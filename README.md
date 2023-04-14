@@ -1,7 +1,7 @@
 <h1 align="center">Hi 👋, I'm Black Pearl</h1>
 <h3 align="center">Sistema de gestão dos Convênios do SINDIPORTO PA AP</h3>
 
-<h3 align="left">Connect with me:</h3>
+<h3 align="left">Connect with me: maxsonferovante@gmail.com</h3>
 <p align="left">
 </p>
 

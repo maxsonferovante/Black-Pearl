@@ -66,7 +66,7 @@ pipenv==2023.3.20
 platformdirs==3.1.1
 pluggy==1.0.0
 protobuf==4.22.1
-psycopg2==2.9.6
+
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycparser==2.21

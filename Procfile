@@ -1,1 +1,1 @@
-web: gunicorn blackpearl.wsgi --log-file
+web: gunicorn blackpearl.wsgi --log-file -

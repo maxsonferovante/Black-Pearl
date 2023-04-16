@@ -45,7 +45,7 @@ def sair(request):
 def home(request):
     return render(request, 'usuarios/home.html')
 
-
+"""
 def cadastro(request):
     if request.method == 'GET':
         return render(request, 'registration/cadastro.html', {
@@ -58,17 +58,13 @@ def cadastro(request):
 
         userName = User.objects.filter(username=usuario).first()
         if userName:
-            """
-            Se existir o usuario inserido já existir retornará uma mensagem de que existe, tente novamente.
-            """
+          
             return render(request, 'registration/cadastro.html', {
                 'form': UserCreationForm,
                 "error": True
             })
         else:
-            """
-            Se não criará o usuario
-            """
+           
 
             try:
                 validate_password(password=senha, user=usuario)
@@ -92,8 +88,9 @@ def cadastro(request):
                     'form': UserCreationForm,
                     "error": ValueError
                 })
+"""
 
-        """userName = User.objects.filter(username=usuario).first()
+"""userName = User.objects.filter(username=usuario).first()
         if userName:
             return render(request, 'login.html', {
                     'form': UserCreationForm,

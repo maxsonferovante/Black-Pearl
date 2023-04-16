@@ -10,7 +10,9 @@
             <title>Title</title>
         </head>
         <body>
-        <form action="{% url 'login' %}" method="POST">{% csrf_token %}
+        <form action="{% url 'login' %}" method="POST">
+            {% csrf_token %}
+
             <section class="vh-100" style="background-color: #508bfc">
                 <div class="container py-5 h-100">
                 <div class="row d-flex justify-content-center align-items-center h-100">
@@ -19,11 +21,10 @@
                       <div class="card-body p-5 text-center">
 
                         <h3 class="mb-5">Acesso Black Pearl</h3>
-                          {% if form.errors %}
+                          {% if error %}
                             <p>Your username and password didn't match. Please try again.</p>
-                            {% endif %}
-
-                            {% if next %}
+                          {% endif %}
+                          {% if next %}
                                 {% if user.is_authenticated %}
                                 <p>Your account doesn't have access to this page. To proceed,
                                 please login with an account that has access.</p>
@@ -41,10 +42,11 @@
                           <label class="form-label" for="typePasswordX-2">Password</label>
                         </div>
 
-
-                           <div class="form-link d-flex justify-content-start mb-4">
+                    <!-- <div class="form-link d-flex justify-content-start mb-4">
                               <p><a class="link-offset-2 link-underline link-underline-opacity-0" href="{% url 'cadastro' %}">criar novo usuário</a></p>
                             </div>
+                          -->
+
                           <input type="hidden" name="next" value="{{ next_page }}">
                           <button class="btn btn-primary btn-lg btn-block" type="submit" value="login">Entrar</button>
                        </div>

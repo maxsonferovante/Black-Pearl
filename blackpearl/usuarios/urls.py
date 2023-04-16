@@ -1,10 +1,11 @@
-from django.urls import path
+from django.urls import path, include
 
 from blackpearl.usuarios import views
 
 urlpatterns = [
-    path('',views.login, name='login'),
-    path('cadastro/',views.cadastro, name='cadastro'),
-    path('home/', views.plataforma, name ='home')
-]
+    path('', views.login, name='login'),
+    path('create_login/', views.cadastro, name='cadastro'),
+    path('home/', views.home, name='home')
+    #path('create_login/', views.cadastro, name='cadastro'),
 
+]

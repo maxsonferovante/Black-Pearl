@@ -10,7 +10,9 @@
             <title>Title</title>
         </head>
         <body>
-        <form action="{% url 'login' %}" method="POST">{% csrf_token %}
+        <form action="{% url 'login' %}" method="POST">
+            {% csrf_token %}
+
             <section class="vh-100" style="background-color: #508bfc">
                 <div class="container py-5 h-100">
                 <div class="row d-flex justify-content-center align-items-center h-100">
@@ -19,11 +21,10 @@
                       <div class="card-body p-5 text-center">
 
                         <h3 class="mb-5">Acesso Black Pearl</h3>
-                          {% if form.errors %}
+                          {% if error %}
                             <p>Your username and password didn't match. Please try again.</p>
-                            {% endif %}
-
-                            {% if next %}
+                          {% endif %}
+                          {% if next %}
                                 {% if user.is_authenticated %}
                                 <p>Your account doesn't have access to this page. To proceed,
                                 please login with an account that has access.</p>

@@ -2,7 +2,7 @@ import django.contrib.auth.password_validation
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.password_validation import validate_password
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, logout
 from django.contrib.auth import login as login_django
@@ -39,7 +39,6 @@ def login(request):
 def sair(request):
     logout(request)
     return redirect('home')
-
 
 @login_required(login_url='login')
 def home(request):

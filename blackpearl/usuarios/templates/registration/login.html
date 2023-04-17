@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
         <html lang="en">
-        <head>
+        <head>     {% load static %}
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <title>Acesso - Black Pearl</title>
@@ -20,7 +20,9 @@
                     <div class="card shadow-2-strong" style="border-radius: 1rem;">
                       <div class="card-body p-5 text-center">
 
-                        <h3 class="mb-5">Acesso Black Pearl</h3>
+                          <img src="{% static 'usuarios/logo.svg' %}" alt="My logo"  height="100px" width="100px" class="rounded-circle float-center">
+
+                        <h3 class="mb-5 mt-3">Black Pearl - Login</h3>
                           {% if error %}
                             <p>Your username and password didn't match. Please try again.</p>
                           {% endif %}

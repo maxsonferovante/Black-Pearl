@@ -20,13 +20,12 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('blackpearl.usuarios.urls')),
-    #path('login/', auth_views.LoginView.as_view(), name='login'),
-    #path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('associados/', include('blackpearl.associados.urls')),
+    # path('login/', auth_views.LoginView.as_view(), name='login'),
+    # path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-

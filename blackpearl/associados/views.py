@@ -1,18 +1,20 @@
-
 from django.shortcuts import render
 from django.contrib import messages
 from .forms import AssociadoForm, AssociadoModelForm
 from .models import Associado
 
 from django.contrib.auth.decorators import login_required
+
+
 # Create your views here.
 
 @login_required(login_url='login')
 def home(request):
     context = {
         'associados': Associado.objects.order_by('-cpf')
-        }
+    }
     return render(request, 'associados/home.html', context)
+
 
 @login_required(login_url='login')
 def cadastrardjango(request):
@@ -21,7 +23,6 @@ def cadastrardjango(request):
     if str(request.method) == 'POST':
         formDadosAsssociado = AssociadoModelForm(request.POST)
         if formDadosAsssociado.is_valid():
-
 
             assoc = formDadosAsssociado.save()
             messages.success(request, 'Dados de {} {} cadastrados com sucesso!'.format(assoc.nome, assoc.sobrenome))
@@ -33,9 +34,11 @@ def cadastrardjango(request):
     else:
         formDadosAsssociado = AssociadoModelForm()
     context = {
-                'formDadosAssociado': formDadosAsssociado
-            }
+        'formDadosAssociado': formDadosAsssociado
+    }
     return render(request, 'associados/formsdjango.html', context)
+
+
 """
     # o formulario pode ou não ter dados, tem quando usuario usa do botão cadastar, não tem quando a pagina carrega
     formDadosPessoais = AssociadoForm(request.POST or None)
@@ -60,3 +63,12 @@ def cadastrardjango(request):
     }
     return render(request,'associados/formsdjango.html', context)
 """
+
+
+@login_required(login_url='login')
+def visualizar(request, associado_id):
+    associado = Associado.objects.get(id=associado_id)
+    context = {
+        'associado': associado
+    }
+    return render(request, 'associados/visualizar.html', context)

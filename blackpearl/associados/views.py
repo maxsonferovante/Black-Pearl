@@ -1,6 +1,8 @@
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from django.shortcuts import render
 from django.contrib import messages
-from .forms import AssociadoForm, AssociadoModelForm
+from .forms import AssociadoModelForm
 from .models import Associado
 
 from django.contrib.auth.decorators import login_required
@@ -11,7 +13,7 @@ from django.contrib.auth.decorators import login_required
 @login_required(login_url='login')
 def home(request):
     context = {
-        'associados': Associado.objects.order_by('-cpf')
+        'associados': Associado.objects.all()
     }
     return render(request, 'associados/home.html', context)
 
@@ -39,36 +41,42 @@ def cadastrardjango(request):
     return render(request, 'associados/formsdjango.html', context)
 
 
-"""
-    # o formulario pode ou não ter dados, tem quando usuario usa do botão cadastar, não tem quando a pagina carrega
-    formDadosPessoais = AssociadoForm(request.POST or None)
-
-
-    if str(request.method) == 'POST':
-        if formDadosPessoais.is_valid():
-            nome = formDadosPessoais.cleaned_data['nome']
-            sobrenome = formDadosPessoais.cleaned_data['sobrenome']
-            email = formDadosPessoais.cleaned_data['email']
-
-            print('{} {} e {}'.format(nome,sobrenome,email))
-
-            messages.success(request, 'Dados cadastrados com sucesso!')
-            formDadosPessoais = AssociadoForm()
-
-        else:
-            messages.error(request,'Verifique os campos preenchidos!')
-    context = {
-        'formDadosPessoais': formDadosPessoais
-
-    }
-    return render(request,'associados/formsdjango.html', context)
-"""
-
-
 @login_required(login_url='login')
 def visualizar(request, associado_id):
-    associado = Associado.objects.get(id=associado_id)
+    associado = Associado.objects.get(pk=associado_id)
+
     context = {
         'associado': associado
     }
-    return render(request, 'associados/visualizar.html', context)
+    return HttpResponseRedirect(reverse(
+        'home'
+    ))
+    # return render(request, 'associados/editar.html', context)
+
+
+@login_required(login_url='login')
+def editar(request, associado_id):
+    if request.method == 'POST':
+        associado = Associado.objects.get(pk=associado_id)
+        formAssociado = AssociadoModelForm(request.POST, instance=associado)
+        if formAssociado.is_valid():
+            assoc = formAssociado.save()
+
+            messages.success(request, 'Dados de {} {} cadastrados com sucesso!'.format(assoc.nome, assoc.sobrenome))
+            return render(request, 'associados/editar.html', {
+                'form': formAssociado
+            })
+    else:
+        associado = Associado.objects.get(pk=associado_id)
+        formAssociado = AssociadoModelForm(
+            instance=associado
+        )
+    return render(request, 'associados/editar.html', {
+        'form': formAssociado
+    })
+@login_required(login_url='login')
+def excluir(request,  associado_id):
+    if request.method == 'POST':
+        associado = Associado.objects.get(pk=associado_id)
+        associado.delete()
+    return HttpResponseRedirect(reverse('home'))

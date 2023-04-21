@@ -3,27 +3,6 @@ from django import forms
 from blackpearl.associados.models import Associado
 
 
-class AssociadoForm(forms.Form):
-    # Dados Pessoais e contatos
-    nome = forms.CharField(label='Nome', widget=forms.TextInput())
-    sobrenome = forms.CharField(label='Sobrenome', widget=forms.TextInput())
-    dataNascimento = forms.DateField(label='Data de Nascimento', widget=forms.DateInput())
-
-    cpf = forms.CharField(label='CPF', widget=forms.TextInput())
-
-    email = forms.EmailField(label='e-mail', widget=forms.EmailInput())
-    dddNumeroContato = forms.CharField(label='DDD', widget=forms.TextInput())
-    numeroContato = forms.CharField(label='Celular', widget=forms.TextInput())
-
-    # Endereço
-    cep = forms.CharField(label='CEP', widget=forms.TextInput())
-    logradouro = forms.CharField(label='Logradouro', widget=forms.TextInput())
-    num = forms.IntegerField(label='Número', widget=forms.NumberInput())
-    bairro = forms.CharField(label='Bairro', widget=forms.TextInput())
-    cidade = forms.CharField(label='Cidade', widget=forms.TextInput())
-    estado = forms.CharField(label='Estado (UF)', widget=forms.TextInput)
-
-
 class AssociadoModelForm(forms.ModelForm):
     class Meta:
         model = Associado
@@ -34,37 +13,45 @@ class AssociadoModelForm(forms.ModelForm):
         ),
             'cpf': forms.TextInput(
                 attrs={
-                    'id': 'textcpf'
+                    'id': 'textcpf',
+                   'class': 'form-control'
                 }
             ),
             'cep': forms.TextInput(
                 attrs={
-                    'id': 'cep'
+                    'id': 'cep',
+                   'class': 'form-control'
                 }
             ),
             'logradouro': forms.TextInput(
                 attrs={
-                    'id': 'address'
+                    'id': 'address',
+                   'class': 'form-control'
                 }
             ),
             'bairro': forms.TextInput(
                 attrs={
-                    'id': 'textBairro'
+                    'id': 'textBairro',
+                   'class': 'form-control'
                 }
             ),
             'cidade': forms.TextInput(
                 attrs={
-                    'id': 'textCidade'
+                    'id': 'textCidade',
+                   'class': 'form-control'
                 }
             ),
             'estado': forms.TextInput(
                 attrs={
-                    'id': 'inputGroupSelectUF'
+                    'id': 'inputGroupSelectUF',
+                   'class': 'form-control'
                 }
             ),
             'num': forms.TextInput(
                 attrs={
-                    'id': 'textNumero'
+                    'id': 'textNumero',
+                   'class': 'form-control'
                 }
             )
+
         }

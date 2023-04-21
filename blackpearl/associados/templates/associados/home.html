@@ -55,65 +55,121 @@
 
         <div class="container py-5 vh-100">
         <div class="row d-flex justify-content-center align-items-center h-50 mt-5">
-
+            <div class="table-responsive">
                 <table class="table table-hover">
                     <div class="d-grid gap-2 d-md-block">
-                        <a class="btn btn-primary" href="/cadastrardjangoassociados/cadastrar/" role="button">
+                        <a class="btn btn-primary" href="{% url 'cadastrar' %}" role="button">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-add" viewBox="0 0 16 16">
                             <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0Zm-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"></path>
                             <path d="M8.256 14a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Z"></path>
                             </svg>
-                            Novo</a>
+                            Novo
+                        </a>
 
                     </div>
                   <thead>
                     <tr>
-                      <th scope="col">#</th>
+
                       <th scope="col">Nome</th>
                       <th scope="col">Sobrenome</th>
                       <th scope="col">CPF</th>
                       <th scope="col">E-mail</th>
                       <th scope="col"></th>
-
                     </tr>
                   </thead>
                   <tbody class="table-group-divider">
 
                         {% for assoc in associados %}
                         <tr>
-                        <th scope="row">{{ assoc.id }}</th>
+
                         <td>{{ assoc.nome }}</td>
                         <td>{{ assoc.sobrenome }}</td>
                         <td>{{ assoc.cpf }}</td>
                         <td>{{ assoc.email }}</td>
                         <td>
 
-                            <a class="btn btn-success" href="{% url 'visualizar' assoc.id %}" role="button">
+                            <button class="btn btn-success" role="button" href = "{% url 'visualizar' assoc.id%}" data-bs-toggle="modal" data-bs-target="#detalhesModal{{assoc.id}}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-vcard" viewBox="0 0 16 16">
                                 <path d="M5 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm4-2.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5ZM9 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4A.5.5 0 0 1 9 8Zm1 2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5Z"/>
                                 <path d="M2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2ZM1 4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H8.96c.026-.163.04-.33.04-.5C9 10.567 7.21 9 5 9c-2.086 0-3.8 1.398-3.984 3.181A1.006 1.006 0 0 1 1 12V4Z"/>
                                 </svg>
                                 Visualizar
-                            </a>
-                            <button type="button" class="btn btn-warning">
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade " id="detalhesModal{{assoc.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">{{assoc.nome}} {{assoc.sobrenome}}</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                   <ul class="list-unstyled">
+                                       <li>Data de Nascimento: <strong>{{ assoc.dataNascimento }}</strong></li>
+                                       <li>CPF: <strong>{{ assoc.cpf }}</strong></li>
+                                   </ul>
+                                  <h6>Contatos</h6>
+                                  <ul class="list-unstyled">
+                                       <li>Celular: <strong>({{assoc.dddNumeroContato}}) {{ assoc.numeroContato }}</strong></li>
+                                       <li>E-mail: <strong>{{ assoc.email }}</strong></li>
+                                   </ul>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sair</button>
+                                <button type="button" class="btn btn-primary">Ainda não sei</button>
+                              </div>
+                            </div>
+                            </div>
+                            </div>
+
+                            <a class="btn btn-warning" role="button" href ="{% url 'editar' assoc.id%}" >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-gear" viewBox="0 0 16 16">
                                 <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm.256 7a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Zm3.63-4.54c.18-.613 1.048-.613 1.229 0l.043.148a.64.64 0 0 0 .921.382l.136-.074c.561-.306 1.175.308.87.869l-.075.136a.64.64 0 0 0 .382.92l.149.045c.612.18.612 1.048 0 1.229l-.15.043a.64.64 0 0 0-.38.921l.074.136c.305.561-.309 1.175-.87.87l-.136-.075a.64.64 0 0 0-.92.382l-.045.149c-.18.612-1.048.612-1.229 0l-.043-.15a.64.64 0 0 0-.921-.38l-.136.074c-.561.305-1.175-.309-.87-.87l.075-.136a.64.64 0 0 0-.382-.92l-.148-.045c-.613-.18-.613-1.048 0-1.229l.148-.043a.64.64 0 0 0 .382-.921l-.074-.136c-.306-.561.308-1.175.869-.87l.136.075a.64.64 0 0 0 .92-.382l.045-.148ZM14 12.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z"/>
                                 </svg>
                                 Editar
-                            </button>
-                                <button type="button" class="btn btn-danger">
+                            </a>
+
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete{{assoc.id}}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-x" viewBox="0 0 16 16">
                                 <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm.256 7a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Z"/>
                                 <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm-.646-4.854.646.647.646-.647a.5.5 0 0 1 .708.708l-.647.646.647.646a.5.5 0 0 1-.708.708l-.646-.647-.646.647a.5.5 0 0 1-.708-.708l.647-.646-.647-.646a.5.5 0 0 1 .708-.708Z"/>
                                 </svg>
                                 Excluir
                             </button>
+                            <!-- Modal - Delete Associado -->
+                            <div class="modal" id="delete{{assoc.id}}" tabindex="-1" aria-labelledby="myModalLabel2" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h5 class="modal-title">
+                                        Dados de {{ assoc.nome }} {{ assoc.sobrenome }}
+                                      </h5>
+                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true"></span>
+                                      </button>
+                                    </div>
+                                    <div class="modal-body">
+                                      <p>Deseja realmente excluir (a)o associado(a) ?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                      <form action="{% url 'excluir' assoc.id %}" method="POST">
+                                        {% csrf_token %}
+                                        <input type="submit" class="btn btn-primary" value="Delete">
+                                      </form>
+                                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    </div>
+                                  </div>
+                                </div>
+                            </div>
                         </td>
                         </tr>
                         {% endfor %}
 
                 </tbody>
                 </table>
+
+            </div>
 
         </div>
         </div>

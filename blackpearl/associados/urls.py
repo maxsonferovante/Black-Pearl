@@ -6,9 +6,7 @@ from blackpearl.associados import views
 urlpatterns = [
     path('', views.home, name='home'),
     path('cadastrar/', views.cadastrardjango, name='cadastrar'),
-    path('visualizar/<int:associado_id>', views.visualizar, name='visualizar')
-
-    #path('consultar/', views.consultar, name='consultar'),
-    #path('atualizar/', views.atualizar, name='atualizar'),
-    #path('apagar/', views.apagar, name='apagar'),
+    path('<int:associado_id>', views.visualizar, name='visualizar'),
+    path('editar/<int:associado_id>/', views.editar, name='editar'),
+    path('excluir/<int:associado_id>/', views.excluir, name='excluir'),
 ]

@@ -15,9 +15,6 @@ def home(request):
     return render(request, 'associados/home.html', context)
 
 @login_required(login_url='login')
-def cadastrar(request):
-    return render(request, 'associados/forms.html')
-@login_required(login_url='login')
 def cadastrardjango(request):
     # o formulario pode ou não ter dados, tem quando usuario usa do botão cadastar, não tem quando a pagina carrega
 

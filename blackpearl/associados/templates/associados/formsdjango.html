@@ -55,7 +55,7 @@
           <div class="row d-flex justify-content-md-center align-items-center h-50">
             <h6 class="from mt-5">Formulário - Associados</h6>
               {% bootstrap_messages %}
-            <form class="form" action="{% url 'cadastrardjango' %}" method="post" autocomplete="off">
+            <form class="form" action="{% url 'cadastrar' %}" method="post" autocomplete="off">
                 {% csrf_token %}
 
                  <div class="card mb-3 mt-3">

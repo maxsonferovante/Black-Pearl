@@ -1,150 +1,166 @@
-const addressForm = document.querySelector("#cadastro-form");
-const cepInput = document.querySelector("#cep");
-const addressInput = document.querySelector("#address");
-const cityInput = document.querySelector("#city");
-const neighborhoodInput = document.querySelector("#neighborhood");
-const regionInput = document.querySelector("#region");
-const formInputs = document.querySelectorAll("[data-input]");
+
+const cepInput = document.querySelector('#cep');
+const addressInput = document.querySelector('#address');
+const regionInput = document.querySelector('#inputGroupSelectUF');
+const cityInput = document.querySelector('#textCidade');
+const neighborhoodInput = document.querySelector('#textBairro');
+const numeroInput = document.querySelector('#textNumero');
 
 
-
-// Validate CEP Input
-cepInput.addEventListener("keypress", (e) => {
+cepInput.addEventListener('keypress', (e) => {
   const onlyNumbers = /[0-9]|\./;
   const key = String.fromCharCode(e.keyCode);
 
-  console.log(key);
-
-  console.log(onlyNumbers.test(key));
-
-  // allow only numbers
   if (!onlyNumbers.test(key)) {
     e.preventDefault();
     return;
   }
 });
 
-// Evento to get address
-cepInput.addEventListener("keyup", (e) => {
+cepInput.addEventListener('keyup', (e) => {
   const inputValue = e.target.value;
 
-  //   Check if we have a CEP
   if (inputValue.length === 8) {
     getAddress(inputValue);
   }
 });
-const button = document.getElementById("button-addon2");
-button.addEventListener("click", () => {
-  const cep = document.getElementById("cep").value;
-  getAddress(cep);
-});
-const fillFormFields = (data) => {
-  const { logradouro, uf, cidade, bairro } = data;
-  const addressInput = document.getElementById("address");
-  const regionInput = document.getElementById("region");
-  const textUfInput = document.getElementById("textUf");
-  const textCidadeInput = document.getElementById("textCidade");
-  const textBairroInput = document.getElementById("textBairro");
+function getAddress(cep) {
+  const numeroInput = document.querySelector('#numeroInput');
 
-  addressInput.value = logradouro;
-  regionInput.value = uf;
-  textUfInput.value = uf;
-  textCidadeInput.value = cidade;
-  textBairroInput.value = bairro;
-};
+  fetch(`https://viacep.com.br/ws/${cep}/json/`)
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      if (data.erro) {
+        alert('CEP não encontrado');
+        return;
+      }
 
-// Get address from API
-const getAddress = async (cep) => {
-  toggleLoader();
+      addressInput.value = data.logradouro;
+      regionInput.value = data.uf;
+      cityInput.value = data.localidade;
+      neighborhoodInput.value = data.bairro;
+      numeroInput.focus();
 
-  cepInput.blur();
-
-  const apiUrl = 'https://viacep.com.br/ws/${cep}/json/';
-
-  const response = await fetch(apiUrl);
-
-  const data = await response.json();
-
-  console.log(data);
-  console.log(formInputs);
+      formInputs.forEach((input) => {
+        if (input !== numeroInput) {
+          input.setAttribute('disabled', 'disabled');
+        }
+      });
+      numeroInput.removeAttribute('disabled');
+    })
+    .catch(error => console.log(error));
+}
 
 
-   // Show error and reset form
-  if (data.erro === "true") {
-    if (!addressInput.hasAttribute("disabled")) {
-      toggleDisabled();
-    }
-
-    addressForm.reset();
-    toggleLoader();
-    toggleMessage("CEP Inválido, tente novamente.");
+button.addEventListener('click', () => {
+  const inputValue = cepInput.value.replace(/\D/g, '');
+  if (inputValue.length !== 8) {
+    alert('CEP inválido');
     return;
   }
 
-  // Activate disabled attribute if form is empty
-  if (addressInput.value === "") {
-    toggleDisabled();
-  }
-
-  addressInput.value = data.logradouro;
-  cityInput.value = data.localidade;
-  neighborhoodInput.value = data.bairro;
-  regionInput.value = data.uf;
-
-  toggleLoader();
-};
-
-// Add or remove disable attribute
-const toggleDisabled = () => {
-  if (regionInput.hasAttribute("disabled")) {
-    formInputs.forEach((input) => {
-      input.removeAttribute("disabled");
-    });
-  } else {
-    formInputs.forEach((input) => {
-      input.setAttribute("disabled", "disabled");
-    });
-  }
-};
-
-// Show or hide loader
-const toggleLoader = () => {
-  const fadeElement = document.querySelector("#fade");
-  const loaderElement = document.querySelector("#loader");
-
-  fadeElement.classList.toggle("hide");
-  loaderElement.classList.toggle("hide");
-};
-
-// Show or hide message
-const toggleMessage = (msg) => {
-  const fadeElement = document.querySelector("#fade");
-  const messageElement = document.querySelector("#message");
-
-  const messageTextElement = document.querySelector("#message p");
-
-  messageTextElement.innerText = msg;
-
-  fadeElement.classList.toggle("hide");
-  messageElement.classList.toggle("hide");
-};
-
-// Close message modal
-closeButton.addEventListener("click", () => toggleMessage());
-
-// Save address
-addressForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-
-  toggleLoader();
-
-  setTimeout(() => {
-    toggleLoader();
-
-    toggleMessage("Endereço salvo com sucesso!");
-
-    addressForm.reset();
-
-    toggleDisabled();
-  }, 1000);
+  getAddress(inputValue);
 });
+
+
+
+const checkbox = document.getElementById("flexSwitchCheckChecked");
+const select01 = document.getElementById("inputGroupSelect01");
+const select02 = document.getElementById("inputGroupSelect02");
+
+checkbox.addEventListener("change", function() {
+  if (this.checked) {
+    select01.disabled = false;
+    select02.disabled = false;
+    select01.selectedIndex = 0;
+    select02.selectedIndex = 0;
+  } else {
+    select01.disabled = true;
+    select02.disabled = true;
+    select01.selectedIndex = 0;
+    select02.selectedIndex = 0;
+  }
+});
+
+
+
+// Obtém o elemento HTML do campo de texto do CPF
+const cpfInput = document.getElementById("textcpf");
+
+// Adiciona um ouvinte de eventos ao campo de texto para verificar a entrada do usuário
+cpfInput.addEventListener("input", function() {
+  // Remove todos os caracteres que não são números do valor do campo de texto
+  const cpf = cpfInput.value.replace(/\D/g, "");
+
+  // Verifica se o CPF tem 11 dígitos
+  if (cpf.length !== 11) {
+    cpfInput.setCustomValidity("O CPF deve ter 11 dígitos numéricos.");
+  } else {
+    cpfInput.setCustomValidity("");
+    // Verifica se o CPF é válido usando o algoritmo de validação de CPF
+    let sum = 0;
+    let remainder;
+    for (let i = 1; i <= 9; i++) {
+      sum += parseInt(cpf.substring(i-1, i)) * (11 - i);
+    }
+    remainder = (sum * 10) % 11;
+    if ((remainder == 10) || (remainder == 11)) {
+      remainder = 0;
+    }
+    if (remainder != parseInt(cpf.substring(9, 10))) {
+      cpfInput.setCustomValidity("O CPF é inválido.");
+      return;
+    }
+    sum = 0;
+    for (let i = 1; i <= 10; i++) {
+      sum += parseInt(cpf.substring(i-1, i)) * (12 - i);
+    }
+    remainder = (sum * 10) % 11;
+    if ((remainder == 10) || (remainder == 11)) {
+      remainder = 0;
+    }
+    if (remainder != parseInt(cpf.substring(10, 11))) {
+      cpfInput.setCustomValidity("O CPF é inválido.");
+      return;
+    }
+  }
+});
+
+
+
+function validarDDD(ddd) {
+  var dddsValidos = ["11", "12", "13", "14", "15", "16", "17", "18", "19", "21", "22", "24", "27", "28", "31", "32", "33", "34", "35", "37", "38", "41", "42", "43", "44", "45", "46", "47", "48", "49", "51", "53", "54", "55", "61", "62", "63", "64", "65", "66", "67", "68", "69", "71", "73", "74", "75", "77", "79", "81", "82", "83", "84", "85", "86", "87", "88", "89", "91", "92", "93", "94", "95", "96", "97", "98", "99"];
+  return dddsValidos.includes(ddd);
+}
+
+function validarCelular(celular) {
+  var numeros = celular.match(/\d/g);
+  return numeros && numeros.length === 9;
+}
+
+
+const dddInput = document.querySelector('#dddInput');
+const telefoneInput = document.querySelector('#telefoneInput');
+
+function validarTelefone() {
+  const ddd = dddInput.value;
+  const telefone = telefoneInput.value;
+
+  // Validar o DDD
+  if (!ddd.match(/^\d{2}$/) || parseInt(ddd) < 11 || parseInt(ddd) > 99) {
+    dddInput.setCustomValidity('Por favor, insira um DDD válido');
+  } else {
+    dddInput.setCustomValidity('');
+  }
+
+  // Validar o telefone
+  if (!telefone.match(/^\d{9}$/)) {
+    telefoneInput.setCustomValidity('Por favor, insira um número de telefone válido com 9 dígitos');
+  } else {
+    telefoneInput.setCustomValidity('');
+  }
+}
+
+dddInput.addEventListener('input', validarTelefone);
+telefoneInput.addEventListener('input', validarTelefone);

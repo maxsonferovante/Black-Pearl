@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'blackpearl.usuarios',
     'blackpearl.associados',
+    'bootstrap5',
 ]
 
 MIDDLEWARE = [

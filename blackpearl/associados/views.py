@@ -1,19 +1,25 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.shortcuts import render
 from django.contrib import messages
-from .forms import AssociadoModelForm
-from .models import Associado
+from tablib import Dataset
+from blackpearl.settings import BASE_DIR
+from .forms import AssociadoModelForm, FileUploadExcelModelForm
+from .models import Associado, FileUploadExcelModel
 
 from django.contrib.auth.decorators import login_required
 
+import pandas as pd
 
+from .importExcelToAssociados import import_excel_to_associado
 # Create your views here.
 
 @login_required(login_url='login')
 def home(request):
+    associados = Associado.objects.all()
     context = {
-        'associados': Associado.objects.all()
+        'associados': associados,
+
     }
     return render(request, 'associados/home.html', context)
 
@@ -28,6 +34,7 @@ def cadastrardjango(request):
 
             assoc = formDadosAsssociado.save()
             messages.success(request, 'Dados de {} {} cadastrados com sucesso!'.format(assoc.nome, assoc.sobrenome))
+
             formDadosAsssociado = AssociadoModelForm()
 
         else:
@@ -74,9 +81,43 @@ def editar(request, associado_id):
     return render(request, 'associados/editar.html', {
         'form': formAssociado
     })
+
+
 @login_required(login_url='login')
-def excluir(request,  associado_id):
+def excluir(request, associado_id):
     if request.method == 'POST':
         associado = Associado.objects.get(pk=associado_id)
         associado.delete()
     return HttpResponseRedirect(reverse('home'))
+
+
+@login_required(login_url='login')
+def importExcel(request):
+    if request.method == 'POST':
+        formUploadFile = FileUploadExcelModelForm(request.POST)
+        if formUploadFile.is_valid():
+            arq = request.FILES['files']
+            obj = FileUploadExcelModel.objects.create(
+                nome="teste",
+                arquivo=arq
+            )
+            ## modulo importExcelToAssociado.py responsável pela migração dos dados
+            import_excel_to_associado(obj)
+            obj = FileUploadExcelModel.objects.get(arquivo=obj.arquivo)
+
+            obj.delete()
+
+
+            formUploadFile = FileUploadExcelModelForm()
+
+            messages.success(request, 'Dados importados com sucesso!')
+
+        else:
+            messages.error(request,'Verifique os campos destacados!')
+    else:
+        formUploadFile = FileUploadExcelModelForm()
+
+    context = {
+            'formUploadFile': formUploadFile
+        }
+    return render(request, 'associados/formsdimport_excel.html', context)

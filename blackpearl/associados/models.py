@@ -66,9 +66,13 @@ class Associado(Base):
     def __str__(self):
         return self.nome
 
-
 def associado_pre_save(instance, sender, **kwargs):
     instance.slug = slugify(instance.nome)
 
-
 signals.pre_save.connect(associado_pre_save, sender=Associado)
+
+class FileUploadExcelModel(Base):
+    nome = models.CharField(max_length=100)
+    arquivo = models.FileField()
+
+

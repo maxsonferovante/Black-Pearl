@@ -1,6 +1,6 @@
 from django import forms
 
-from blackpearl.associados.models import Associado
+from blackpearl.associados.models import Associado, FileUploadExcelModel
 
 
 class AssociadoModelForm(forms.ModelForm):
@@ -14,44 +14,53 @@ class AssociadoModelForm(forms.ModelForm):
             'cpf': forms.TextInput(
                 attrs={
                     'id': 'textcpf',
-                   'class': 'form-control'
+                    'class': 'form-control'
                 }
             ),
             'cep': forms.TextInput(
                 attrs={
                     'id': 'cep',
-                   'class': 'form-control'
+                    'class': 'form-control'
                 }
             ),
             'logradouro': forms.TextInput(
                 attrs={
                     'id': 'address',
-                   'class': 'form-control'
+                    'class': 'form-control'
                 }
             ),
             'bairro': forms.TextInput(
                 attrs={
                     'id': 'textBairro',
-                   'class': 'form-control'
+                    'class': 'form-control'
                 }
             ),
             'cidade': forms.TextInput(
                 attrs={
                     'id': 'textCidade',
-                   'class': 'form-control'
+                    'class': 'form-control'
                 }
             ),
             'estado': forms.TextInput(
                 attrs={
                     'id': 'inputGroupSelectUF',
-                   'class': 'form-control'
+                    'class': 'form-control'
                 }
             ),
             'num': forms.TextInput(
                 attrs={
                     'id': 'textNumero',
-                   'class': 'form-control'
+                    'class': 'form-control'
                 }
             )
 
+        }
+
+
+class FileUploadExcelModelForm(forms.Form):
+    class meta:
+        model = FileUploadExcelModel
+        fields = '__all__'
+        widgets = {
+            'arquivo': forms.FileField()
         }

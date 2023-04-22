@@ -60,16 +60,18 @@
                             Listagem Geral
               </a>
               </div>
-              <h6 class="from">Cadastro</h6>
+              <h6 class="from">Cadastro via Excel</h6>
               {% bootstrap_messages %}
-                <form class="form" action="{% url 'cadastrar' %}" method="post" autocomplete="off" >
+                <form class="form" action="{% url 'importExcel' %}" method="post" autocomplete="off" enctype="multipart/form-data">
                             {% csrf_token %}
                  <div class="card mb-3 mt-3">
                      <h6 class="card-header text-center">Dados Pessoais, Contatos e Endereço</h6>
                      <div class="card-body">
-
-                            {% bootstrap_form formDadosAssociado%}
-
+                            <div class="input-group mb-3">
+                              <input type="file" class="form-control" id="inputGroupFile02" name="files" required>
+                                {% bootstrap_form formUploadFile%}
+                              <label class="input-group-text" for="inputGroupFile02">Upload</label>
+                            </div>
                      </div>
                  </div>
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
@@ -80,6 +82,8 @@
                               <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z"/>
                             </svg>
                             Cadastrar</button>
+
+
                      {% endbuttons %}
                     </div>
                 </form>

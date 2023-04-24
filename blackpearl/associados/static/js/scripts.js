@@ -164,3 +164,36 @@ function validarTelefone() {
 
 dddInput.addEventListener('input', validarTelefone);
 telefoneInput.addEventListener('input', validarTelefone);
+
+
+ $("#datatable").DataTable({
+            paging: true,
+            pageLength: 10,
+            lengthChange:true,
+            autoWidth:true,
+            searching: true,
+            bInfo: true,
+            bSort: true,
+            language: {
+            processing:     "Processando...",
+            search:         "Pesquisar:",
+            lengthMenu:     "Mostrar _MENU_ entradas",
+            info:           "Mostrando _START_ até _END_ de _TOTAL_ entradas",
+            infoEmpty:      "Mostrando 0 até 0 de 0 entradas",
+            infoFiltered:   "(filtrado de _MAX_ entradas no total)",
+            infoPostFix:    "",
+            loadingRecords: "Carregando...",
+            zeroRecords:    "Nenhum registro encontrado",
+            emptyTable:     "Nenhum dado disponível na tabela",
+            paginate: {
+                first:      "Primeiro",
+                previous:   "Anterior",
+                next:       "Próximo",
+                last:       "Último"
+            },
+            aria: {
+                sortAscending:  ": ativar para classificar a coluna em ordem crescente",
+                sortDescending: ": ativar para classificar a coluna em ordem decrescente"
+            }
+            }
+            });

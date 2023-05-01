@@ -1,94 +1,11 @@
- <!DOCTYPE html>
+
+{% extends "base.html" %}
+
+{% block bootstrap5_content %}
 {% load bootstrap5 %}
-
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    {% load static %}
-    {% bootstrap_css %}
-      <meta charset="UTF-8">
-      <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous"/>
-      <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet"/>
-        <!-- Usado para construção do Datatables -->
+{% load static %}
+    <!-- Usado para construção do Datatables -->
       <link href="https://cdn.datatables.net/v/bs5/jq-3.6.0/jszip-2.5.0/dt-1.13.4/b-2.3.6/b-html5-2.3.6/b-print-2.3.6/datatables.min.css" rel="stylesheet"/>
-
-        <title>Associados - Black Pearl</title>
-
-
-</head>
-
-  <body>
-<!-- Navbar -->
-      <nav class="navbar navbar-dark fixed-top"
-      style="background-color: #508bfc">
-      <div class="container-fluid ">
-          <a class="navbar-brand" href="#">
-              Black Pearl
-          </a>
-
-        <div class="dropdown btn-group ">
-
-            <button class="navbar-toggler dropdown-toggle dropdown-toggle-split" data-bs-toggle="offcanvas"  data-bs-target="#offcanvasDarkNavbarAssociado" aria-controls="offcanvasDarkNavbarAssociado" aria-label="Toggle navigation">Nome de quem está logado
-           </button>
-            <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasDarkNavbarAssociado" aria-labelledby="offcanvasDarkNavbarLabelAssociado">
-              <div class="offcanvas-header">
-                <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabelAssociado">Menu</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-              </div>
-              <div class="offcanvas-body">
-                <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-                  <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="#">Meu Perfil</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">Configuração</a>
-                  </li>
-                   <li><hr class="nav-link-divider"></li>
-                    <li><a class="nav-link" href="#">Sair</a></li>
-                </ul>
-              </div>
-            </div>
-
-
-          <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar" aria-label="Toggle navigation" >
-          <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasDarkNavbar" aria-labelledby="offcanvasDarkNavbarLabel">
-              <div class="offcanvas-header">
-                <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel">Menu</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-              </div>
-              <div class="offcanvas-body">
-                <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-                  <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href=" /associados/ ">Associados</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">Financeiro</a>
-                  </li>
-                  <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      Comunicação
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-dark">
-                      <li><a class="dropdown-item" href="#">A</a></li>
-                      <li><a class="dropdown-item" href="#">Another action</a></li>
-                      <li>
-                        <hr class="dropdown-divider">
-                      </li>
-                      <li><a class="dropdown-item" href="#">Something else here</a></li>
-                    </ul>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            </div>
-      </div>
-    </nav>
-
         <div class="container py-5 vh-100">
         <div class="row d-flex justify-content-center align-items-center h-50 mt-5">
 
@@ -98,6 +15,7 @@
                               <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0Zm-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"></path>
                               <path d="M8.256 14a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Z"></path>
                           </svg>
+                          Novo
                       </a>
 
                  </div>
@@ -105,10 +23,9 @@
 
                       <thead>
                         <tr>
-                          <th scope="col">Nome</th>
-                          <th scope="col">Sobrenome</th>
-                          <th scope="col">CPF</th>
-                          <th scope="col">E-mail</th>
+                          <th scope="col">Nome completo</th>
+                          <th scope="col">Data de Nascimento</th>
+                          <th scope="col">Empresa</th>
                           <th scope="col">Opções</th>
                         </tr>
                       </thead>
@@ -117,10 +34,9 @@
                             {% for assoc in associados %}
                             <tr>
 
-                            <td>{{ assoc.nome }}</td>
-                            <td>{{ assoc.sobrenome }}</td>
-                            <td>{{ assoc.cpf }}</td>
-                            <td>{{ assoc.email }}</td>
+                            <td>{{ assoc.nomecompleto }}</td>
+                            <td>{{ assoc.dataNascimento }}</td>
+                            <td>{{ assoc.empresa }}</td>
                             <td>
 
                                 <button class="btn btn-success" role="button" href = "{% url 'visualizar' assoc.id%}" data-bs-toggle="modal" data-bs-target="#detalhesModal{{assoc.id}}">
@@ -136,14 +52,16 @@
                                 <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                                 <div class="modal-content">
                                   <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="exampleModalLabel">{{assoc.nome}} {{assoc.sobrenome}}</h1>
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">{{assoc.nomecompleto}}</h1>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                   </div>
                                   <div class="modal-body">
                                        <ul class="list-unstyled">
+
                                            <li>Data de Nascimento: <strong>{{ assoc.dataNascimento }}</strong></li>
                                            <li>CPF: <strong>{{ assoc.cpf }}</strong></li>
                                        </ul>
+
                                       <h6>Contatos</h6>
                                       <ul class="list-unstyled">
                                            <li>Celular: <strong>({{assoc.dddNumeroContato}}) {{ assoc.numeroContato }}</strong></li>
@@ -152,7 +70,7 @@
                                   </div>
                                   <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sair</button>
-                                    <button type="button" class="btn btn-primary">Ainda não sei</button>
+                                    <button type="button" class="btn btn-primary" >Exportar para PDF</button>
                                   </div>
                                 </div>
                                 </div>
@@ -178,7 +96,7 @@
                                       <div class="modal-content">
                                         <div class="modal-header">
                                           <h5 class="modal-title">
-                                            Dados de {{ assoc.nome }} {{ assoc.sobrenome }}
+                                            Dados de {{ assoc.nomecompleto }} }
                                           </h5>
                                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true"></span>
@@ -200,7 +118,6 @@
                             </td>
                             </tr>
                             {% endfor %}
-
                     </tbody>
                     </table>
 
@@ -249,5 +166,5 @@
             }
             });
         </script>
-    </body>
-  </html>
+
+{% endblock bootstrap5_content %}

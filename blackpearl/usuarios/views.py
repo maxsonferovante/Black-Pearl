@@ -1,14 +1,14 @@
-import django.contrib.auth.password_validation
+
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.contrib.auth.password_validation import validate_password
-from django.shortcuts import render, redirect, reverse
-from django.contrib.auth.models import User
+from django.contrib.auth.forms import AuthenticationForm
+from django.shortcuts import render, redirect
+
 from django.contrib.auth import authenticate, logout
 from django.contrib.auth import login as login_django
 
+from django.views import View
 
-# Create your views here.
+
 
 
 # Create your views here.
@@ -40,9 +40,11 @@ def sair(request):
     logout(request)
     return redirect('home')
 
+
 @login_required(login_url='login')
 def home(request):
     return render(request, 'usuarios/home.html')
+
 
 """
 def cadastro(request):

@@ -1,24 +1,26 @@
+from io import BytesIO
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.shortcuts import render
 from django.contrib import messages
-from tablib import Dataset
-from blackpearl.settings import BASE_DIR
+from django.contrib.auth.decorators import login_required
+from reportlab.pdfgen import canvas
+
+from .importExcelToAssociados import import_excel_to_associado
 from .forms import AssociadoModelForm, FileUploadExcelModelForm
 from .models import Associado, FileUploadExcelModel
 
-from django.contrib.auth.decorators import login_required
 
-import pandas as pd
 
-from .importExcelToAssociados import import_excel_to_associado
 # Create your views here.
 
 @login_required(login_url='login')
 def home(request):
     associados = Associado.objects.all()
+
+
     context = {
-        'associados': associados,
+        'associados': associados
 
     }
     return render(request, 'associados/home.html', context)
@@ -33,7 +35,7 @@ def cadastrardjango(request):
         if formDadosAsssociado.is_valid():
 
             assoc = formDadosAsssociado.save()
-            messages.success(request, 'Dados de {} {} cadastrados com sucesso!'.format(assoc.nome, assoc.sobrenome))
+            messages.success(request, 'Dados de {} cadastrados com sucesso!'.format(assoc.nomecompleto))
 
             formDadosAsssociado = AssociadoModelForm()
 
@@ -43,22 +45,17 @@ def cadastrardjango(request):
     else:
         formDadosAsssociado = AssociadoModelForm()
     context = {
-        'formDadosAssociado': formDadosAsssociado
+        'form': formDadosAsssociado
     }
     return render(request, 'associados/formsdjango.html', context)
 
 
 @login_required(login_url='login')
 def visualizar(request, associado_id):
-    associado = Associado.objects.get(pk=associado_id)
-
-    context = {
-        'associado': associado
-    }
     return HttpResponseRedirect(reverse(
         'home'
     ))
-    # return render(request, 'associados/editar.html', context)
+
 
 
 @login_required(login_url='login')
@@ -69,7 +66,7 @@ def editar(request, associado_id):
         if formAssociado.is_valid():
             assoc = formAssociado.save()
 
-            messages.success(request, 'Dados de {} {} cadastrados com sucesso!'.format(assoc.nome, assoc.sobrenome))
+            messages.success(request, 'Dados de {} atualizados com sucesso!'.format(assoc.nomecompleto))
             return render(request, 'associados/editar.html', {
                 'form': formAssociado
             })
@@ -107,17 +104,47 @@ def importExcel(request):
 
             obj.delete()
 
-
             formUploadFile = FileUploadExcelModelForm()
 
             messages.success(request, 'Dados importados com sucesso!')
 
         else:
-            messages.error(request,'Verifique os campos destacados!')
+            messages.error(request, 'Verifique os campos destacados!')
     else:
         formUploadFile = FileUploadExcelModelForm()
 
     context = {
-            'formUploadFile': formUploadFile
-        }
+        'formUploadFile': formUploadFile
+    }
     return render(request, 'associados/formsdimport_excel.html', context)
+
+
+def export_pdf(request, assoc_id):
+    assoc = Associado.objects.get(id=assoc_id)
+
+    buffer = BytesIO()
+
+    p = canvas.Canvas(buffer)
+    p.drawString(100, 750, "{} {}".format(assoc.nome, assoc.sobrenome))
+
+    p.drawString(100, 730, "{} {}".format(assoc.dataNascimento, assoc.cpf))
+
+    p.drawString(100, 710, "{()} {} - {}", assoc.dddNumeroContato, assoc.numeroContato, assoc.email)
+
+    p.drawString(100, 690, "CEP: {} Logradouro: {} N: {}".format(assoc.cep, assoc.logradouro, assoc.num))
+
+    p.drawString(100, 690, "Bairro: {} Cidade: {} Estado(UF): {}".format(assoc.bairro, assoc.cidade, assoc.estado))
+
+    p.showPage()
+    p.save()
+
+    # Define o nome do arquivo PDF
+    filename = f"cadastro_{assoc.id}.pdf"
+
+    # Envia o PDF para o navegador como um arquivo de download
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    buffer.seek(0)
+    response.write(buffer.read())
+    buffer.close()
+    return response

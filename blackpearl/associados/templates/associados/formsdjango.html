@@ -1,78 +1,140 @@
-<!DOCTYPE html>
+
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
 {% load bootstrap5 %}
+{% load static %}
 
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    {% load static %}
-    {% bootstrap_css %}
-      <meta charset="UTF-8">
-      <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <script src="{% static 'js/scripts.js' %}" defer></script>
-      <title>Associados - Black Pearl</title>
-
-</head>
-<body>
-
- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
- <nav class="navbar navbar-dark fixed-top "
-      style="background-color: #508bfc">
-      <div class="container-fluid ">
-          <a class="navbar-brand" href="#">
-              Black Pearl - Associados
-          </a>
-
-        <div class="dropdown btn-group ">
-
-            <button class="navbar-toggler dropdown-toggle dropdown-toggle-split" data-bs-toggle="offcanvas"  data-bs-target="#offcanvasDarkNavbarUsuario" aria-controls="offcanvasDarkNavbarUsuario" aria-label="Toggle navigation">Nome de quem está logado
-           </button>
-            <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasDarkNavbarUsuario" aria-labelledby="offcanvasDarkNavbarLabelUsuario">
-              <div class="offcanvas-header">
-                <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabelUsuario">Menu</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-              </div>
-              <div class="offcanvas-body">
-                <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-                  <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="#">Meu Perfil</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">Configuração</a>
-                  </li>
-                   <li><hr class="nav-link-divider"></li>
-                    <li><a class="nav-link" href="#">Sair</a></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          </div>
-        </nav>
+{% block bootstrap5_content %}
         <div class="container py-5 vh-100">
           <div class="row d-flex justify-content-md-center align-items-center h-50 mt-5">
-
-              <div class="d-grid gap-2 d-md-flex  justify-content-md-end">
+              <div class="d-grid gap-2 d-md-flex  justify-content-md-end mb-3">
                         <a class="btn btn-primary" href="{% url 'home' %}" role="button">
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-ul" viewBox="0 0 16 16">
                               <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm-3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
                             </svg>
                             Listagem Geral
-              </a>
+                        </a>
               </div>
-              <h6 class="from">Cadastro</h6>
-              {% bootstrap_messages %}
-                <form class="form" action="{% url 'cadastrar' %}" method="post" autocomplete="off" >
-                            {% csrf_token %}
+
+            {% bootstrap_messages %}
+
+              <form class="form-horizontal" action="{% url 'cadastrar' %}" method="post" autocomplete="off" >
+                  {% csrf_token %}
                  <div class="card mb-3 mt-3">
-                     <h6 class="card-header text-center">Dados Pessoais, Contatos e Endereço</h6>
-                     <div class="card-body">
+                  <h6 class="card-header">
+                    Dados pessoais e contatos
+                  </h6>
+                  <div class="card-body">
 
-                            {% bootstrap_form formDadosAssociado%}
+                    <div class="row">
+                        <div class="form-group  col-sm">
 
-                     </div>
+                          {{ form.nomecompleto|as_crispy_field }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="from-group  col-sm">
+
+                          {{ form.dataNascimento|as_crispy_field }}
+                        </div>
+                        <div class="from-group col-sm">
+
+                          {{ form.sexo|as_crispy_field }}
+                        </div>
+                        <div class="from-group col-sm">
+
+                          {{ form.estadocivil|as_crispy_field }}
+                          </div>
+                    </div>
+
+                    <div class="row">
+                          <div class="from-group col-sm">
+
+                            {{ form.identidade|as_crispy_field }}
+                          </div>
+                          <div class="from-group  col-sm">
+
+                            {{ form.orgemissor|as_crispy_field }}
+                          </div>
+                          <div class="from-group col-sm">
+
+                            {{ form.cpf|as_crispy_field }}
+                          </div>
+                      </div>
+
+                      <div class="row">
+                            <div class="from-group col-sm">
+                                {{ form.dddNumeroContato|as_crispy_field }}
+                            </div>
+                            <div class="from-groupcol col-sm">
+                                {{ form.numeroContato|as_crispy_field }}
+                            </div>
+                              <div class="from-group  col-sm">
+                                {{ form.email|as_crispy_field }}
+                              </div>
+                        </div>
+                  </div>
+                </div>
+
+                  <div class="card mb-3 mt-3">
+                      <h6 class="card-header">
+                        Endereço
+                      </h6>
+                  <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-6 col-md-4">
+                            <div class="form-group col-sm">
+                                {{ form.cep|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-group col-sm">
+                                {{ form.logradouro|as_crispy_field }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="from-groupcol col-sm">
+                          {{ form.estado|as_crispy_field }}
+                        </div>
+
+                        <div class="from-group col-sm">
+                          {{ form.cidade|as_crispy_field }}
+                          </div>
+                        <div class="from-group col-sm">
+                              {{ form.bairro|as_crispy_field }}
+                          </div>
+                        <div class="from-group col-sm">
+                              {{ form.num|as_crispy_field }}
+                        </div>
+                    </div>
+                  </div>
+                </div>
+
+
+                 <div class="card mb-3 mt-3">
+                      <h6 class="card-header">
+                        Associação
+                      </h6>
+                  <div class="card-body">
+                    <div class="row">
+                            <div class="form-group col-sm">
+                                {{ form.dataAssociacao|as_crispy_field }}
+                            </div>
+                           <div class="form-group col-sm">
+                                {{ form.associacao|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-sm">
+                                {{ form.empresa|as_crispy_field }}
+                            </div>
+                    </div>
+                  </div>
                  </div>
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+
+                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                         {% buttons %}
                         <button type="submit" class="btn btn-primary">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill-add" viewBox="0 0 16 16">
@@ -80,11 +142,65 @@
                               <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z"/>
                             </svg>
                             Cadastrar</button>
-                     {% endbuttons %}
-                    </div>
+                        {% endbuttons %}
+                     </div>
                 </form>
+
+              <script>
+
+                const cepInput = document.querySelector('#cep');
+                const addressInput = document.querySelector('#address');
+                const regionInput = document.querySelector('#inputGroupSelectUF');
+                const cityInput = document.querySelector('#textCidade');
+                const neighborhoodInput = document.querySelector('#textBairro');
+                const numeroInput = document.querySelector('#textNumero');
+
+
+                cepInput.addEventListener('keypress', (e) => {
+                  const onlyNumbers = /[0-9]|\./;
+                  const key = String.fromCharCode(e.keyCode);
+
+                  if (!onlyNumbers.test(key)) {
+                    e.preventDefault();
+                    return;
+                  }
+                });
+
+                cepInput.addEventListener('keyup', (e) => {
+                  const inputValue = e.target.value;
+
+                  if (inputValue.length === 8) {
+                    getAddress(inputValue);
+                  }
+                });
+                function getAddress(cep) {
+                  const numeroInput = document.querySelector('#numeroInput');
+
+                  fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                    .then(response => response.json())
+                    .then(data => {
+                      console.log(data);
+                      if (data.erro) {
+                        alert('CEP não encontrado');
+                        return;
+                      }
+
+                      addressInput.value = data.logradouro;
+                      regionInput.value = data.uf;
+                      cityInput.value = data.localidade;
+                      neighborhoodInput.value = data.bairro;
+                      numeroInput.focus();
+
+                      formInputs.forEach((input) => {
+                        if (input !== numeroInput) {
+                          input.setAttribute('disabled', 'disabled');
+                        }
+                      });
+                      numeroInput.removeAttribute('disabled');
+                    })
+                    .catch(error => console.log(error));
+                }
+          </script>
           </div>
         </div>
-{% bootstrap_javascript %}
-</body>
-</html>
+{% endblock bootstrap5_content %}

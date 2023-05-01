@@ -1,0 +1,7 @@
+{% include "django/forms/widgets/input.html" %}
+{% with input_html|safe as input %}
+<div class="input-group">
+    <span class="input-group-text">{{ field.label }}</span>
+    {{ input }}
+</div>
+{% endwith %}

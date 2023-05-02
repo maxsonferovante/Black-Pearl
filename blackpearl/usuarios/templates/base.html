@@ -51,8 +51,19 @@
               </div>
               <div class="offcanvas-body">
                 <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-                  <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href=" /associados/ ">Associados</a>
+                  <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Cadastro
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="/associados/">Listagem Geral</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                      <li><a class="dropdown-item" href="/associados/cadastrar/">Incluir Associado(a)</a></li>
+                      <li><a class="dropdown-item" href="/associados/cadastrardependentes">Incluir dependente</a></li>
+                    </ul>
+
+
+
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" href="#">Financeiro</a>
@@ -61,7 +72,7 @@
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                       Comunicação
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-dark">
+                    <ul class="dropdown-menu">
                       <li><a class="dropdown-item" href="#">A</a></li>
                       <li><a class="dropdown-item" href="#">Another action</a></li>
                       <li>

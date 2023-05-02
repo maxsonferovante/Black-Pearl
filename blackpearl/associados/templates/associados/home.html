@@ -67,6 +67,11 @@
                                            <li>Celular: <strong>({{assoc.dddNumeroContato}}) {{ assoc.numeroContato }}</strong></li>
                                            <li>E-mail: <strong>{{ assoc.email }}</strong></li>
                                        </ul>
+                                      <h6>Dependetes</h6>
+                                      <ul class="list-unstyled">
+                                           <li> 1 -  <strong>{{assoc.dependentes}}</strong></li>
+
+                                       </ul>
                                   </div>
                                   <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sair</button>
@@ -96,7 +101,7 @@
                                       <div class="modal-content">
                                         <div class="modal-header">
                                           <h5 class="modal-title">
-                                            Dados de {{ assoc.nomecompleto }} }
+                                            Dados de {{ assoc.nomecompleto }}
                                           </h5>
                                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true"></span>

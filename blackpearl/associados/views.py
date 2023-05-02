@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from reportlab.pdfgen import canvas
 
 from .importExcelToAssociados import import_excel_to_associado
-from .forms import AssociadoModelForm, FileUploadExcelModelForm
+from .forms import AssociadoModelForm, FileUploadExcelModelForm, DependenteModelForm
 from .models import Associado, FileUploadExcelModel
 
 
@@ -48,6 +48,29 @@ def cadastrardjango(request):
         'form': formDadosAsssociado
     }
     return render(request, 'associados/formsdjango.html', context)
+
+@login_required(login_url='login')
+def cadastrardependentes(request):
+    # o formulario pode ou não ter dados, tem quando usuario usa do botão cadastar, não tem quando a pagina carrega
+
+    if str(request.method) == 'POST':
+        form = DependenteModelForm(request.POST)
+        if form.is_valid():
+
+            depent = form.save()
+            messages.success(request, 'Dados de {} cadastrados com sucesso!'.format(depent.nomecompleto))
+
+            form = DependenteModelForm()
+
+        else:
+            messages.error(request, 'Verifique os campos destacados.')
+
+    else:
+        form = DependenteModelForm()
+    context = {
+        'form': form
+    }
+    return render(request, 'associados/forms_dependente.html', context)
 
 
 @login_required(login_url='login')
@@ -148,3 +171,4 @@ def export_pdf(request, assoc_id):
     response.write(buffer.read())
     buffer.close()
     return response
+

@@ -18,114 +18,49 @@
 
             {% bootstrap_messages %}
 
-              <form class="form-horizontal" action="{% url 'cadastrar' %}" method="post" autocomplete="off" >
+              <form class="form-horizontal" action="{% url 'cadastrardependentes' %}" method="post" autocomplete="off" >
                   {% csrf_token %}
                  <div class="card mb-3">
-                     <h6 class="card-header">Dados pessoais e contatos</h6>
+                     <h6 class="card-header">Dados pessoais</h6>
                      <div class="card-body">
 
                         <div class="row">
                             <div class="form-group  col-sm">
-
-                              {{ form.nomecompleto|as_crispy_field }}
+                              {{ form.titular|as_crispy_field }}
+                            </div>
+                            <div class="form-group  col-sm">
+                              {{ form.grauparentesco|as_crispy_field }}
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="from-group  col-sm">
-
-                              {{ form.dataNascimento|as_crispy_field }}
+                              {{ form.nomecompleto|as_crispy_field }}
                             </div>
-                            <div class="from-group col-sm">
-
-                              {{ form.sexo|as_crispy_field }}
-                            </div>
-                            <div class="from-group col-sm">
-
-                              {{ form.estadocivil|as_crispy_field }}
-                              </div>
                         </div>
 
-                        <div class="row">
-                              <div class="from-group col-sm">
+                         <div class="row">
+                            <div class="from-group  col-sm">
+                              {{ form.dataNascimento|as_crispy_field }}
+                            </div>
+                             <div class="from-group  col-sm">
+                              {{ form.sexo|as_crispy_field }}
+                            </div>
+                        </div>
 
+                         <div class="row">
+                              <div class="from-group col-sm">
                                 {{ form.identidade|as_crispy_field }}
                               </div>
                               <div class="from-group  col-sm">
-
                                 {{ form.orgemissor|as_crispy_field }}
                               </div>
                               <div class="from-group col-sm">
-
                                 {{ form.cpf|as_crispy_field }}
                               </div>
                           </div>
-
-                          <div class="row">
-                                <div class="from-group col-sm">
-                                    {{ form.dddNumeroContato|as_crispy_field }}
-                                </div>
-                                <div class="from-groupcol col-sm">
-                                    {{ form.numeroContato|as_crispy_field }}
-                                </div>
-                                  <div class="from-group  col-sm">
-                                    {{ form.email|as_crispy_field }}
-                                  </div>
-                            </div>
                      </div>
                 </div>
-
-                 <div class="card mb-3 ">
-                          <h6 class="card-header">Endereço</h6>
-                      <div class="card-body">
-                        <div class="row">
-                            <div class="col-6 col-md-4">
-                                <div class="form-group col-sm">
-                                    {{ form.cep|as_crispy_field }}
-                                </div>
-                            </div>
-                            <div class="col-md-8">
-                                <div class="form-group col-sm">
-                                    {{ form.logradouro|as_crispy_field }}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="from-groupcol col-sm">
-                              {{ form.estado|as_crispy_field }}
-                            </div>
-
-                            <div class="from-group col-sm">
-                              {{ form.cidade|as_crispy_field }}
-                              </div>
-                            <div class="from-group col-sm">
-                                  {{ form.bairro|as_crispy_field }}
-                              </div>
-                            <div class="from-group col-sm">
-                                  {{ form.num|as_crispy_field }}
-                            </div>
-                        </div>
-                      </div>
-                  </div>
-
-                 <div class="card mb-3 ">
-                      <h6 class="card-header">
-                        Associação
-                      </h6>
-                  <div class="card-body">
-                    <div class="row">
-                            <div class="form-group col-sm">
-                                {{ form.dataAssociacao|as_crispy_field }}
-                            </div>
-                           <div class="form-group col-sm">
-                                {{ form.associacao|as_crispy_field }}
-                            </div>
-                            <div class="form-group col-sm">
-                                {{ form.empresa|as_crispy_field }}
-                            </div>
-                    </div>
-                  </div>
-                 </div>
 
 
                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">

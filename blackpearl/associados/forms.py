@@ -74,7 +74,19 @@ class AssociadoModelForm(forms.ModelForm):
                 raise ValidationError('Data de nascimento inválida')
             return data_nascimento
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
+        self.fields['dataNascimento'].widget.attrs.update({'class': 'form-control'})
+        self.fields['dataAssociacao'].widget.attrs.update({'class': 'form-control'})
+
+        # Definir valor padrão para o campo dataNascimento
+        if 'instance' in kwargs:
+            instance = kwargs['instance']
+            if instance.dataNascimento:
+                self.fields['dataNascimento'].initial = instance.dataNascimento.strftime('%Y-%m-%d')
+            if instance.dataAssociacao:
+                self.fields['dataAssociacao'].initial = instance.dataNascimento.strftime('%Y-%m-%d')
 class DependenteModelForm(forms.ModelForm):
     class Meta:
         model = Dependente

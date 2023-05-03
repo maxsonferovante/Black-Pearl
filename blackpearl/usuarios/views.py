@@ -1,4 +1,3 @@
-
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect
@@ -9,17 +8,13 @@ from django.contrib.auth import login as login_django
 from django.views import View
 
 
-
-
 # Create your views here.
 def login(request):
     if request.method != 'GET':
         usuario = request.POST.get('userName')
         email = request.POST.get('email-address')
         senha = request.POST.get('password')
-        user = authenticate(username=usuario,
-                            email=email,
-                            password=senha)
+        user = authenticate(username=usuario, email=email, password=senha)
         if user:
             login_django(request, user)
             return render(request, 'usuarios/home.html')

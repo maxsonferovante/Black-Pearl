@@ -1,24 +1,13 @@
 
-{% extends "base.html" %}
+{% extends "base_sidebar.html" %}
 
 {% block bootstrap5_content %}
 {% load bootstrap5 %}
 {% load static %}
     <!-- Usado para construção do Datatables -->
       <link href="https://cdn.datatables.net/v/bs5/jq-3.6.0/jszip-2.5.0/dt-1.13.4/b-2.3.6/b-html5-2.3.6/b-print-2.3.6/datatables.min.css" rel="stylesheet"/>
-        <div class="container py-5 vh-100">
+        <div class="container py-5">
         <div class="row d-flex justify-content-center align-items-center h-50 mt-5">
-
-                 <div class="d-grid gap-2 d-md-block">
-                      <a class="btn btn-primary" href="{% url 'cadastrar' %}" role="button">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-add" viewBox="0 0 16 16">
-                              <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0Zm-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"></path>
-                              <path d="M8.256 14a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Z"></path>
-                          </svg>
-                          Novo
-                      </a>
-
-                 </div>
                     <table class="table table-striped table-hover" id="datatable">
 
                       <thead>

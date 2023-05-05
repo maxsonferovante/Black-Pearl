@@ -1,7 +1,6 @@
 from datetime import timezone
 
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout,  Row, Column
+
 from django import forms
 from django.core.exceptions import ValidationError
 
@@ -9,19 +8,18 @@ from blackpearl.associados.models import Associado, FileUploadExcelModel, Depend
 
 
 class AssociadoModelForm(forms.ModelForm):
-
     class Meta:
         model = Associado
         exclude = ['ativo']
         fields = ['nomecompleto', 'dataNascimento', 'sexo', 'cpf', 'identidade', 'orgemissor', 'estadocivil',
                   'dataAssociacao', 'associacao', 'empresa', 'email', 'dddNumeroContato', 'numeroContato',
-                  'cep', 'logradouro', 'num', 'bairro', 'cidade', 'estado']
+                  'cep', 'logradouro', 'num', 'bairro', 'cidade', 'estado', 'matricula']
 
         widgets = {
             'dataNascimento': forms.DateInput(
-              attrs={
-                  'type':'date'
-              }
+                attrs={
+                    'type': 'date'
+                }
             ),
             'dataAssociacao': forms.DateInput(
                 attrs={
@@ -67,27 +65,10 @@ class AssociadoModelForm(forms.ModelForm):
             )
         }
 
-        def clean_dataNascimento(self):
-            data_nascimento = self.cleaned_data['dataNascimento']
-            # Verifica se a data de nascimento é posterior à data atual
-            if data_nascimento and data_nascimento >= timezone.now().date():
-                raise ValidationError('Data de nascimento inválida')
-            return data_nascimento
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.fields['dataNascimento'].widget.attrs.update({'class': 'form-control'})
-        self.fields['dataAssociacao'].widget.attrs.update({'class': 'form-control'})
-
-        # Definir valor padrão para o campo dataNascimento
-        if 'instance' in kwargs:
-            instance = kwargs['instance']
-            if instance.dataNascimento:
-                self.fields['dataNascimento'].initial = instance.dataNascimento.strftime('%Y-%m-%d')
-            if instance.dataAssociacao:
-                self.fields['dataAssociacao'].initial = instance.dataNascimento.strftime('%Y-%m-%d')
 class DependenteModelForm(forms.ModelForm):
+
+
     class Meta:
         model = Dependente
         exclude = ['ativo']
@@ -102,7 +83,6 @@ class DependenteModelForm(forms.ModelForm):
                 }
             )
         }
-
 
 
 class FileUploadExcelModelForm(forms.Form):

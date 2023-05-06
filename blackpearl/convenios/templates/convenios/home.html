@@ -1,0 +1,85 @@
+
+{% extends "base_sidebar.html" %}
+
+{% block bootstrap5_content %}
+{% load bootstrap5 %}
+{% load static %}
+
+    <!-- Usado para construção do Datatables -->
+      <link href="https://cdn.datatables.net/v/bs5/jq-3.6.0/jszip-2.5.0/dt-1.13.4/b-2.3.6/b-html5-2.3.6/b-print-2.3.6/datatables.min.css" rel="stylesheet"/>
+        <div class="container card py-5 mt-5">
+          <h5 class="card-heard">Cartões Volus</h5>
+          <div class="row d-flex justify-content-center align-items-center h-50 mt-5">
+                      <table class="table table-striped table-hover" id="datatable">
+
+                        <thead>
+                          <tr>
+                            <th scope="col">Titular</th>
+                            <th scope="col">Empresa</th>
+                            <th scope="col">Limite (R$)</th>
+                            <th scope="col">Status</th>
+
+                          </tr>
+                        </thead>
+                            <tbody class="table-group-divider">
+
+                              {% for cartao in cartoes %}
+                              <tr>
+
+                              <td>{{ cartao.titular }}</td>
+                                <td>{{ cartao.titular.empresa }}</td>
+                              <td>{{ cartao.valorLimite }}</td>
+                              <td>{{ cartao.status }}</td>
+
+                              </tr>
+                              {% endfor %}
+                      </tbody>
+                      </table>
+
+          </div>
+        </div>
+        {% bootstrap_javascript %}
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
+        <!-- Usandos para construção do datatables
+        caso queria ter acesso ao jquery, acesse: https://datatables.net/manual/index
+        -->
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+        <script src="https://cdn.datatables.net/v/bs5/jq-3.6.0/jszip-2.5.0/dt-1.13.4/b-2.3.6/b-html5-2.3.6/b-print-2.3.6/datatables.min.js"></script>
+        <script>
+            $("#datatable").DataTable({
+            paging: true,
+            pageLength: 5,
+            lengthChange:true,
+            autoWidth:true,
+            searching: true,
+            bInfo: true,
+            bSort: true,
+            language: {
+            processing:     "Processando...",
+            search:         "Pesquisar:",
+            lengthMenu:     "Mostrar _MENU_ entradas",
+            info:           "Mostrando _START_ até _END_ de _TOTAL_ entradas",
+            infoEmpty:      "Mostrando 0 até 0 de 0 entradas",
+            infoFiltered:   "(filtrado de _MAX_ entradas no total)",
+            infoPostFix:    "",
+            loadingRecords: "Carregando...",
+            zeroRecords:    "Nenhum registro encontrado",
+            emptyTable:     "Nenhum dado disponível na tabela",
+            paginate: {
+                first:      "Primeiro",
+                previous:   "Anterior",
+                next:       "Próximo",
+                last:       "Último"
+            },
+            aria: {
+                sortAscending:  ": ativar para classificar a coluna em ordem crescente",
+                sortDescending: ": ativar para classificar a coluna em ordem decrescente"
+            }
+            }
+            });
+        </script>
+
+{% endblock bootstrap5_content %}

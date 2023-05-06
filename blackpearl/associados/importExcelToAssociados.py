@@ -10,6 +10,8 @@ def import_excel_to_associado(objUploadFile):
     print(f' {BASE_DIR}/{path}')
     df = pd.read_excel(path)
 
+
+"""
     for index in df.index:
         associado = Associado.objects.create(
             ativo=df.at[index, 'ativo'],
@@ -27,6 +29,8 @@ def import_excel_to_associado(objUploadFile):
             cidade=df.at[index, 'cidade'],
             estado=df.at[index, 'estado']
         )
-
         print("Salvando no banco de dados {} ...".format(associado.nome))
+"""
+
+
 

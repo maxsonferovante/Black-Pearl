@@ -1,5 +1,7 @@
 from django.db import models
 
+from blackpearl.associados.models import Associado
+
 
 # Create your models here.
 class Base(models.Model):
@@ -51,40 +53,54 @@ status_choices = [
 ]
 
 
-class CartaoConvenio(Base):
+class CartaoConvenioVolus(Base):
     nome = models.CharField('Nome do Cartão', max_length=20, default='Convênio Volus')
+    titular = models.ForeignKey(Associado, on_delete=models.CASCADE, related_name='cartaovolus')
     valorLimite = models.DecimalField('Valor do Limite', max_digits=8, decimal_places=2)
     status = models.CharField('Status', max_length=20, choices=status_choices)
+    def __str__(self):
+        return 'Titular: {}'.format(self.titular)
+
+class FaturaCartao(Base):
+    cartao = models.ForeignKey(CartaoConvenioVolus, on_delete=models.CASCADE, related_name='cartao')
+    valor = models.DecimalField('Valor da Fatura', max_digits=8, decimal_places=2)
+    competencia = models.DateField('Competência')
 
     def __str__(self):
-        return 'Valor do Limite: {}'.format(self.valorLimite)
+        return 'Valor da fatura e competência: {}  / {}'.format(self.valor,self.competencia)
 
 class PlanoOdontologico(Base):
-    nome = models.CharField('Nome', default='Uniodonto Belém', max_length= 20)
-    numContrato = models.CharField('Número do contrato', max_length= 20)
-    cnpj = models.CharField('CNPJ', max_length= 40, default='15.308.521/0001-88')
+    nome = models.CharField('Nome', default='Uniodonto Belém', max_length=20)
+    numContrato = models.CharField('Número do contrato', max_length=20)
+    cnpj = models.CharField('CNPJ', max_length=40, default='15.308.521/0001-88')
     valorUnitario = models.DecimalField('Valor Unitário', max_digits=8, decimal_places=2)
 
-
     def __str__(self):
-        return 'Uniodonto Belém ({})'.format(self.numContrato )
+        return 'Uniodonto Belém ({})'.format(self.numContrato)
+
 
 oticas_choices = [
     ('Ótica Telegrafo', 'Ótica Telegrafo'),
     ('Ótica Progressiva', 'Ótica Progressiva')
 ]
 
+
 class Otica(Base):
-    nome = models.CharField('Nome da Ótica', max_length= 40, choices=oticas_choices)
-    cnpj = models.CharField('CNPJ', max_length= 40)
-    valorCompra  = models.DecimalField('Valor da Compra', max_digits=8, decimal_places=2)
+    nome = models.CharField('Nome da Ótica', max_length=40, choices=oticas_choices)
+    cnpj = models.CharField('CNPJ', max_length=40)
+    valorCompra = models.DecimalField('Valor da Compra', max_digits=8, decimal_places=2)
+
 
 taxa_choices = [
-    (15.0,'15%'),
-    (8.0,'8%'),
-    (5.0,'5%')
+    (15.0, '15%'),
+    (8.0, '8%'),
+    (5.0, '5%')
 ]
+
+
 class TaxaAdministrativa(Base):
-    percentual = models.DecimalField('Percetual da Taxa Administrativa', max_digits=8, decimal_places=2, choices=taxa_choices)
+    percentual = models.DecimalField('Percetual da Taxa Administrativa', max_digits=8, decimal_places=2,
+                                     choices=taxa_choices)
+
     def __str__(self):
         return 'Taxa Administrativa: {}'.format(self.percentual)

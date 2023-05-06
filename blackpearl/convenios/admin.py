@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import ValoresPorFaixa, PlanoSaude, CartaoConvenio, PlanoOdontologico, Otica, TaxaAdministrativa
+from .models import ValoresPorFaixa, PlanoSaude, CartaoConvenioVolus, PlanoOdontologico, Otica, TaxaAdministrativa, \
+    FaturaCartao
 
 
 # Register your models here.
@@ -11,9 +12,13 @@ class ValoresPorFaixaAdmin(admin.ModelAdmin):
 class PlanoSaudeAdmin(admin.ModelAdmin):
     list_display = ('nome','cnpj', 'segmentacao', 'contrato', 'ativo')
 
-@admin.register(CartaoConvenio)
+@admin.register(CartaoConvenioVolus)
 class CartaoConvenioAdmin(admin.ModelAdmin):
-    list_display = ('valorLimite','status', 'ativo')
+    list_display = ('titular', 'valorLimite','status', 'ativo')
+
+@admin.register(FaturaCartao)
+class FaturaCartaoAdmin(admin.ModelAdmin):
+    list_display = ('cartao', 'valor', 'competencia')
 
 @admin.register(PlanoOdontologico)
 class PlanoOdontologicoUniodontoAdmin(admin.ModelAdmin):

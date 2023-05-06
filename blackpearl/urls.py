@@ -24,6 +24,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('blackpearl.usuarios.urls')),
     path('associados/', include('blackpearl.associados.urls')),
+    path('convenios/', include('blackpearl.convenios.urls')),
+
 
     # path('login/', auth_views.LoginView.as_view(), name='login'),
     # path('logout/', auth_views.LogoutView.as_view(), name='logout'),

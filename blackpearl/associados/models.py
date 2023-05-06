@@ -122,7 +122,7 @@ class Associado(Base):
     estado = models.CharField('Estado (UF)', max_length=2, choices=ESTADOS_CHOICES, default='')
 
     def __str__(self):
-        return '{} - {}'.format(self.nomecompleto, self.cpf)
+        return '{}'.format(self.nomecompleto)
 
 class Dependente(Base):
     titular = models.ForeignKey(Associado, on_delete=models.CASCADE, related_name='dependentes')

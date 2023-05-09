@@ -5,7 +5,7 @@ from django.urls import path, include
 from blackpearl.convenios import views
 
 urlpatterns = [
-    path('', views.home, name='home'),
+    path('', views.home, name='home_conv'),
     path('cadastrar/', views.cadastrarCartao, name ='cadastrarCartao')
 
     # path('login/', auth_views.LoginView.as_view(), name='login'),

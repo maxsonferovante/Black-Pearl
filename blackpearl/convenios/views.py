@@ -8,6 +8,9 @@ from .models import CartaoConvenioVolus
 @login_required(login_url='login')
 def home(request):
     cartoes = CartaoConvenioVolus.objects.all()
+
+
+
     context = {
         'cartoes': cartoes
     }

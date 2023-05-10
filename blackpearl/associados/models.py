@@ -128,12 +128,12 @@ class Dependente(Base):
     titular = models.ForeignKey(Associado, on_delete=models.CASCADE, related_name='dependentes')
 
     nomecompleto = models.CharField('Nome Completo', max_length=300)
-    dataNascimento = models.DateField('Data de Nascimento', blank=True, null=True)
+    dataNascimento = models.DateField('Data de Nascimento')
     sexo = models.CharField('Sexo', max_length=1, choices=SEXO_CHOICES)
 
     cpf = models.CharField('CPF', max_length=11)
-    identidade = models.CharField('Identidade', max_length=20, default='')
-    orgemissor = models.CharField('Órgão Emissor', max_length=6, choices=ORGEMISSOR_CHOICES, default='')
+    identidade = models.CharField('Identidade', max_length=20, default='', blank=True)
+    orgemissor = models.CharField('Órgão Emissor', max_length=6, choices=ORGEMISSOR_CHOICES, default='', blank=True)
     grauparentesco = models.CharField('Grau de Parentesco', max_length=6, choices=GRAUS_PARENTESCO_CHOICES, default='')
 
 

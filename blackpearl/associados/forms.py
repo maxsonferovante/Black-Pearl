@@ -1,6 +1,5 @@
 from datetime import timezone
 
-
 from django import forms
 from django.core.exceptions import ValidationError
 
@@ -67,11 +66,11 @@ class AssociadoModelForm(forms.ModelForm):
 
 
 class DependenteModelForm(forms.ModelForm):
-
-
     class Meta:
         model = Dependente
         exclude = ['ativo']
+
+
         widgets = {'dataNascimento': forms.DateInput(
             attrs={'type': 'date', 'placeholder': 'yyyy-mm-dd (DOB)',
                    'class': 'form-control'}

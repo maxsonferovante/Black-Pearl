@@ -1,4 +1,6 @@
 from io import BytesIO
+
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.shortcuts import render
@@ -8,8 +10,7 @@ from reportlab.pdfgen import canvas
 
 from .importExcelToAssociados import import_excel_to_associado
 from .forms import AssociadoModelForm, FileUploadExcelModelForm, DependenteModelForm
-from .models import Associado, FileUploadExcelModel
-
+from .models import Associado, FileUploadExcelModel, Dependente
 
 
 # Create your views here.
@@ -33,15 +34,18 @@ def cadastrardjango(request):
     if str(request.method) == 'POST':
         formDadosAsssociado = AssociadoModelForm(request.POST)
         if formDadosAsssociado.is_valid():
-
-            assoc = formDadosAsssociado.save()
-            messages.success(request, 'Dados de {} cadastrados com sucesso!'.format(assoc.nomecompleto))
-
-            formDadosAsssociado = AssociadoModelForm()
-
+            nomecompleto = formDadosAsssociado.cleaned_data['nomecompleto']
+            cpf = formDadosAsssociado.cleaned_data['cpf']
+            try:
+                associado_existente = Associado.objects.get(nomecompleto=nomecompleto, cpf=cpf)
+                messages.warning(request, f'O associado "{nomecompleto}" já está cadastrado.')
+                return render(request, 'associados/formsdjango.html', {'form': formDadosAsssociado})
+            except ObjectDoesNotExist:
+                assoc = formDadosAsssociado.save()
+                messages.success(request, f'Dados de {assoc.nomecompleto} cadastrados com sucesso!')
+                formDadosAsssociado = AssociadoModelForm()
         else:
             messages.error(request, 'Verifique os campos destacados.')
-
     else:
         formDadosAsssociado = AssociadoModelForm()
     context = {
@@ -56,11 +60,17 @@ def cadastrardependentes(request):
     if str(request.method) == 'POST':
         form = DependenteModelForm(request.POST)
         if form.is_valid():
+            nomecompleto = form.cleaned_data['nomecompleto']
+            cpf = form.cleaned_data['cpf']
 
-            depent = form.save()
-            messages.success(request, 'Dados de {} cadastrados com sucesso!'.format(depent.nomecompleto))
-
-            form = DependenteModelForm()
+            try:
+                associado_existente = Dependente.objects.get(nomecompleto=nomecompleto, cpf=cpf)
+                messages.warning(request, f'O dependente "{nomecompleto}" já está cadastrado.')
+                return render(request, 'associados/forms_dependente.html', {'form': form})
+            except ObjectDoesNotExist:
+                depent = form.save()
+                messages.success(request, f'Dados de {depent.nomecompleto} cadastrados com sucesso!')
+                form = DependenteModelForm()
 
         else:
             messages.error(request, 'Verifique os campos destacados.')
@@ -76,7 +86,7 @@ def cadastrardependentes(request):
 @login_required(login_url='login')
 def visualizar(request, associado_id):
     return HttpResponseRedirect(reverse(
-        'home'
+        'home_assoc'
     ))
 
 
@@ -108,7 +118,8 @@ def excluir(request, associado_id):
     if request.method == 'POST':
         associado = Associado.objects.get(pk=associado_id)
         associado.delete()
-    return HttpResponseRedirect(reverse('home'))
+
+    return HttpResponseRedirect(reverse('home_assoc'))
 
 
 @login_required(login_url='login')

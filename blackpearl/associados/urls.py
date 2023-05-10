@@ -6,7 +6,7 @@ from blackpearl.associados import views
 
 urlpatterns = [
     path('', views.home, name='home_assoc'),
-    path('cadastrar/', views.cadastrardjango, name='cadastrar'),
+    path('cadastrar/', views.cadastrardjango, name='cadastrardjango'),
     path('cadastrardependentes/', views.cadastrardependentes, name='cadastrardependentes'),
     path('importExcel/', views.importExcel, name='importExcel'),
 

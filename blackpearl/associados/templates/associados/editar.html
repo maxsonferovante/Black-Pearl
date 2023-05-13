@@ -5,13 +5,14 @@
 {% load static %}
 
 {% block bootstrap5_content %}
-        <div class="container py-5">
+        <div class="container py-1">
+          <div class="row d-flex justify-content-md-center align-items-center h-50">
 
             {% bootstrap_messages %}
 
-              <form class="form-horizontal" action="" method="post" autocomplete="off" >
+              <form class="form-horizontal" action=""  method="post" autocomplete="off" >
                   {% csrf_token %}
-                 <div class="card mb-3 mt-3">
+                 <div class="card mb-3 ">
                   <h6 class="card-header">
                     Dados pessoais e contatos
                   </h6>
@@ -68,7 +69,7 @@
                   </div>
                 </div>
 
-                  <div class="card mb-3 mt-3">
+                  <div class="card mb-3 ">
                       <h6 class="card-header">
                         Endereço
                       </h6>
@@ -106,14 +107,14 @@
                 </div>
 
 
-                 <div class="card mb-3 mt-3">
+                 <div class="card mb-3 ">
                       <h6 class="card-header">
                         Associação
                       </h6>
                   <div class="card-body">
                     <div class="row">
                             <div class="form-group col-sm">
-                                {{ form.dataAssociacao|as_crispy_field }}
+                               {{ form.dataAssociacao|as_crispy_field }}
                             </div>
                            <div class="form-group col-sm">
                                 {{ form.associacao|as_crispy_field }}
@@ -125,7 +126,7 @@
                   </div>
                  </div>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                {% buttons %}
+                   {% buttons %}
                         <button type="submit" class="btn btn-primary">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
                                   <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
@@ -140,11 +141,67 @@
                             </svg>
                             Cancelar
                         </a>
-                {% endbuttons %}
-                </div>
+                    {% endbuttons %}
+            </div>
             </form>
+                 <script>
 
-        </div>
+                const cepInput = document.querySelector('#cep');
+                const addressInput = document.querySelector('#address');
+                const regionInput = document.querySelector('#inputGroupSelectUF');
+                const cityInput = document.querySelector('#textCidade');
+                const neighborhoodInput = document.querySelector('#textBairro');
+                const numeroInput = document.querySelector('#textNumero');
+
+
+                cepInput.addEventListener('keypress', (e) => {
+                  const onlyNumbers = /[0-9]|\./;
+                  const key = String.fromCharCode(e.keyCode);
+
+                  if (!onlyNumbers.test(key)) {
+                    e.preventDefault();
+                    return;
+                  }
+                });
+
+                cepInput.addEventListener('keyup', (e) => {
+                  const inputValue = e.target.value;
+
+                  if (inputValue.length === 8) {
+                    getAddress(inputValue);
+                  }
+                });
+                function getAddress(cep) {
+                  const numeroInput = document.querySelector('#numeroInput');
+
+                  fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                    .then(response => response.json())
+                    .then(data => {
+                      console.log(data);
+                      if (data.erro) {
+                        alert('CEP não encontrado');
+                        return;
+                      }
+
+                      addressInput.value = data.logradouro;
+                      regionInput.value = data.uf;
+                      cityInput.value = data.localidade;
+                      neighborhoodInput.value = data.bairro;
+                      numeroInput.focus();
+
+                      formInputs.forEach((input) => {
+                        if (input !== numeroInput) {
+                          input.setAttribute('disabled', 'disabled');
+                        }
+                      });
+                      numeroInput.removeAttribute('disabled');
+                    })
+                    .catch(error => console.log(error));
+                }
+          </script>
+
+          </div>
+
         </div>
 
 {% endblock bootstrap5_content %}

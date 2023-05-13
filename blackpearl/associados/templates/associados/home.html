@@ -58,7 +58,9 @@
                                        </ul>
                                       <h6>Dependetes</h6>
                                       <ul class="list-unstyled">
-                                           <li> 1 -  <strong>{{assoc.dependentes}}</strong></li>
+                                          {% for depen in dependentes %}
+                                           <li><strong>{{depen.nomecompleto}}</strong></li>
+                                           {% endfor %}
 
                                        </ul>
                                   </div>

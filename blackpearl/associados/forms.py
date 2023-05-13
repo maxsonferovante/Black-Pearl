@@ -1,7 +1,12 @@
+import re
 from datetime import timezone
 
 from django import forms
 from django.core.exceptions import ValidationError
+from django.forms import DateInput
+from widget_tweaks.templatetags.widget_tweaks import register
+
+from django.utils.translation import gettext_lazy as _
 
 from blackpearl.associados.models import Associado, FileUploadExcelModel, Dependente
 
@@ -15,15 +20,27 @@ class AssociadoModelForm(forms.ModelForm):
                   'cep', 'logradouro', 'num', 'bairro', 'cidade', 'estado', 'matricula']
 
         widgets = {
-            'dataNascimento': forms.DateInput(
+            'dataNascimento': DateInput(
                 attrs={
-                    'type': 'date'
-                }
+                    'type': 'text',
+                    'class': 'form-control',
+                    'autocomplete': 'off',
+                    'placeholder': 'dd/mm/yyyy',
+                    'data-mask': '00/00/0000',
+                    'pattern': '[0-9]{2}/[0-9]{2}/[0-9]{4}'
+                },
+                format='%d/%m/%Y'
             ),
-            'dataAssociacao': forms.DateInput(
+            'dataAssociacao': DateInput(
                 attrs={
-                    'type': 'date'
-                }
+                    'type': 'text',
+                    'class': 'form-control',
+                    'autocomplete': 'off',
+                    'placeholder': 'dd/mm/yyyy',
+                    'data-mask': '00/00/0000',
+                    'pattern': '[0-9]{2}/[0-9]{2}/[0-9]{4}'
+                },
+                format='%d/%m/%Y'
             ),
 
             'cep': forms.TextInput(
@@ -65,23 +82,49 @@ class AssociadoModelForm(forms.ModelForm):
         }
 
 
+    """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['dataNascimento'].label = _('Data de Nascimento')
+        self.fields['dataNascimento'].widget.attrs.update({'placeholder': '__/__/____'})
+        self.fields['dataAssociacao'].label = _('Data de Associação')
+        self.fields['dataAssociacao'].widget.attrs.update({'placeholder': '__/__/____'})
+    """
 class DependenteModelForm(forms.ModelForm):
     class Meta:
         model = Dependente
         exclude = ['ativo']
-
-
-        widgets = {'dataNascimento': forms.DateInput(
-            attrs={'type': 'date', 'placeholder': 'yyyy-mm-dd (DOB)',
-                   'class': 'form-control'}
-        ),
-            'cpf': forms.TextInput(
+        widgets = {
+            'dataNascimento': DateInput(
                 attrs={
-                    'id': 'textcpf',
-                    'class': 'form-control'
-                }
-            )
+                    'type': 'text',
+                    'class': 'form-control',
+                    'autocomplete': 'off',
+                    'placeholder': 'dd/mm/yyyy',
+                    'data-mask': '00/00/0000',
+                    'pattern': '[0-9]{2}/[0-9]{2}/[0-9]{4}'
+                },
+                format='%d/%m/%Y'
+            ),
         }
+
+
+"""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['dataNascimento'].label = _('Data de Nascimento')
+        self.fields['dataNascimento'].widget.attrs.update({'placeholder': '__/__/____'})
+"""
+@register.filter(name='add_class')
+def add_class(field, css):
+    return field.as_widget(attrs={"class": css})
+
+@register.filter(name='add_placeholder')
+def add_placeholder(field, text):
+    return field.as_widget(attrs={"placeholder": text})
+
+
+
 
 
 class FileUploadExcelModelForm(forms.Form):

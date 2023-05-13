@@ -18,7 +18,7 @@ class CartaoConvenioAdmin(admin.ModelAdmin):
 
 @admin.register(FaturaCartao)
 class FaturaCartaoAdmin(admin.ModelAdmin):
-    list_display = ('cartao', 'valor', 'competencia')
+    list_display = ('cartao', 'valor','valorComTaxa', 'competencia')
 
 @admin.register(PlanoOdontologico)
 class PlanoOdontologicoUniodontoAdmin(admin.ModelAdmin):
@@ -31,4 +31,4 @@ class oticaAdmin(admin.ModelAdmin):
 
 @admin.register(TaxaAdministrativa)
 class TaxaAdministrativaAdmin(admin.ModelAdmin):
-    list_display = ('percentual', 'ativo')
+    list_display = ('categoria','percentual', 'ativo')

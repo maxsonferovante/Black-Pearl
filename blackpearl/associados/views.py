@@ -85,9 +85,14 @@ def cadastrardependentes(request):
 
 @login_required(login_url='login')
 def visualizar(request, associado_id):
-    return HttpResponseRedirect(reverse(
-        'home_assoc'
-    ))
+    associado = Associado.objects.get(pk = associado_id)
+
+    dependentes = associado.dependentes.all()
+    context = {
+        'dependentes': dependentes
+
+    }
+    return render(request, 'associados/home.html', context)
 
 
 
@@ -100,6 +105,7 @@ def editar(request, associado_id):
             assoc = formAssociado.save()
 
             messages.success(request, 'Dados de {} atualizados com sucesso!'.format(assoc.nomecompleto))
+
             return render(request, 'associados/editar.html', {
                 'form': formAssociado
             })

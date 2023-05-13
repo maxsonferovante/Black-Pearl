@@ -2,6 +2,7 @@ from django.db import models
 
 from blackpearl.associados.models import Associado
 
+from datetime import datetime
 
 # Create your models here.
 class Base(models.Model):
@@ -64,7 +65,14 @@ class CartaoConvenioVolus(Base):
 class FaturaCartao(Base):
     cartao = models.ForeignKey(CartaoConvenioVolus, on_delete=models.CASCADE, related_name='cartao')
     valor = models.DecimalField('Valor da Fatura', max_digits=8, decimal_places=2)
+    valorComTaxa = models.DecimalField('Valor da Fatura com a Taxa Adm', max_digits=8, decimal_places=2,  null=True, blank=True)
     competencia = models.DateField('Competência')
+
+    def save(self, *args, **kwargs):
+        taxa_administrativa = TaxaAdministrativa.objects.get(categoria='Cartão')
+        percentual_taxa = taxa_administrativa.percentual
+        self.valorComTaxa = self.valor * (1 + percentual_taxa / 100)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return 'Valor da fatura e competência: {}  / {}'.format(self.valor,self.competencia)
@@ -78,27 +86,27 @@ class PlanoOdontologico(Base):
     def __str__(self):
         return 'Uniodonto Belém ({})'.format(self.numContrato)
 
-
 oticas_choices = [
     ('Ótica Telegrafo', 'Ótica Telegrafo'),
     ('Ótica Progressiva', 'Ótica Progressiva')
 ]
 
-
 class Otica(Base):
     nome = models.CharField('Nome da Ótica', max_length=40, choices=oticas_choices)
     cnpj = models.CharField('CNPJ', max_length=40)
     valorCompra = models.DecimalField('Valor da Compra', max_digits=8, decimal_places=2)
-
-
 taxa_choices = [
     (15.0, '15%'),
     (8.0, '8%'),
     (5.0, '5%')
 ]
-
-
+categoria_choices = [
+    ('Cartão', 'Cartão'),
+    ('Saúde', 'Saúde'),
+    ('Odontológico','Odontológico')
+]
 class TaxaAdministrativa(Base):
+    categoria = models.CharField('Categoria', max_length=20, choices=categoria_choices)
     percentual = models.DecimalField('Percetual da Taxa Administrativa', max_digits=8, decimal_places=2,
                                      choices=taxa_choices)
 

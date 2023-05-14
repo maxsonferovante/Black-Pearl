@@ -1,3 +1,4 @@
+from _decimal import Decimal
 from django.db import models
 
 from blackpearl.associados.models import Associado
@@ -60,7 +61,7 @@ class CartaoConvenioVolus(Base):
     valorLimite = models.DecimalField('Valor do Limite', max_digits=8, decimal_places=2)
     status = models.CharField('Status', max_length=20, choices=status_choices)
     def __str__(self):
-        return 'Titular: {}'.format(self.titular)
+        return '{}'.format(self.titular)
 
 class FaturaCartao(Base):
     cartao = models.ForeignKey(CartaoConvenioVolus, on_delete=models.CASCADE, related_name='cartao')
@@ -71,7 +72,7 @@ class FaturaCartao(Base):
     def save(self, *args, **kwargs):
         taxa_administrativa = TaxaAdministrativa.objects.get(categoria='Cartão')
         percentual_taxa = taxa_administrativa.percentual
-        self.valorComTaxa = self.valor * (1 + percentual_taxa / 100)
+        self.valorComTaxa = Decimal(self.valor * (1.0 + percentual_taxa / 100.0))
         super().save(*args, **kwargs)
 
     def __str__(self):

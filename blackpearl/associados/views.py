@@ -1,27 +1,43 @@
+from datetime import datetime, timedelta
 from io import BytesIO
 
+from _decimal import Decimal
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.shortcuts import render
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from faker import Faker
 from reportlab.pdfgen import canvas
 
 from .importExcelToAssociados import import_excel_to_associado
 from .forms import AssociadoModelForm, FileUploadExcelModelForm, DependenteModelForm
-from .models import Associado, FileUploadExcelModel, Dependente
+from .models import Associado, FileUploadExcelModel, Dependente, Empresa
+from ..convenios.models import CartaoConvenioVolus, FaturaCartao
 
 
 # Create your views here.
 
 @login_required(login_url='login')
 def home(request):
+    paramentro_page = request.GET.get('page', '1')
+    paramentro_limit = request.GET.get('limit', '10')
+
+    if not (paramentro_limit.isdigit() and int(paramentro_limit) > 0):
+        paramentro_limit = '10'
+
     associados = Associado.objects.all()
+    associados_paginator = Paginator(associados, paramentro_limit)
+    try:
+        page = associados_paginator.page(paramentro_page)
+    except (EmptyPage, PageNotAnInteger):
+        page = associados_paginator.page(1)
 
-
+    ##gerador_dados(50)
     context = {
-        'associados': associados
+        'associados': page
 
     }
     return render(request, 'associados/home.html', context)
@@ -41,6 +57,7 @@ def cadastrardjango(request):
                 messages.warning(request, f'O associado "{nomecompleto}" já está cadastrado.')
                 return render(request, 'associados/formsdjango.html', {'form': formDadosAsssociado})
             except ObjectDoesNotExist:
+
                 assoc = formDadosAsssociado.save()
                 messages.success(request, f'Dados de {assoc.nomecompleto} cadastrados com sucesso!')
                 formDadosAsssociado = AssociadoModelForm()
@@ -52,6 +69,7 @@ def cadastrardjango(request):
         'form': formDadosAsssociado
     }
     return render(request, 'associados/formsdjango.html', context)
+
 
 @login_required(login_url='login')
 def cadastrardependentes(request):
@@ -85,7 +103,7 @@ def cadastrardependentes(request):
 
 @login_required(login_url='login')
 def visualizar(request, associado_id):
-    associado = Associado.objects.get(pk = associado_id)
+    associado = Associado.objects.get(pk=associado_id)
 
     dependentes = associado.dependentes.all()
     context = {
@@ -93,7 +111,6 @@ def visualizar(request, associado_id):
 
     }
     return render(request, 'associados/home.html', context)
-
 
 
 @login_required(login_url='login')
@@ -188,4 +205,42 @@ def export_pdf(request, assoc_id):
     response.write(buffer.read())
     buffer.close()
     return response
+
+
+def gerador_dados(quant):
+    for i in range(quant):
+        # Cria um objeto Associado com os dados gerados
+        associado = Associado(
+            nomecompleto="MAXSON ALMEIDA FEROVANTE",
+            dataNascimento="1994-10-14",
+            sexo="M",
+            cpf="86234863537",
+            identidade="4761825",
+            orgemissor="SSP",
+            estadocivil="S",
+            dataAssociacao="2020-10-01",
+            associacao="Agredado(a)",
+            matricula=4,
+            empresa=Empresa.objects.get(nome="SINDIPORTO"),
+            email="maxsonferovante@example.com",
+            dddNumeroContato="91 982299627",
+            numeroContato="982299627",
+            cep="66650550",
+            logradouro="PASSAGEM COMERCIÁRIOS",
+            num=3,
+            bairro="COQUEIRO",
+            cidade="BELÉM",
+            estado="PA",
+        )
+
+        # Salva o objeto no banco de dados
+        associado.save()
+        cartao = CartaoConvenioVolus(
+            nome='Convênio Volus',
+            titular=associado,
+            valorLimite=quant*10,
+            status='ATIVO',
+        )
+        cartao.save()
+
 

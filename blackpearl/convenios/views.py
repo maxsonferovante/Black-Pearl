@@ -1,17 +1,31 @@
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render
 from django.contrib import messages
 from .forms import CartaoConvenioVolusForm, FaturaCartaoForm
 from .models import CartaoConvenioVolus, FaturaCartao
 
+
 # Create your views here.
 @login_required(login_url='login')
 def home(request):
+    paramentro_page = request.GET.get('page', '1')
+    paramentro_limit = request.GET.get('limit', '10')
+
+    if not (paramentro_limit.isdigit() and int(paramentro_limit) > 0):
+        paramentro_limit = '10'
+
     cartoes =CartaoConvenioVolus.objects.filter(status__in=['ATIVO', 'SUSPENSO'])
+    cartoes_paginator = Paginator(cartoes, paramentro_limit)
+
+    try:
+        page = cartoes_paginator.page(paramentro_page)
+    except (EmptyPage, PageNotAnInteger):
+        page = cartoes_paginator.page(1)
 
     context = {
-        'cartoes': cartoes
+        'cartoes': page
     }
     return render(request,'convenios/home.html', context)
 
@@ -68,3 +82,7 @@ def cadastrarFatura(request):
         'form': formFatura
     }
     return render(request,'convenios/formsfatura.html', context)
+
+
+def listarFaturas(request):
+    return render(request, 'convenios/listarFaturas.html')

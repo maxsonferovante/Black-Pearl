@@ -7,7 +7,8 @@ from blackpearl.convenios import views
 urlpatterns = [
     path('', views.home, name='home_conv'),
     path('cadastrar/', views.cadastrarCartao, name ='cadastrarCartao'),
-    path('cadastrarFatura/', views.cadastrarFatura, name ='cadastrarFatura')
+    path('cadastrarFatura/', views.cadastrarFatura, name ='cadastrarFatura'),
+    path('listarFaturas/', views.listarFaturas, name ='listarFaturas'),
 
     # path('login/', auth_views.LoginView.as_view(), name='login'),
     # path('logout/', auth_views.LogoutView.as_view(), name='logout'),

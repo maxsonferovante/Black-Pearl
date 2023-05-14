@@ -110,20 +110,20 @@ def listarFaturas(request):
     return render(request, 'convenios/listarFaturas.html',context)
 
 
-def exporttopdf(request):
-    faturas = FaturaCartao.objects.filter().order_by('competencia')
+def exporttofile(faturas, nome_arq,tipoArquivo_selecionado):
+
     quant_faturas = faturas.count()
     buffer = BytesIO()
     pdf = canvas.Canvas(buffer)
     y = 750  # Posição y inicial
-
     for fatura in faturas:
         if y<=50:
             pdf.showPage()
             y = 750
-
         # Escreve o título da fatura
         pdf.drawString(100, y, "Titular do Cartão: {}".format(fatura.cartao.titular.nomecompleto))
+        y -= 20  # Move para a próxima linha
+        pdf.drawString(100, y, "Empresa: {}".format(fatura.cartao.titular.empresa.nome))
         y -= 20  # Move para a próxima linha
         # Escreve as informações da fatura
         pdf.drawString(100, y, "Competência: {}".format(fatura.competencia))
@@ -133,11 +133,9 @@ def exporttopdf(request):
         pdf.drawString(100, y, "Valor com a taxa administrativa: {}".format(fatura.valorComTaxa))
         y -= 40  # Move duas linhas para baixo
 
-
     pdf.save()
     # Define o nome do arquivo PDF
-    filename = f"all_faturas_sindiporto.pdf"
-
+    filename = f"{nome_arq}.pdf"
     # Envia o PDF para o navegador como um arquivo de download
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
@@ -145,5 +143,37 @@ def exporttopdf(request):
     response.write(buffer.read())
     buffer.close()
     return response
+
+
+def exportar(request):
+    empresa_selecionada = request.GET.get('inputGroupSelectEmpresa')
+    data_inicial = request.GET.get('start_date')
+    data_final = request.GET.get('end_date')
+    tipoArquivo_selecionado = request.GET.get('inputGroupSelectTipoArquivo')
+
+    print(f"{empresa_selecionada}, {data_inicial}, {data_final}")
+
+    if data_inicial and data_final and empresa_selecionada and tipoArquivo_selecionado:
+        # Filtra as faturas pelo intervalo de datas e pelo nome da empresa
+        if empresa_selecionada == '5':
+            faturas = FaturaCartao.objects.filter(
+                competencia__gte=data_inicial, competencia__lte=data_final
+            ).order_by('competencia')
+
+            nome_arq = 'faturas_{}_{}'.format(data_inicial,data_final)
+        else:
+            faturas = FaturaCartao.objects.filter(
+                cartao__titular__empresa_id=empresa_selecionada,
+                competencia__gte=data_inicial, competencia__lte=data_final
+            ).order_by('competencia')
+            nome_arq = 'fatura_{}_{}'.format(data_inicial,data_final)
+        messages.success(request, "Dados exportados ... ")
+        return exporttofile(faturas= faturas,
+                            nome_arq = nome_arq,
+                            tipoArquivo_selecionado=tipoArquivo_selecionado)
+
+    return listarFaturas(request)
+
+
 
 

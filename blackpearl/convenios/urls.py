@@ -9,7 +9,7 @@ urlpatterns = [
     path('cadastrar/', views.cadastrarCartao, name ='cadastrarCartao'),
     path('cadastrarFatura/', views.cadastrarFatura, name ='cadastrarFatura'),
     path('listarFaturas/', views.listarFaturas, name ='listarFaturas'),
-    path('exporttopdf/', views.exporttopdf, name = 'exporttopdf'),
+    path('exportar/', views.exportar, name = 'exportar'),
 
     # path('login/', auth_views.LoginView.as_view(), name='login'),
     # path('logout/', auth_views.LogoutView.as_view(), name='logout'),

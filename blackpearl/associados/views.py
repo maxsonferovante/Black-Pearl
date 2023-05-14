@@ -36,7 +36,7 @@ def home(request):
     except (EmptyPage, PageNotAnInteger):
         page = associados_paginator.page(1)
 
-    ##gerador_dados(50)
+    ##gerador_dados(5)
     context = {
         'associados': page
 
@@ -221,7 +221,7 @@ def gerador_dados(quant):
             estadocivil="S",
             dataAssociacao="2020-10-01",
             associacao="Agredado(a)",
-            matricula=4,
+            matricula=randint(1, 1500),
             empresa=Empresa.objects.get(nome="SINDIPORTO"),
             email="maxsonferovante@example.com",
             dddNumeroContato="91 982299627",
@@ -243,7 +243,7 @@ def gerador_dados(quant):
             status='ATIVO',
         )
         cartao.save()
-        valor = Decimal(randint(500, 1500))  # gerar um valor aleatório entre 500 e 1500
+        valor = Decimal(randint(300, 1500))  # gerar um valor aleatório entre 500 e 1500
         taxa_adm = valor * Decimal('0.05')  # taxa de administração de 5%
         valor_com_taxa = valor + taxa_adm
         competencia = datetime.now().date() - timedelta(days=30 * i)  # gerar a data de competência retroativamente

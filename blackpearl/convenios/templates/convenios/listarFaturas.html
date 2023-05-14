@@ -6,15 +6,16 @@
 {% load static %}
 
 
-<div class="container card py-5 mt-5">
-    <h5 class="card-heard">Faturas</h5>
-    <div class="row d-flex justify-content-center align-items-center h-50 mt-5">
-
+<div class="container py-5 ">
+    <h5 class="card-heard">Faturas
+    </h5>
+    <div class="row d-flex justify-content-center align-items-center h-50 ">
         <table class="table table-hover" >
                         <thead>
                           <tr>
                               <th scope="col">Titular</th>
-                              <th scope="col">Competencia</th>
+                              <th scope="col">Empresa</th>
+                              <th scope="col">Competência</th>
                               <th scope="col">Valor (R$)</th>
                               <th scope="col">Valor com Taxa (R$)</th>
                           </tr>
@@ -24,6 +25,7 @@
                               {% for fatura in faturas %}
                               <tr>
                                   <td>{{ fatura.cartao }}</td>
+                                  <td>{{ fatura.cartao.titular.empresa }}</td>
                                   <td>{{ fatura.competencia }}</td>
                                   <td>{{ fatura.valor }}</td>
 
@@ -33,7 +35,7 @@
 
                           </tbody>
         </table>
-        <div>
+        <div class="pagination">
             <nav>
                           <ul class="pagination justify-content-start">
                               {% if faturas.has_previous%}
@@ -58,7 +60,7 @@
                               {% endfor %}
                               {% if faturas.has_next %}
                                 <li class="page-item">
-                                  <a class="page-link" href="{% url 'listarFaturas' %}?page={{ faturas.next_page_number}}">Próximo</a>
+                                  <a class="page-link" href="{% url 'listarFaturas' %}?page={{faturas.next_page_number}}">Próximo</a>
                                 </li>
                               {% else %}
                                 <li class="page-item disabled">
@@ -69,14 +71,47 @@
                         </nav>
         </div>
         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-            {% buttons %}
-            <a type="submit" class="btn btn-primary" href = "{% url 'exporttopdf' %}">
-                <i class="bi bi-download"></i>
-                Exportar
-            </a>
-            {% endbuttons %}
-        </div>
 
+
+            <form class="form" action="{% url 'exportar' %}" method="GET">
+                {% buttons %}
+                <span class="fw-bold"> Filtro de Exportação</span>
+
+                <div class="form-group col-sm">
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="inputGroupSelectEmpresa">Empresa</label>
+                        <select class="form-select" id="inputGroupSelectEmpresa" name="inputGroupSelectEmpresa">
+                        <option selected>opções...</option>
+                        <option value="1">SINDIPORTO</option>
+                        <option value="2">Companhia Docas do Pará</option>
+                        <option value="3">Companhia Docas de Santana</option>
+                        <option value="4">Hidrovias do Brasil</option>
+                        <option value="5">Todas</option>
+                        </select>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="date" name="start_date" class="form-control" placeholder="Data inicial" aria-label="Data inicial">
+                        <span class="input-group-text">Intervalo</span>
+                        <input type="date" name="end_date" class="form-control" placeholder="Data final" aria-label="Data final">
+                    </div>
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="inputGroupSelectTipoArquivo">Tipo de arquivo</label>
+                        <select class="form-select" id="inputGroupSelectTipoArquivo" name="inputGroupSelectTipoArquivo">
+                            <option selected>opções...</option>
+                            <option value="1">PDF (.pdf)</option>
+                            <option value="2">Planilhas (.xlsx)</option>
+                            <option value="3">Arquivo de Texto (.txt)</option>
+                        </select>
+                    </div>
+                </div>
+                {% if request.GET.obj %}
+                    <a class="btn btn-primary" href="{% url 'product-list' %}">Reset</a>
+                {% endif %}
+                <button type="submit" class="btn btn-primary"><i class="bi bi-download"></i> Exportar</button>
+                {% bootstrap_messages %}
+                {% endbuttons %}
+            </form>
+        </div>
     </div>
 </div>
 

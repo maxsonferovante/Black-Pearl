@@ -72,7 +72,8 @@ class FaturaCartao(Base):
     def save(self, *args, **kwargs):
         taxa_administrativa = TaxaAdministrativa.objects.get(categoria='Cartão')
         percentual_taxa = taxa_administrativa.percentual
-        self.valorComTaxa = Decimal(self.valor * (1.0 + percentual_taxa / 100.0))
+        taxa = 1 + (percentual_taxa/Decimal(100.0))
+        self.valorComTaxa = self.valor * taxa
         super().save(*args, **kwargs)
 
     def __str__(self):

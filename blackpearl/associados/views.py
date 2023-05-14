@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from io import BytesIO
+from random import randint
 
 from _decimal import Decimal
 from django.core.exceptions import ObjectDoesNotExist
@@ -242,5 +243,18 @@ def gerador_dados(quant):
             status='ATIVO',
         )
         cartao.save()
+        valor = Decimal(randint(500, 1500))  # gerar um valor aleatório entre 500 e 1500
+        taxa_adm = valor * Decimal('0.05')  # taxa de administração de 5%
+        valor_com_taxa = valor + taxa_adm
+        competencia = datetime.now().date() - timedelta(days=30 * i)  # gerar a data de competência retroativamente
+
+        # criar a fatura
+        fatura = FaturaCartao(
+            cartao=cartao,
+            valor=valor,
+            valorComTaxa=valor_com_taxa,
+            competencia=competencia,
+        )
+        fatura.save()
 
 

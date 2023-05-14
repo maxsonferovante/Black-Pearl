@@ -1,8 +1,13 @@
+from io import BytesIO
+
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib import messages
+from reportlab.pdfgen import canvas
+
 from .forms import CartaoConvenioVolusForm, FaturaCartaoForm
 from .models import CartaoConvenioVolus, FaturaCartao
 
@@ -85,4 +90,60 @@ def cadastrarFatura(request):
 
 
 def listarFaturas(request):
-    return render(request, 'convenios/listarFaturas.html')
+    paramentro_page = request.GET.get('page', '1')
+    paramentro_limit = request.GET.get('limit', '10')
+
+    if not (paramentro_limit.isdigit() and int(paramentro_limit) > 0):
+        paramentro_limit = '10'
+
+    faturas = FaturaCartao.objects.filter().order_by('competencia')
+    fatura_paginator = Paginator(faturas, paramentro_limit)
+
+    try:
+        page = fatura_paginator.page(paramentro_page)
+    except (EmptyPage, PageNotAnInteger):
+        page = fatura_paginator.page(1)
+
+    context = {
+        'faturas': page
+    }
+    return render(request, 'convenios/listarFaturas.html',context)
+
+
+def exporttopdf(request):
+    faturas = FaturaCartao.objects.filter().order_by('competencia')
+    quant_faturas = faturas.count()
+    buffer = BytesIO()
+    pdf = canvas.Canvas(buffer)
+    y = 750  # Posição y inicial
+
+    for fatura in faturas:
+        if y<=50:
+            pdf.showPage()
+            y = 750
+
+        # Escreve o título da fatura
+        pdf.drawString(100, y, "Titular do Cartão: {}".format(fatura.cartao.titular.nomecompleto))
+        y -= 20  # Move para a próxima linha
+        # Escreve as informações da fatura
+        pdf.drawString(100, y, "Competência: {}".format(fatura.competencia))
+        y -= 20
+        pdf.drawString(100, y, "Valor da fatura: {}".format(fatura.valor))
+        y -= 20
+        pdf.drawString(100, y, "Valor com a taxa administrativa: {}".format(fatura.valorComTaxa))
+        y -= 40  # Move duas linhas para baixo
+
+
+    pdf.save()
+    # Define o nome do arquivo PDF
+    filename = f"all_faturas_sindiporto.pdf"
+
+    # Envia o PDF para o navegador como um arquivo de download
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    buffer.seek(0)
+    response.write(buffer.read())
+    buffer.close()
+    return response
+
+

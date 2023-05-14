@@ -10,29 +10,72 @@
     <h5 class="card-heard">Faturas</h5>
     <div class="row d-flex justify-content-center align-items-center h-50 mt-5">
 
-        <div class="row">
+        <table class="table table-hover" >
+                        <thead>
+                          <tr>
+                              <th scope="col">Titular</th>
+                              <th scope="col">Competencia</th>
+                              <th scope="col">Valor (R$)</th>
+                              <th scope="col">Valor com Taxa (R$)</th>
+                          </tr>
+                        </thead>
+                            <tbody class="table-group-divider">
 
-          <div class="col-sm-6 mb-3 mb-sm-3">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">Competência</h5>
-                <p class="card-text">10000</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
-              </div>
-            </div>
-          </div>
+                              {% for fatura in faturas %}
+                              <tr>
+                                  <td>{{ fatura.cartao }}</td>
+                                  <td>{{ fatura.competencia }}</td>
+                                  <td>{{ fatura.valor }}</td>
 
-           <div class="col-sm-6">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">Competência</h5>
-                <p class="card-text">12122121</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
-              </div>
-            </div>
-          </div>
+                                  <td>{{ fatura.valorComTaxa }}</td>
+                              </tr>
+                              {% endfor %}
 
-       </div>
+                          </tbody>
+        </table>
+        <div>
+            <nav>
+                          <ul class="pagination justify-content-start">
+                              {% if faturas.has_previous%}
+                                <li class="page-item">
+                                  <a href="{% url 'listarFaturas' %}?page={{ faturas.previous_page_number}}" class="page-link">Anterior</a>
+                                </li>
+                              {% else %}
+                              <li class="page-item disabled">
+                                  <a  class="page-link">Anterior</a>
+                              </li>
+                              {% endif%}
+                              {% for num in faturas.paginator.page_range%}
+                                  {% if num == faturas.number %}
+                                    <li class="page-item active">
+                                        <a class="page-link" href="#">{{num}}</a>
+                                    </li>
+                                  {% else %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{% url 'listarFaturas' %}?page={{ num}}">{{num}}</a>
+                                    </li>
+                                  {% endif%}
+                              {% endfor %}
+                              {% if faturas.has_next %}
+                                <li class="page-item">
+                                  <a class="page-link" href="{% url 'listarFaturas' %}?page={{ faturas.next_page_number}}">Próximo</a>
+                                </li>
+                              {% else %}
+                                <li class="page-item disabled">
+                                  <a class="page-link">Próximo</a>
+                                </li>
+                              {% endif%}
+                          </ul>
+                        </nav>
+        </div>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            {% buttons %}
+            <a type="submit" class="btn btn-primary" href = "{% url 'exporttopdf' %}">
+                <i class="bi bi-download"></i>
+                Exportar
+            </a>
+            {% endbuttons %}
+        </div>
 
     </div>
 </div>

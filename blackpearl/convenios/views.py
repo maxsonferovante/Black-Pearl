@@ -1,9 +1,10 @@
 from io import BytesIO
 import openpyxl
+
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.contrib import messages
 from reportlab.pdfgen import canvas
@@ -15,9 +16,10 @@ from .models import CartaoConvenioVolus, FaturaCartao
 # Create your views here.
 @login_required(login_url='login')
 def home(request):
-    nome_pesquisado =request.GET.get('obj')
+    nome_pesquisado = request.GET.get('obj')
     if nome_pesquisado:
-        cartoes = CartaoConvenioVolus.objects.filter(titular__nomecompleto__icontains=nome_pesquisado).order_by('titular')
+        cartoes = CartaoConvenioVolus.objects.filter(titular__nomecompleto__icontains=nome_pesquisado).order_by(
+            'titular')
     else:
         cartoes = CartaoConvenioVolus.objects.all()
 
@@ -26,7 +28,6 @@ def home(request):
 
     if not (paramentro_limit.isdigit() and int(paramentro_limit) > 0):
         paramentro_limit = '10'
-
 
     cartoes_paginator = Paginator(cartoes, paramentro_limit)
 
@@ -38,10 +39,12 @@ def home(request):
     context = {
         'list_objs': page
     }
-    return render(request,'convenios/home.html', context)
+    return render(request, 'convenios/home.html', context)
+
 
 @login_required(login_url='login')
 def cadastrarCartao(request):
+
     if str(request.method) == 'POST':
         formCartao = CartaoConvenioVolusForm(request.POST)
         if formCartao.is_valid():
@@ -49,8 +52,9 @@ def cadastrarCartao(request):
 
             try:
                 titular_existente = CartaoConvenioVolus.objects.get(titular=titular)
-                messages.warning(request,'O titular {} já tem um cartão contrado, o limite é de {}.'.format(titular, titular_existente.valorLimite))
-                return render(request,'convenios/formsdjango.html', {'form': formCartao})
+                messages.warning(request, 'O titular {} já tem um cartão contrado, o limite é de {}.'.format(titular,
+                                                                                                             titular_existente.valorLimite))
+                return render(request, 'convenios/formsdjango.html', {'form': formCartao})
             except ObjectDoesNotExist:
                 cartao = formCartao.save()
                 messages.success(request, 'Cartão incluido com sucesso!')
@@ -62,7 +66,8 @@ def cadastrarCartao(request):
     context = {
         'form': formCartao
     }
-    return render(request,'convenios/formsdjango.html', context)
+    return render(request, 'convenios/formsdjango.html', context)
+
 
 @login_required(login_url='login')
 def cadastrarFatura(request):
@@ -75,12 +80,12 @@ def cadastrarFatura(request):
             valor = formFatura.cleaned_data['valor']
 
             try:
-                fatura_existente = FaturaCartao.objects.get(cartao=cartao,competencia=competencia)
+                fatura_existente = FaturaCartao.objects.get(cartao=cartao, competencia=competencia)
                 messages.warning(request,
                                  'O cartão do {} já tem uma fatura registrada para a competencia {}.'
                                  .format(cartao, fatura_existente.competencia))
 
-                return render(request,'convenios/formsfatura.html', {'form': formFatura})
+                return render(request, 'convenios/formsfatura.html', {'form': formFatura})
             except ObjectDoesNotExist:
                 fatura = formFatura.save()
                 messages.success(request, 'Fatura de competencia {} incluída com sucesso!'.format(fatura.competencia))
@@ -92,13 +97,14 @@ def cadastrarFatura(request):
     context = {
         'form': formFatura
     }
-    return render(request,'convenios/formsfatura.html', context)
+    return render(request, 'convenios/formsfatura.html', context)
 
 
 def listarFaturas(request):
     nome_pesquisado = request.GET.get('obj')
     if nome_pesquisado:
-        faturas = FaturaCartao.objects.filter(cartao__titular__nomecompleto__icontains=nome_pesquisado).order_by('cartao')
+        faturas = FaturaCartao.objects.filter(cartao__titular__nomecompleto__icontains=nome_pesquisado).order_by(
+            'cartao')
     else:
         faturas = FaturaCartao.objects.filter().order_by('competencia')
 
@@ -118,8 +124,7 @@ def listarFaturas(request):
     context = {
         'list_objs': page
     }
-    return render(request, 'convenios/listarFaturas.html',context)
-
+    return render(request, 'convenios/listarFaturas.html', context)
 
 
 def exportar(request):
@@ -137,21 +142,22 @@ def exportar(request):
                 competencia__gte=data_inicial, competencia__lte=data_final
             ).order_by('competencia')
 
-            nome_arq = 'faturas_{}_{}'.format(data_inicial,data_final)
+            nome_arq = 'faturas_{}_{}'.format(data_inicial, data_final)
         else:
             faturas = FaturaCartao.objects.filter(
                 cartao__titular__empresa_id=empresa_selecionada,
                 competencia__gte=data_inicial, competencia__lte=data_final
             ).order_by('competencia')
-            nome_arq = 'fatura_{}_{}'.format(data_inicial,data_final)
+            nome_arq = 'fatura_{}_{}'.format(data_inicial, data_final)
 
-        return exporttofile(faturas= faturas,
-                            nome_arq = nome_arq,
+        return exporttofile(faturas=faturas,
+                            nome_arq=nome_arq,
                             tipoArquivo_selecionado=tipoArquivo_selecionado)
 
     return listarFaturas(request)
 
-def exporttofile(faturas, nome_arq,tipoArquivo_selecionado):
+
+def exporttofile(faturas, nome_arq, tipoArquivo_selecionado):
     filename = f"{nome_arq}"
 
     if tipoArquivo_selecionado == '1':
@@ -160,7 +166,7 @@ def exporttofile(faturas, nome_arq,tipoArquivo_selecionado):
         pdf = canvas.Canvas(buffer)
         y = 750  # Posição y inicial
         for fatura in faturas:
-            if y<=50:
+            if y <= 50:
                 pdf.showPage()
                 y = 750
             # Escreve o título da fatura
@@ -188,7 +194,7 @@ def exporttofile(faturas, nome_arq,tipoArquivo_selecionado):
         response.write(buffer.read())
 
         buffer.close()
-    elif tipoArquivo_selecionado  == '2':
+    elif tipoArquivo_selecionado == '2':
         wb = openpyxl.Workbook()
         ws = wb.active
         ws.title = nome_arq
@@ -216,14 +222,10 @@ def exporttofile(faturas, nome_arq,tipoArquivo_selecionado):
         faturas_txt = ''
         for fatura in faturas:
             matricula = str(fatura.cartao.titular.matricula).zfill(6)
-            valorComTaxa = str(fatura.valorComTaxa)[:4].replace('.','').zfill(12)
-            faturas_txt += '{} {}\n'.format(matricula,valorComTaxa)
+            valorComTaxa = str(fatura.valorComTaxa)[:4].replace('.', '').zfill(12)
+            faturas_txt += '{} {}\n'.format(matricula, valorComTaxa)
 
         response = HttpResponse(faturas_txt, content_type='text/plain')
         response['Content-Disposition'] = f'attachment; filename="{nome_arq}.txt'
 
     return response
-
-
-
-

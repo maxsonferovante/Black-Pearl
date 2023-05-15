@@ -4,20 +4,33 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import DateInput
 from re import match
+
+from blackpearl.associados.models import Associado
 from blackpearl.convenios.models import CartaoConvenioVolus, FaturaCartao
 from widget_tweaks.templatetags.widget_tweaks import register
+
 
 class CartaoConvenioVolusForm(forms.ModelForm):
     class Meta:
         model = CartaoConvenioVolus
         exclude = ['ativo']
-        fields = ['titular', 'valorLimite','status']
+        fields = ['titular', 'valorLimite', 'status']
+
+    def __int__(self, *args, **kwargs):
+        super.__init__( *args, **kwargs)
+        self.fields['titular'].queryset = Associado.objects.none()
+
+        if 'titular' in self.data:
+            self.fields['titular'].queryset = Associado.objects.all()
+        elif self.instance.pk:
+            self.fields['titular'].queryset = Associado.objects.all().filter(
+                pk = self.instance.pk)
 
 class FaturaCartaoForm(forms.ModelForm):
     class Meta:
         model = FaturaCartao
         exclude = ['ativo']
-        fields = ['cartao', 'valor','valorComTaxa','competencia']
+        fields = ['cartao', 'valor', 'valorComTaxa', 'competencia']
         widgets = {
             'competencia': DateInput(
                 attrs={
@@ -30,7 +43,7 @@ class FaturaCartaoForm(forms.ModelForm):
                 },
                 format='%d/%m/%Y'
             ),
-               'valor': forms.NumberInput(
+            'valor': forms.NumberInput(
                 attrs={
                     'class': 'form-control',
                     'step': '0.01',
@@ -57,13 +70,12 @@ class FaturaCartaoForm(forms.ModelForm):
 
         return cleaned_data
 
+
 @register.filter(name='add_class')
 def add_class(field, css):
     return field.as_widget(attrs={"class": css})
 
+
 @register.filter(name='add_placeholder')
 def add_placeholder(field, text):
     return field.as_widget(attrs={"placeholder": text})
-
-
-

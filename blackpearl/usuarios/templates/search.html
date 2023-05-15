@@ -1,0 +1,9 @@
+<form class="d-flex gap-3 mt-2" action="{% url href %}" method="GET">
+  <input name="obj" type="text" value="{{request.GET.obj}}" class="form-control" placeholder="pesquisar pelo nome do associado...">
+  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+    <button type="submit" class="btn btn-primary">Buscar</button>
+    {% if request.GET.obj %}
+    <a class="btn btn-secondary" href="{% url href %}">Reset</a>
+    {% endif %}
+  </div>
+</form>

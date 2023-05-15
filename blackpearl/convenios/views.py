@@ -15,13 +15,19 @@ from .models import CartaoConvenioVolus, FaturaCartao
 # Create your views here.
 @login_required(login_url='login')
 def home(request):
+    nome_pesquisado =request.GET.get('obj')
+    if nome_pesquisado:
+        cartoes = CartaoConvenioVolus.objects.filter(titular__nomecompleto__icontains=nome_pesquisado).order_by('titular')
+    else:
+        cartoes = CartaoConvenioVolus.objects.all()
+
     paramentro_page = request.GET.get('page', '1')
     paramentro_limit = request.GET.get('limit', '10')
 
     if not (paramentro_limit.isdigit() and int(paramentro_limit) > 0):
         paramentro_limit = '10'
 
-    cartoes =CartaoConvenioVolus.objects.filter(status__in=['ATIVO', 'SUSPENSO'])
+
     cartoes_paginator = Paginator(cartoes, paramentro_limit)
 
     try:
@@ -30,7 +36,7 @@ def home(request):
         page = cartoes_paginator.page(1)
 
     context = {
-        'cartoes': page
+        'list_objs': page
     }
     return render(request,'convenios/home.html', context)
 
@@ -90,13 +96,18 @@ def cadastrarFatura(request):
 
 
 def listarFaturas(request):
+    nome_pesquisado = request.GET.get('obj')
+    if nome_pesquisado:
+        faturas = FaturaCartao.objects.filter(cartao__titular__nomecompleto__icontains=nome_pesquisado).order_by('cartao')
+    else:
+        faturas = FaturaCartao.objects.filter().order_by('competencia')
+
     paramentro_page = request.GET.get('page', '1')
     paramentro_limit = request.GET.get('limit', '10')
 
     if not (paramentro_limit.isdigit() and int(paramentro_limit) > 0):
         paramentro_limit = '10'
 
-    faturas = FaturaCartao.objects.filter().order_by('competencia')
     fatura_paginator = Paginator(faturas, paramentro_limit)
 
     try:
@@ -105,10 +116,40 @@ def listarFaturas(request):
         page = fatura_paginator.page(1)
 
     context = {
-        'faturas': page
+        'list_objs': page
     }
     return render(request, 'convenios/listarFaturas.html',context)
 
+
+
+def exportar(request):
+    empresa_selecionada = request.GET.get('inputGroupSelectEmpresa')
+    data_inicial = request.GET.get('start_date')
+    data_final = request.GET.get('end_date')
+    tipoArquivo_selecionado = request.GET.get('inputGroupSelectTipoArquivo')
+
+    print(f"{empresa_selecionada}, {data_inicial}, {data_final}")
+
+    if data_inicial and data_final and empresa_selecionada and tipoArquivo_selecionado:
+        # Filtra as faturas pelo intervalo de datas e pelo nome da empresa
+        if empresa_selecionada == '5':
+            faturas = FaturaCartao.objects.filter(
+                competencia__gte=data_inicial, competencia__lte=data_final
+            ).order_by('competencia')
+
+            nome_arq = 'faturas_{}_{}'.format(data_inicial,data_final)
+        else:
+            faturas = FaturaCartao.objects.filter(
+                cartao__titular__empresa_id=empresa_selecionada,
+                competencia__gte=data_inicial, competencia__lte=data_final
+            ).order_by('competencia')
+            nome_arq = 'fatura_{}_{}'.format(data_inicial,data_final)
+
+        return exporttofile(faturas= faturas,
+                            nome_arq = nome_arq,
+                            tipoArquivo_selecionado=tipoArquivo_selecionado)
+
+    return listarFaturas(request)
 
 def exporttofile(faturas, nome_arq,tipoArquivo_selecionado):
     filename = f"{nome_arq}"
@@ -182,36 +223,6 @@ def exporttofile(faturas, nome_arq,tipoArquivo_selecionado):
         response['Content-Disposition'] = f'attachment; filename="{nome_arq}.txt'
 
     return response
-
-
-def exportar(request):
-    empresa_selecionada = request.GET.get('inputGroupSelectEmpresa')
-    data_inicial = request.GET.get('start_date')
-    data_final = request.GET.get('end_date')
-    tipoArquivo_selecionado = request.GET.get('inputGroupSelectTipoArquivo')
-
-    print(f"{empresa_selecionada}, {data_inicial}, {data_final}")
-
-    if data_inicial and data_final and empresa_selecionada and tipoArquivo_selecionado:
-        # Filtra as faturas pelo intervalo de datas e pelo nome da empresa
-        if empresa_selecionada == '5':
-            faturas = FaturaCartao.objects.filter(
-                competencia__gte=data_inicial, competencia__lte=data_final
-            ).order_by('competencia')
-
-            nome_arq = 'faturas_{}_{}'.format(data_inicial,data_final)
-        else:
-            faturas = FaturaCartao.objects.filter(
-                cartao__titular__empresa_id=empresa_selecionada,
-                competencia__gte=data_inicial, competencia__lte=data_final
-            ).order_by('competencia')
-            nome_arq = 'fatura_{}_{}'.format(data_inicial,data_final)
-        messages.success(request, "Dados exportados ... ")
-        return exporttofile(faturas= faturas,
-                            nome_arq = nome_arq,
-                            tipoArquivo_selecionado=tipoArquivo_selecionado)
-
-    return listarFaturas(request)
 
 
 

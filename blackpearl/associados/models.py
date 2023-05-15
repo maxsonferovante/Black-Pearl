@@ -134,6 +134,11 @@ class Associado(Base):
     def __str__(self):
         return '{}'.format(self.nomecompleto)
 
+    def get_sexo_display(self):
+        return dict(SEXO_CHOICES)[self.sexo]
+    def get_associacao_display(self):
+        return dict(ASSOCIACAO_CHOICES)[self.associacao]
+
 class Dependente(Base):
     titular = models.ForeignKey(Associado, on_delete=models.CASCADE, related_name='dependentes')
 

@@ -23,13 +23,18 @@ from ..convenios.models import CartaoConvenioVolus, FaturaCartao
 
 @login_required(login_url='login')
 def home(request):
+    nome_pesquisa = request.GET.get('obj')
+    if nome_pesquisa:
+        associados = Associado.objects.filter(nomecompleto__icontains=nome_pesquisa).order_by('nomecompleto')
+    else:
+        associados = Associado.objects.all().order_by('nomecompleto')
+
     paramentro_page = request.GET.get('page', '1')
     paramentro_limit = request.GET.get('limit', '10')
 
     if not (paramentro_limit.isdigit() and int(paramentro_limit) > 0):
         paramentro_limit = '10'
 
-    associados = Associado.objects.all()
     associados_paginator = Paginator(associados, paramentro_limit)
     try:
         page = associados_paginator.page(paramentro_page)
@@ -38,7 +43,7 @@ def home(request):
 
     ##gerador_dados(5)
     context = {
-        'associados': page
+        'list_objs': page
 
     }
     return render(request, 'associados/home.html', context)
@@ -212,18 +217,18 @@ def gerador_dados(quant):
     for i in range(quant):
         # Cria um objeto Associado com os dados gerados
         associado = Associado(
-            nomecompleto="MAXSON ALMEIDA FEROVANTE",
-            dataNascimento="1994-10-14",
-            sexo="M",
+            nomecompleto="GIULIA HELENA PRAXEDES DA SILVA",
+            dataNascimento="1997-04-18",
+            sexo="F",
             cpf="86234863537",
             identidade="4761825",
             orgemissor="SSP",
             estadocivil="S",
-            dataAssociacao="2020-10-01",
+            dataAssociacao="2023-04-01",
             associacao="Agredado(a)",
             matricula=randint(1, 1500),
             empresa=Empresa.objects.get(nome="SINDIPORTO"),
-            email="maxsonferovante@example.com",
+            email="GIULIA HELENA PRAXEDES DA SILVA",
             dddNumeroContato="91 982299627",
             numeroContato="982299627",
             cep="66650550",

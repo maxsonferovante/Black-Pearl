@@ -1,0 +1,47 @@
+<div class="btn-group" role="group" aria-label="Item pagination">
+                            <nav>
+                              <ul class="pagination justify-content-start">
+                                  {% if list_objs.has_previous%}
+                                    <li class="page-item">
+                                        {% if request.GET.obj %}
+                                            <a href="{% url href %}?page={{ list_objs.previous_page_number}}&obj={{request.GET.obj}}" class="page-link">Anterior</a>
+                                        {% else %}
+                                            <a href="{% url href %}?page={{ list_objs.previous_page_number}}" class="page-link">Anterior</a>
+                                        {% endif %}
+                                    </li>
+                                  {% else %}
+                                  <li class="page-item disabled">
+                                      <a  class="page-link">Anterior</a>
+                                  </li>
+                                  {% endif%}
+                                  {% for num in list_objs.paginator.page_range%}
+                                      {% if num == list_objs.number %}
+                                        <li class="page-item active">
+                                            <a class="page-link" href="#">{{num}}</a>
+                                        </li>
+                                      {% else %}
+                                        <li class="page-item">
+                                            {% if request.GET.obj %}
+                                                <a class="page-link" href="{% url href %}?page={{ num}}&obj={{request.GET.obj}}">{{num}}</a>
+                                            {% else %}
+                                                <a class="page-link" href="{% url href %}?page={{ num}}">{{num}}</a>
+                                            {% endif %}
+                                        </li>
+                                      {% endif%}
+                                  {% endfor %}
+                                  {% if list_objs.has_next %}
+                                    <li class="page-item">
+                                        {% if request.GET.obj %}
+                                            <a class="page-link" href="{% url href %}?page={{ list_objs.next_page_number}}&obj={{request.GET.obj}}">Próximo</a>
+                                        {% else %}
+                                            <a class="page-link" href="{% url href %}?page={{ list_objs.next_page_number}}">Próximo</a>
+                                        {% endif %}
+                                    </li>
+                                  {% else %}
+                                    <li class="page-item disabled">
+                                      <a class="page-link">Próximo</a>
+                                    </li>
+                                  {% endif%}
+                              </ul>
+                            </nav>
+</div>

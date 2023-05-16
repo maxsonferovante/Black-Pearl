@@ -1,0 +1,51 @@
+
+{% extends "base_sidebar.html" %}
+{% load crispy_forms_tags %}
+{% block bootstrap5_content %}
+{% load bootstrap5 %}
+{% load static %}
+
+    <!-- Usado para construção do Datatables -->
+      <link href="https://cdn.datatables.net/v/bs5/jq-3.6.0/jszip-2.5.0/dt-1.13.4/b-2.3.6/b-html5-2.3.6/b-print-2.3.6/datatables.min.css" rel="stylesheet"/>
+      <div class="container">
+         <div class="row d-flex justify-content-center align-items-center h-50 mt-5">
+         {% bootstrap_messages %}
+         <form class="form-horizontal" action="{% url 'contratacaoodontologica' %}" method="post" autocomplete="off" >
+                  {% csrf_token %}
+                 <div class="card mb-3">
+                     <h6 class="card-header">Contratação do Plano Odontologico</h6>
+                     <div class="card-body">
+                        <div class="row">
+                            <div class="form-group  col-sm">
+
+                              {{ form.contratante|as_crispy_field }}
+                            </div>
+                             <div class="from-group col-sm">
+
+                              {{ form.plano_odontologico|as_crispy_field }}
+                            </div>
+                        </div>
+                         <div class="row">
+                            <div class="form-group  col-sm">
+                               {{ form.dependentes|as_crispy_field }}
+                            </div>
+                        </div>
+                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            {% buttons %}
+                            <button type="submit" class="btn btn-primary">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill-add" viewBox="0 0 16 16">
+                                  <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0Zm-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                                  <path d="M2 13c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z"/>
+                                </svg>
+                                Contratar
+                            </button>
+                            {% endbuttons %}
+                        </div>
+                     </div>
+                 </div>
+              </form>
+         </div>
+      </div>
+
+
+{% endblock bootstrap5_content %}

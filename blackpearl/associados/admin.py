@@ -1,7 +1,6 @@
 from django.contrib import admin
 from .models import Associado, Empresa, Dependente
 
-
 @admin.register(Associado)
 class AssociadoAdmin(admin.ModelAdmin):
     list_display = ('nomecompleto', 'dataNascimento','cpf', 'empresa', 'matricula','criado', 'slug', 'ativo')

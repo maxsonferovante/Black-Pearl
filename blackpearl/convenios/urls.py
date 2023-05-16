@@ -8,8 +8,11 @@ urlpatterns = [
     path('', views.home, name='home_conv'),
     path('cadastrar/', views.cadastrarCartao, name ='cadastrarCartao'),
     path('cadastrarFatura/', views.cadastrarFatura, name ='cadastrarFatura'),
+    path('listagemcartoes/', views.listagemcartoes, name ='listagemcartoes'),
     path('listarFaturas/', views.listarFaturas, name ='listarFaturas'),
     path('exportar/', views.exportar, name = 'exportar'),
+
+    path('contratacaoodontologica/', views.contratacaoodontologica, name='contratacaoodontologica'),
 
     # path('login/', auth_views.LoginView.as_view(), name='login'),
     # path('logout/', auth_views.LogoutView.as_view(), name='logout'),

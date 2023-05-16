@@ -1,7 +1,7 @@
 from _decimal import Decimal
 from django.db import models
 
-from blackpearl.associados.models import Associado
+from blackpearl.associados.models import Associado, Dependente
 
 from datetime import datetime
 
@@ -13,6 +13,7 @@ class Base(models.Model):
 
     class Meta:
         abstract = True
+
 
 
 planos_choices = [
@@ -36,7 +37,6 @@ class PlanoSaude(Base):
 
     def __str__(self):
         return '{} - {} - {}'.format(self.nome, self.contrato, self.segmentacao)
-
 
 class ValoresPorFaixa(Base):
     planoSaude = models.ForeignKey(PlanoSaude, on_delete=models.CASCADE, related_name='faixas')
@@ -81,22 +81,48 @@ class FaturaCartao(Base):
 
 class PlanoOdontologico(Base):
     nome = models.CharField('Nome', default='Uniodonto Belém', max_length=20)
-    numContrato = models.CharField('Número do contrato', max_length=20)
+    numContrato = models.CharField('Número do contrato', max_length=20, default='00319')
     cnpj = models.CharField('CNPJ', max_length=40, default='15.308.521/0001-88')
     valorUnitario = models.DecimalField('Valor Unitário', max_digits=8, decimal_places=2)
 
+
     def __str__(self):
         return 'Uniodonto Belém ({})'.format(self.numContrato)
+
+class ContratacaoPlanoOdontologico(Base):
+    contratante = models.OneToOneField(Associado, on_delete=models.CASCADE, related_name='plano_odontologico')
+    plano_odontologico = models.ForeignKey(PlanoOdontologico, on_delete=models.CASCADE)
+    dependentes = models.ManyToManyField(Dependente, through='ContratacaoDependentePlanoOdontologico')
+    valor = models.DecimalField('Valor', max_digits=8, decimal_places=2, null= True, blank=True)
+    def save(self, *args, **kwargs):
+        valorPlano = PlanoOdontologico.objects.get(numContrato = '00319').valorUnitario
+        self.valor = valorPlano
+        super().save(*args, **kwargs)
+    def __str__(self):
+        return '{} - Plano: {}'.format(self.contratante,self.plano_odontologico)
+class ContratacaoDependentePlanoOdontologico(Base):
+    contratacao_plano_odontologico = models.ForeignKey(ContratacaoPlanoOdontologico, on_delete=models.CASCADE)
+    dependente = models.ForeignKey(Dependente, on_delete=models.CASCADE)
+    valor = models.DecimalField('Valor', max_digits=8, decimal_places=2, null=True, blank=True)
+    def save(self, *args, **kwargs):
+        valorPlano = PlanoOdontologico.objects.get(numContrato='00319').valorUnitario
+        self.valor = valorPlano
+        ##*(1 + Dependente.objects.filter(titular=self.contratante).count())
+        super().save(*args, **kwargs)
+    def __str__(self):
+        return '{}'.format(self.contratacao_plano_odontologico)
 
 oticas_choices = [
     ('Ótica Telegrafo', 'Ótica Telegrafo'),
     ('Ótica Progressiva', 'Ótica Progressiva')
 ]
 
+
 class Otica(Base):
     nome = models.CharField('Nome da Ótica', max_length=40, choices=oticas_choices)
     cnpj = models.CharField('CNPJ', max_length=40)
     valorCompra = models.DecimalField('Valor da Compra', max_digits=8, decimal_places=2)
+
 taxa_choices = [
     (15.0, '15%'),
     (8.0, '8%'),

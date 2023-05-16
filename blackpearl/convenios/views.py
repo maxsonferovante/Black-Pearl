@@ -9,13 +9,19 @@ from django.shortcuts import render
 from django.contrib import messages
 from reportlab.pdfgen import canvas
 
-from .forms import CartaoConvenioVolusForm, FaturaCartaoForm
+from .forms import CartaoConvenioVolusForm, FaturaCartaoForm, ContratacaoPlanoOdontologicoForm
 from .models import CartaoConvenioVolus, FaturaCartao
+from ..associados.models import Dependente
 
 
 # Create your views here.
 @login_required(login_url='login')
 def home(request):
+    return render(request, 'convenios/home.html')
+
+
+@login_required(login_url='login')
+def listagemcartoes(request):
     nome_pesquisado = request.GET.get('obj')
     if nome_pesquisado:
         cartoes = CartaoConvenioVolus.objects.filter(titular__nomecompleto__icontains=nome_pesquisado).order_by(
@@ -39,12 +45,11 @@ def home(request):
     context = {
         'list_objs': page
     }
-    return render(request, 'convenios/home.html', context)
+    return render(request, 'convenios/listagemcartoes.html', context)
 
 
 @login_required(login_url='login')
 def cadastrarCartao(request):
-
     if str(request.method) == 'POST':
         formCartao = CartaoConvenioVolusForm(request.POST)
         if formCartao.is_valid():
@@ -100,6 +105,7 @@ def cadastrarFatura(request):
     return render(request, 'convenios/formsfatura.html', context)
 
 
+@login_required(login_url='login')
 def listarFaturas(request):
     nome_pesquisado = request.GET.get('obj')
     if nome_pesquisado:
@@ -229,3 +235,23 @@ def exporttofile(faturas, nome_arq, tipoArquivo_selecionado):
         response['Content-Disposition'] = f'attachment; filename="{nome_arq}.txt'
 
     return response
+
+
+@login_required(login_url='login')
+def contratacaoodontologica(request):
+    if str(request.method) == 'POST':
+        form_contrante = ContratacaoPlanoOdontologicoForm(request.POST)
+        if form_contrante.is_valid():
+            print (form_contrante)
+            form_contrante.save()
+            messages.success(request,'Contratação feita com sucesso!')
+            form_contrante = ContratacaoPlanoOdontologicoForm()
+        else:
+            messages.warning(request,'Verifique os campos destacados!')
+    else:
+        form_contrante = ContratacaoPlanoOdontologicoForm()
+
+    context = {
+        'form': form_contrante
+    }
+    return render(request, 'convenios/contratacaoodontologica.html', context)

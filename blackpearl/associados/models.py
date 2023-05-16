@@ -58,14 +58,14 @@ SEXO_CHOICES = [
 
 ]
 
-GRAUS_PARENTESCO_CHOICES = (
+GRAUS_PARENTESCO_CHOICES = [
     ('P', 'Pai'),
     ('M', 'Mãe'),
     ('F', 'Filho(a)'),
     ('C', 'Cônjuge'),
     ('I', 'Irmão(ã)'),
     ('O', 'Outro'),
-)
+]
 
 ASSOCIACAO_CHOICES = [
     ('ag', 'Agredado(a)'),
@@ -155,7 +155,9 @@ class Dependente(Base):
         self.nomecompleto = self.nomecompleto.upper()
         super().save(*args, **kwargs)
     def __str__(self):
-        return '{}'.format(self.nomecompleto)
+        return '{} - {} - {}'.format(self.nomecompleto,
+                                     self.dataNascimento,
+                                     dict(GRAUS_PARENTESCO_CHOICES)[self.grauparentesco].upper())
 def associado_pre_save(instance, sender, **kwargs):
     instance.slug = slugify(instance.nomecompleto)
 signals.pre_save.connect(associado_pre_save, sender=Associado)

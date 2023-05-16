@@ -16,120 +16,120 @@
       <title>Black Pearl</title>
  {{ form.media }}
   </head>
-
 <body>
-<div class="container-fluid">
-    <div class="row flex-nowrap">
-        <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 " style="background-color: #F4F8FF">
-            <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
-                <a href="/home" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-
-                    <span class="fs-5 d-none d-sm-inline text-dark">Menu</span>
-                </a>
-
-                <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
-                    <li class="nav-item">
-                        <a href="/home/" class="nav-link align-middle px-0">
-                            <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline text-dark">Home</span>
+        <div class="container-fluid">
+            <div class="row flex-nowrap">
+                <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-light">
+                    <div class="flex flex-column  h-full w-full align-items-center align-items-sm-start px-3 pt-2 min-vh-100">
+                        <a href="/home" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                            <span class="fs-5 d-none d-sm-inline text-dark">Menu</span>
                         </a>
-                    </li>
-                    <li>
-                        <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle dropdown-toggle">
-                            <i class="bi bi-people"></i> <span class="ms-1 d-none d-sm-inline text-dark">Associados</span>
-                        </a>
-                        <ul class="collapse nav flex-column ms-1" id="submenu1" data-bs-parent="#menu">
-                            <li class="w-100">
-                               <a href="/associados/" class="nav-link px-1"> <i class="bi bi-list"></i>
-                                   <span class="d-none d-sm-inline text-dark">Listagem Geral</span></a>
+                        <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start">
+                            <li class="nav-item">
+                                <a href="/home/" class="nav-link align-middle px-0">
+                                    <i class="fs-4 bi-house"></i>
+                                    <span class="ms-1 d-none d-sm-inline text-dark">Home</span>
+                                </a>
                             </li>
-                            <li>
-                                <a href="/associados/cadastrar/" class="nav-link px-1">
-                                  <i class="bi bi-person-plus"></i>
-                                    <span class="d-none d-sm-inline text-dark">Novo Associado</span></a>
+                            <li  class="nav-link px-0 align-middle ">
+                                    <i class="bi bi-people"></i> <span class="ms-1 d-none d-sm-inline text-dark">Associados</span>
                             </li>
-                            <li>
-                                <a href="/associados/cadastrardependentes" class="nav-link px-1">
-                                    <i class="bi bi-person-add"></i>
-                                    <span class="d-none d-sm-inline text-dark">Novo Dependente</span></a>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <li>
-                        <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle dropdown-toggle">
-                           <i class="bi bi-bag"></i><span class="ms-1 d-none d-sm-inline text-dark">Convênios</span></a>
-                        <ul class="collapse nav flex-column ms-1" id="submenu2" data-bs-parent="#menu">
-                            <li class="w-100">
-                                <a href="#" class="nav-link px-0">
-                                    <i class="bi bi-heart-pulse"></i>
-                                    <span class="d-none d-sm-inline text-dark">Plano de Saúde</span></a>
-                            </li>
-                            <li>
-                                <a href="#" class="nav-link px-0"><i class="bi bi-bookmark"></i> <span class="d-none d-sm-inline text-dark">Plano Odontológicos</span></a>
-                            </li>
-                            <li>
-                                <a href="#submenu23" data-bs-toggle="collapse" class="nav-link px-1 align-middle dropdown-toggle">
-                                    <i class="bi bi-credit-card"> </i><span class="d-none d-sm-inline text-dark">Cartão Volus</span></a>
-
-                                    <ul class="collapse nav flex-column ms-1" id="submenu23" data-bs-parent="#menuconvenios">
-                                        <li class="w-100">
-                                           <a href="/convenios/" class="nav-link px-2"> <i class="bi bi-card-list"></i>
+                                <li class="nav-item">
+                                           <a href="/associados/" class="nav-link px-4"> <i class="bi bi-card-list"></i>
                                                <span class="d-none d-sm-inline text-dark">Listagem Geral</span></a>
-                                        </li>
-                                        <li>
-                                            <a href="/convenios/cadastrar/" class="nav-link px-2">
+                                </li>
+                                <li class="nav-item">
+                                            <a href="/associados/cadastrar/" class="nav-link px-4">
                                               <i class="bi bi-person-plus"></i>
-                                                <span class="d-none d-sm-inline text-dark">Novo Cartão</span></a>
-                                        </li>
-                                        <li>
-                                            <a href="/convenios/listarFaturas" class="nav-link px-2">
+                                                <span class="d-none d-sm-inline text-dark">Novo Associado</span></a>
+                                </li>
+                                <li class="nav-item">
+                                            <a href="/associados/cadastrardependentes" class="nav-link px-4">
                                                 <i class="bi bi-person-add"></i>
-                                                <span class="d-none d-sm-inline text-dark">Lista de Faturas</span></a>
-                                        </li>
-                                        <li>
-                                            <a href="/convenios/cadastrarFatura/" class="nav-link px-2">
-                                                <i class="bi bi-person-add"></i>
-                                                <span class="d-none d-sm-inline text-dark">Gerar Fatura</span></a>
-                                        </li>
-                                    </ul>
-                            </li>
+                                                <span class="d-none d-sm-inline text-dark">Novo Dependente</span></a>
+                                </li>
                             <li>
-                                <a href="#" class="nav-link px-1"><i class="bi bi-eyeglasses"></i> <span class="d-none d-sm-inline text-dark">Ótica</span></a>
+                                        <a href="/convenios/" class="nav-link px-0">
+                                            <i class="bi bi-bag"></i>
+                                            <span class="d-none d-sm-inline text-dark">Convênios</span></a>
+                            </li>
+
+                            <li class="nav-item">
+                                        <a href="#" class="nav-link px-2">
+                                            <i class="bi bi-heart-pulse"></i>
+                                            <span class="d-none d-sm-inline text-dark">Plano de Saúde</span></a>
+                            </li>
+                            <li class="nav-item">
+                                        <a href="#" class="nav-link px-2">
+                                            <i class="bi bi-bookmark"></i>
+
+                                            <span class="d-none d-sm-inline text-dark">Plano Odontológico</span>
+                                        </a>
+                            </li>
+                                                <li>
+                                                    <a href="/convenios/contratacaoodontologica/" class="nav-link px-4">
+                                                      <i class="bi bi-plus-square"></i>
+                                                        <span class="d-none d-sm-inline text-dark">Contratação</span></a>
+                                                </li>
+
+                            <li class="nav-item">
+                            <li  data-bs-toggle="collapse" class="nav-link px-2 align-middle ">
+                                            <i class="bi bi-credit-card"> </i><span class="d-none d-sm-inline text-dark">Cartão Volus</span></li>
+
+
+                                                <li class="w-100">
+                                                   <a href="/convenios/listagemcartoes" class="nav-link px-4"> <i class="bi bi-card-list"></i>
+                                                       <span class="d-none d-sm-inline text-dark">Listagem Geral</span></a>
+                                                </li>
+                                                <li>
+                                                    <a href="/convenios/cadastrar/" class="nav-link px-4">
+                                                      <i class="bi bi-plus-square"></i>
+                                                        <span class="d-none d-sm-inline text-dark">Novo Cartão</span></a>
+                                                </li>
+                                                <li>
+                                                    <a href="/convenios/listarFaturas" class="nav-link px-4">
+                                                        <i class="bi bi-card-list"></i>
+                                                        <span class="d-none d-sm-inline text-dark">Lista de Faturas</span></a>
+                                                </li>
+                                                <li>
+                                                    <a href="/convenios/cadastrarFatura/" class="nav-link px-4">
+                                                        <i class="bi bi-file-earmark-plus"></i>
+                                                        <span class="d-none d-sm-inline text-dark">Incluir consumo</span></a>
+                                                </li>
+                            <li>
+                                        <a href="#" class="nav-link px-2">
+                                            <i class="bi bi-eyeglasses"></i>
+                                            <span class="d-none d-sm-inline text-dark">Ótica</span></a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link px-0 align-middle">
+                                    <i class="bi bi-bank"></i> <span class="ms-1 d-none d-sm-inline text-dark">Financeiro</span> </a>
                             </li>
                         </ul>
-                    </li>
-
-                    <li>
-                        <a href="#" class="nav-link px-0 align-middle">
-                            <i class="bi bi-bank"></i> <span class="ms-1 d-none d-sm-inline text-dark">Financeiro</span> </a>
-                    </li>
-                </ul>
-                <hr>
-                <div class="dropdown pb-4">
-                    <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="https://avatars.githubusercontent.com/u/10967077?v=4" alt="hugenerd" width="30" height="30" class="rounded-circle">
-                        <span class="d-none d-sm-inline text-dark ms-2" >Nome de quem está logado</span>
-                    </a>
-                    <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser1">
-                        <li><a class="dropdown-item" href="#">Meu perfil</a></li>
-                        <li><a class="dropdown-item" href="#">Configurações</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="#">Sair</a></li>
-                    </ul>
+                        <hr>
+                        <div class="dropdown pb-4">
+                            <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="https://avatars.githubusercontent.com/u/10967077?v=4" alt="hugenerd" width="30" height="30" class="rounded-circle">
+                                <span class="d-none d-sm-inline text-dark ms-2" >Nome</span>
+                            </a>
+                            <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser1">
+                                <li><a class="dropdown-item" href="#">Meu perfil</a></li>
+                                <li><a class="dropdown-item" href="#">Configurações</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="#">Sair</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col py-3 d-flex">
+                      {% block bootstrap5_content %}
+                      {% endblock bootstrap5_content %}
                 </div>
             </div>
         </div>
-        <div class="col py-3">
-              {% block bootstrap5_content %}
-              {% endblock bootstrap5_content %}
-        </div>
-    </div>
-</div>
 
+        {% bootstrap_javascript %}
 </body>
-
-
-{% bootstrap_javascript %}
 </html>

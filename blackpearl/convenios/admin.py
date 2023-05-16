@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import ValoresPorFaixa, PlanoSaude, CartaoConvenioVolus, PlanoOdontologico, Otica, TaxaAdministrativa, \
-    FaturaCartao
+    FaturaCartao,ContratacaoPlanoOdontologico, ContratacaoDependentePlanoOdontologico
 
 
 # Register your models here.
@@ -32,3 +32,18 @@ class oticaAdmin(admin.ModelAdmin):
 @admin.register(TaxaAdministrativa)
 class TaxaAdministrativaAdmin(admin.ModelAdmin):
     list_display = ('categoria','percentual', 'ativo')
+
+
+
+
+@admin.register(ContratacaoPlanoOdontologico)
+class ContratacaoPlanoOdontologicoAdmin(admin.ModelAdmin):
+    list_display = ('contratante', 'plano_odontologico', 'display_dependentes', 'valor')
+
+    def display_dependentes(self, obj):
+        return ', '.join([str(dependente) for dependente in obj.dependentes.all()])
+
+    display_dependentes.short_description = 'Dependentes'
+@admin.register(ContratacaoDependentePlanoOdontologico)
+class ContratacaoDependentePlanoOdontologico(admin.ModelAdmin):
+    list_display = ('contratacao_plano_odontologico', 'dependente', 'valor')

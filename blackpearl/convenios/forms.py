@@ -5,8 +5,9 @@ from django.core.exceptions import ValidationError
 from django.forms import DateInput
 from re import match
 
-from blackpearl.associados.models import Associado
-from blackpearl.convenios.models import CartaoConvenioVolus, FaturaCartao
+from blackpearl.associados.models import Associado, Dependente
+from blackpearl.convenios.models import CartaoConvenioVolus, FaturaCartao, ContratacaoPlanoOdontologico, \
+    ContratacaoDependentePlanoOdontologico
 from widget_tweaks.templatetags.widget_tweaks import register
 
 
@@ -70,6 +71,11 @@ class FaturaCartaoForm(forms.ModelForm):
 
         return cleaned_data
 
+class ContratacaoPlanoOdontologicoForm(forms.ModelForm):
+
+    class Meta:
+        model = ContratacaoPlanoOdontologico
+        fields = ['contratante', 'plano_odontologico','dependentes']
 
 @register.filter(name='add_class')
 def add_class(field, css):

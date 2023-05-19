@@ -34,8 +34,6 @@ class TaxaAdministrativaAdmin(admin.ModelAdmin):
     list_display = ('categoria','percentual', 'ativo')
 
 
-
-
 @admin.register(ContratacaoPlanoOdontologico)
 class ContratacaoPlanoOdontologicoAdmin(admin.ModelAdmin):
     list_display = ('contratante', 'plano_odontologico', 'display_dependentes', 'valor')
@@ -46,4 +44,4 @@ class ContratacaoPlanoOdontologicoAdmin(admin.ModelAdmin):
     display_dependentes.short_description = 'Dependentes'
 @admin.register(ContratacaoDependentePlanoOdontologico)
 class ContratacaoDependentePlanoOdontologico(admin.ModelAdmin):
-    list_display = ('contratacao_plano_odontologico', 'dependente', 'valor')
+    list_display = ('dependente' , 'contratacao_plano_odontologico', 'valor')

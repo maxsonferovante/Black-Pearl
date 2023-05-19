@@ -1,5 +1,7 @@
 from _decimal import Decimal
 from django.db import models
+from django.db.models.signals import post_delete, post_save
+from django.dispatch import receiver
 
 from blackpearl.associados.models import Associado, Dependente
 
@@ -14,20 +16,17 @@ class Base(models.Model):
     class Meta:
         abstract = True
 
-
-
-planos_choices = [
-    ('Unimed - Max Nacional', 'Unimed - Max Nacional'),
-    ('Unimed - Grupo de Municipios', 'Unimed - Grupo de Municipios'),
-
-]
-segmentacao_choices = [
-    ('Apartamento', 'Apartamento'),
-    ('Enfermaria', 'Enfermaria')
-]
-
-
 class PlanoSaude(Base):
+    planos_choices = [
+        ('Unimed - Max Nacional', 'Unimed - Max Nacional'),
+        ('Unimed - Grupo de Municipios', 'Unimed - Grupo de Municipios'),
+
+    ]
+    segmentacao_choices = [
+        ('Apartamento', 'Apartamento'),
+        ('Enfermaria', 'Enfermaria')
+    ]
+
     nome = models.CharField("Nome do Plano", max_length=100, choices=planos_choices)
     cnpj = models.CharField('CNPJ', max_length=40, default="04.201.372/0001-37")
     contrato = models.CharField('Número do Contrato', max_length=10)
@@ -48,14 +47,15 @@ class ValoresPorFaixa(Base):
         return '{} - {}:{}'.format(self.idadeMin, self.idadeMax, self.valor)
 
 
-status_choices = [
-    ('ATIVO', 'ATIVO'),
-    ('SUSPENSO', 'SUSPENSO'),
-    ('CANCELADO', 'CANCELADO')
-]
 
 
 class CartaoConvenioVolus(Base):
+    status_choices = [
+        ('ATIVO', 'ATIVO'),
+        ('SUSPENSO', 'SUSPENSO'),
+        ('CANCELADO', 'CANCELADO')
+    ]
+
     nome = models.CharField('Nome do Cartão', max_length=20, default='Convênio Volus')
     titular = models.ForeignKey(Associado, on_delete=models.CASCADE, related_name='cartaovolus')
     valorLimite = models.DecimalField('Valor do Limite', max_digits=8, decimal_places=2)
@@ -95,8 +95,8 @@ class ContratacaoPlanoOdontologico(Base):
     dependentes = models.ManyToManyField(Dependente, through='ContratacaoDependentePlanoOdontologico')
     valor = models.DecimalField('Valor', max_digits=8, decimal_places=2, null= True, blank=True)
     def save(self, *args, **kwargs):
-        valorPlano = PlanoOdontologico.objects.get(numContrato = '00319').valorUnitario
-        self.valor = valorPlano
+        valorPlano = PlanoOdontologico.objects.get(numContrato='00319').valorUnitario
+        self.valor = valorPlano * (1 +self.dependentes.count())
         super().save(*args, **kwargs)
     def __str__(self):
         return '{} - Plano: {}'.format(self.contratante,self.plano_odontologico)
@@ -107,33 +107,40 @@ class ContratacaoDependentePlanoOdontologico(Base):
     def save(self, *args, **kwargs):
         valorPlano = PlanoOdontologico.objects.get(numContrato='00319').valorUnitario
         self.valor = valorPlano
-        ##*(1 + Dependente.objects.filter(titular=self.contratante).count())
         super().save(*args, **kwargs)
     def __str__(self):
         return '{}'.format(self.contratacao_plano_odontologico)
+@receiver(post_save, sender=ContratacaoDependentePlanoOdontologico)
+def decrescentar_valor_contratacao(sender, instance, **kwargs):
+    contratacao_plano_odontologico = instance.contratacao_plano_odontologico
+    contratacao_plano_odontologico.save()
+@receiver(post_delete, sender=ContratacaoDependentePlanoOdontologico)
+def acresentar_valor_contratacao(sender, instance, **kwargs):
+    contratacao_plano_odontologico = instance.contratacao_plano_odontologico
+    contratacao_plano_odontologico.save()
 
-oticas_choices = [
-    ('Ótica Telegrafo', 'Ótica Telegrafo'),
-    ('Ótica Progressiva', 'Ótica Progressiva')
-]
 
 
 class Otica(Base):
+    oticas_choices = [
+        ('Ótica Telegrafo', 'Ótica Telegrafo'),
+        ('Ótica Progressiva', 'Ótica Progressiva')
+    ]
     nome = models.CharField('Nome da Ótica', max_length=40, choices=oticas_choices)
     cnpj = models.CharField('CNPJ', max_length=40)
     valorCompra = models.DecimalField('Valor da Compra', max_digits=8, decimal_places=2)
 
-taxa_choices = [
-    (15.0, '15%'),
-    (8.0, '8%'),
-    (5.0, '5%')
-]
-categoria_choices = [
-    ('Cartão', 'Cartão'),
-    ('Saúde', 'Saúde'),
-    ('Odontológico','Odontológico')
-]
 class TaxaAdministrativa(Base):
+    taxa_choices = [
+        (15.0, '15%'),
+        (8.0, '8%'),
+        (5.0, '5%')
+    ]
+    categoria_choices = [
+        ('Cartão', 'Cartão'),
+        ('Saúde', 'Saúde'),
+        ('Odontológico', 'Odontológico')
+    ]
     categoria = models.CharField('Categoria', max_length=20, choices=categoria_choices)
     percentual = models.DecimalField('Percetual da Taxa Administrativa', max_digits=8, decimal_places=2,
                                      choices=taxa_choices)

@@ -40,10 +40,10 @@ Esse projeto é usado pela seguinte empresa:
 
 ## Referência
 
- 
  - [Django](https://www.djangoproject.com/)
  - [Django-Crispy-Forms](https://django-crispy-forms.readthedocs.io/en/latest/index.html)
-- [Bootstrap](https://getbootstrap.com/docs/5.3/getting-started/introduction/)
-- [Heroku](https://www.heroku.com/home?)
+ - [Django-Smart-Select](https://django-smart-selects.readthedocs.io/en/latest/)
+ - [Bootstrap](https://getbootstrap.com/docs/5.3/getting-started/introduction/)
+ - [Heroku](https://www.heroku.com/home?)
 
 

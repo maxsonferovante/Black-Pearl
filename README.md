@@ -30,6 +30,14 @@ Esse projeto é usado pela seguinte empresa:
 
 
 
+## Funcionalidades
+
+- Cadastro de Associados e seus Dependentes
+- Contratação de Convenios (Cartãao e Plano Odontologico)
+- Inclusão e Geração de Relatorio das Faturas do Cartão
+
+
+
 ## Referência
 
  

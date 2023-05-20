@@ -1,13 +1,12 @@
 from datetime import datetime
 
 from django import forms
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.forms import DateInput
 from re import match
 
 from blackpearl.associados.models import Associado, Dependente
-from blackpearl.convenios.models import CartaoConvenioVolus, FaturaCartao, ContratacaoPlanoOdontologico, \
-    ContratacaoDependentePlanoOdontologico
+from blackpearl.convenios.models import CartaoConvenioVolus, FaturaCartao,ContratacaoPlanoOdontologico
 from widget_tweaks.templatetags.widget_tweaks import register
 
 
@@ -64,18 +63,24 @@ class FaturaCartaoForm(forms.ModelForm):
         cleaned_data = super().clean()
         valor = cleaned_data.get('valor')
         cartao = cleaned_data.get('cartao')
-
         if valor and cartao:
             if float(valor) > float(cartao.valorLimite):
                 raise forms.ValidationError('Valor da fatura não pode ser maior que o limite do cartão.')
-
         return cleaned_data
 
-class ContratacaoPlanoOdontologicoForm(forms.ModelForm):
 
+class ContratacaoPlanoOdontologicoForm(forms.ModelForm):
+    valor = forms.DecimalField(max_digits=8, decimal_places=2,  required= False, disabled= True)
+    dependentes = forms.ModelMultipleChoiceField(
+        queryset= Dependente.objects.all(),
+        widget= forms.CheckboxSelectMultiple(
+            attrs={
+                'class': 'chosen-select'
+            }), required=False)
     class Meta:
         model = ContratacaoPlanoOdontologico
-        fields = ['contratante', 'plano_odontologico','dependentes']
+        fields = ['contratante', 'plano_odontologico', 'dependentes','valor']
+
 
 @register.filter(name='add_class')
 def add_class(field, css):

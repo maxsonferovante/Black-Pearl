@@ -24,13 +24,19 @@
 
                               {{ form.plano_odontologico|as_crispy_field }}
                             </div>
-                        </div>
-                         <div class="row">
                             <div class="form-group  col-sm">
-                               {{ form.dependentes|as_crispy_field }}
+
+                              {{ form.valor|as_crispy_field }}
                             </div>
                         </div>
-                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                          <div class="row mt-2" >
+                                            <div class="from-group col-sm">
+                                                {{ form.dependentes|as_crispy_field }}
+                                            </div>
+                          </div>
+
+
+                         <div class="d-grid gap-2 mt-5 d-md-flex justify-content-md-end">
                             {% buttons %}
                             <button type="submit" class="btn btn-primary">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill-add" viewBox="0 0 16 16">
@@ -44,8 +50,10 @@
                      </div>
                  </div>
               </form>
+
          </div>
       </div>
 
 
+{% bootstrap_javascript %}
 {% endblock bootstrap5_content %}

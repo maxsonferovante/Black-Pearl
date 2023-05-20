@@ -1,8 +1,12 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 # Create your models here.
 
 from django.db.models import signals
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.template.defaultfilters import slugify
+
 
 ESTADOS_CHOICES = [
     ("AC", "Acre"),
@@ -90,8 +94,6 @@ class Empresa(Base):
         return self.nome
 
 
-
-
 class Associado(Base):
     nomecompleto = models.CharField('Nome Completo', max_length=300)
 
@@ -138,6 +140,8 @@ class Associado(Base):
         return dict(SEXO_CHOICES)[self.sexo]
     def get_associacao_display(self):
         return dict(ASSOCIACAO_CHOICES)[self.associacao]
+
+
 
 class Dependente(Base):
     titular = models.ForeignKey(Associado, on_delete=models.CASCADE, related_name='dependentes')

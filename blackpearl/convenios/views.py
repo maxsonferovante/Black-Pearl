@@ -10,15 +10,14 @@ from django.contrib import messages
 from reportlab.pdfgen import canvas
 
 from .forms import CartaoConvenioVolusForm, FaturaCartaoForm, ContratacaoPlanoOdontologicoForm
-from .models import CartaoConvenioVolus, FaturaCartao
-from ..associados.models import Dependente
+from .models import CartaoConvenioVolus, FaturaCartao, ContratacaoPlanoOdontologico
+from ..associados.models import Dependente, Associado
 
 
 # Create your views here.
 @login_required(login_url='login')
 def home(request):
     return render(request, 'convenios/home.html')
-
 
 @login_required(login_url='login')
 def listagemcartoes(request):
@@ -47,7 +46,6 @@ def listagemcartoes(request):
     }
     return render(request, 'convenios/listagemcartoes.html', context)
 
-
 @login_required(login_url='login')
 def cadastrarCartao(request):
     if str(request.method) == 'POST':
@@ -72,7 +70,6 @@ def cadastrarCartao(request):
         'form': formCartao
     }
     return render(request, 'convenios/formsdjango.html', context)
-
 
 @login_required(login_url='login')
 def cadastrarFatura(request):
@@ -104,7 +101,6 @@ def cadastrarFatura(request):
     }
     return render(request, 'convenios/formsfatura.html', context)
 
-
 @login_required(login_url='login')
 def listarFaturas(request):
     nome_pesquisado = request.GET.get('obj')
@@ -132,6 +128,48 @@ def listarFaturas(request):
     }
     return render(request, 'convenios/listarFaturas.html', context)
 
+@login_required(login_url='login')
+def contratacaoodontologica(request):
+    if str(request.method) == 'POST':
+        form_contrante = ContratacaoPlanoOdontologicoForm(request.POST)
+        if form_contrante.is_valid():
+            form_contrante.save()
+            messages.success(request,'Contratação feita com sucesso!')
+            form_contrante = ContratacaoPlanoOdontologicoForm()
+        else:
+            messages.warning(request,'Verifique os campos destacados!')
+    else:
+        form_contrante = ContratacaoPlanoOdontologicoForm()
+
+    context = {
+        'form': form_contrante
+    }
+    return render(request, 'convenios/contratacaoodontologica.html', context)
+
+def listarcontratacaoodontologica(request):
+    nome_pesquisado = request.GET.get('obj')
+    if nome_pesquisado:
+        contratos = ContratacaoPlanoOdontologico.objects.filter(contratante__nomecompleto__icontains = nome_pesquisado).order_by('contratante')
+    else:
+        contratos = ContratacaoPlanoOdontologico.objects.all()
+
+    paramentro_page = request.GET.get('page', '1')
+    paramentro_limit = request.GET.get('limit', '10')
+
+    if not (paramentro_limit.isdigit() and int(paramentro_limit) > 0):
+        paramentro_limit = '10'
+
+    contratos_paginator = Paginator(contratos, paramentro_limit)
+
+    try:
+        page = contratos_paginator.page(paramentro_page)
+    except (EmptyPage, PageNotAnInteger):
+        page = contratos_paginator.page(1)
+
+    context = {
+        'list_objs': page
+    }
+    return render(request, 'convenios/listagemcontratacaoodontologica.html', context)
 
 def exportar(request):
     empresa_selecionada = request.GET.get('inputGroupSelectEmpresa')
@@ -161,8 +199,6 @@ def exportar(request):
                             tipoArquivo_selecionado=tipoArquivo_selecionado)
 
     return listarFaturas(request)
-
-
 def exporttofile(faturas, nome_arq, tipoArquivo_selecionado):
     filename = f"{nome_arq}"
 
@@ -225,33 +261,14 @@ def exporttofile(faturas, nome_arq, tipoArquivo_selecionado):
 
 
     elif tipoArquivo_selecionado == '3':
-        faturas_txt = ''
+        """faturas_txt = ''
         for fatura in faturas:
             matricula = str(fatura.cartao.titular.matricula).zfill(6)
             valorComTaxa = str(fatura.valorComTaxa)[:4].replace('.', '').zfill(12)
             faturas_txt += '{} {}\n'.format(matricula, valorComTaxa)
 
         response = HttpResponse(faturas_txt, content_type='text/plain')
-        response['Content-Disposition'] = f'attachment; filename="{nome_arq}.txt'
+        response['Content-Disposition'] = f'attachment; filename="{nome_arq}.txt'"""
 
     return response
 
-
-@login_required(login_url='login')
-def contratacaoodontologica(request):
-    if str(request.method) == 'POST':
-        form_contrante = ContratacaoPlanoOdontologicoForm(request.POST)
-        if form_contrante.is_valid():
-            print (form_contrante)
-            form_contrante.save()
-            messages.success(request,'Contratação feita com sucesso!')
-            form_contrante = ContratacaoPlanoOdontologicoForm()
-        else:
-            messages.warning(request,'Verifique os campos destacados!')
-    else:
-        form_contrante = ContratacaoPlanoOdontologicoForm()
-
-    context = {
-        'form': form_contrante
-    }
-    return render(request, 'convenios/contratacaoodontologica.html', context)

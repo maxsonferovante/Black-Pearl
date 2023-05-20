@@ -9,35 +9,34 @@
       <link href="https://cdn.datatables.net/v/bs5/jq-3.6.0/jszip-2.5.0/dt-1.13.4/b-2.3.6/b-html5-2.3.6/b-print-2.3.6/datatables.min.css" rel="stylesheet"/>
         <div class="container">
           <div class="row d-flex justify-content-center align-items-center h-50 mt-5">
-            <h4 class="">Cartões Volus</h4>
-            {% include 'search.html' with href='listagemcartoes' %}
+            <h4 class="">Associados com Plano odontologico</h4>
+            {% include 'search.html' with href='listarcontratacaoodontologica' %}
             <table class="table table-hover" >
                         <thead>
                           <tr>
-                            <th scope="col">Titular</th>
-                            <th scope="col">Empresa</th>
-                            <th scope="col">Limite (R$)</th>
-                            <th scope="col">Status</th>
+                            <th scope="col">Titular - Contratante</th>
+                            <th scope="col">Plano Contratado</th>
+                            <th scope="col">Valor (R$)</th>
+                            <th scope="col">Dependentes</th>
                             <th scope="col">Opções</th>
                           </tr>
                         </thead>
                             <tbody class="table-group-divider">
 
-                              {% for cartao in list_objs %}
+                              {% for contratos in list_objs %}
                               <tr>
 
-                              <td>{{ cartao.titular }}</td>
-                                <td>{{ cartao.titular.empresa }}</td>
-                              <td>{{ cartao.valorLimite }}</td>
-                              <td>{{ cartao.status }}</td>
+                              <td>{{ contratos.contratante }}</td>
+                                <td>{{ contratos.plano_odontologico }}</td>
+                              <td>{{ contratos.valor }}</td>
+                                <td>{{contratos.dependentes.count}}</td>
 
                               </tr>
                               {% endfor %}
 
                           </tbody>
                        </table>
-            {% include 'pagination.html' with href='listagemcartoes'%}
-
+            {% include 'pagination.html' with href='listarcontratacaoodontologica'%}
           </div>
         </div>
 

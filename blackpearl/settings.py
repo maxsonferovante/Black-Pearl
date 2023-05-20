@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crispy_forms',
     'widget_tweaks',
+    'admin_kit',
     'crispy_bootstrap5',
     'blackpearl.usuarios',
     'blackpearl.associados',
@@ -140,4 +141,5 @@ LOGIN_REDIRECT_URL = '/home/'
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
+
 

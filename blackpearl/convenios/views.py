@@ -4,14 +4,13 @@ import openpyxl
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib import messages
 from reportlab.pdfgen import canvas
 
 from .forms import CartaoConvenioVolusForm, FaturaCartaoForm, ContratacaoPlanoOdontologicoForm
 from .models import CartaoConvenioVolus, FaturaCartao, ContratacaoPlanoOdontologico
-from ..associados.models import Dependente, Associado
 
 
 # Create your views here.

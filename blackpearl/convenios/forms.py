@@ -1,10 +1,5 @@
-from datetime import datetime
-
 from django import forms
-from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.forms import DateInput
-from re import match
-
 from blackpearl.associados.models import Associado, Dependente
 from blackpearl.convenios.models import CartaoConvenioVolus, FaturaCartao,ContratacaoPlanoOdontologico
 from widget_tweaks.templatetags.widget_tweaks import register

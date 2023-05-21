@@ -1,13 +1,6 @@
-import re
-from datetime import timezone
-
 from django import forms
-from django.core.exceptions import ValidationError
 from django.forms import DateInput
 from widget_tweaks.templatetags.widget_tweaks import register
-
-from django.utils.translation import gettext_lazy as _
-
 from blackpearl.associados.models import Associado, FileUploadExcelModel, Dependente
 
 
@@ -52,7 +45,8 @@ class AssociadoModelForm(forms.ModelForm):
             'logradouro': forms.TextInput(
                 attrs={
                     'id': 'address',
-                    'class': 'form-control'
+                    'class': 'form-control',
+                    'data-mask': '00000-000'
                 }
             ),
             'bairro': forms.TextInput(
@@ -82,14 +76,6 @@ class AssociadoModelForm(forms.ModelForm):
         }
 
 
-    """
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['dataNascimento'].label = _('Data de Nascimento')
-        self.fields['dataNascimento'].widget.attrs.update({'placeholder': '__/__/____'})
-        self.fields['dataAssociacao'].label = _('Data de Associação')
-        self.fields['dataAssociacao'].widget.attrs.update({'placeholder': '__/__/____'})
-    """
 class DependenteModelForm(forms.ModelForm):
     class Meta:
         model = Dependente
@@ -115,16 +101,16 @@ class DependenteModelForm(forms.ModelForm):
         self.fields['dataNascimento'].label = _('Data de Nascimento')
         self.fields['dataNascimento'].widget.attrs.update({'placeholder': '__/__/____'})
 """
+
+
 @register.filter(name='add_class')
 def add_class(field, css):
     return field.as_widget(attrs={"class": css})
 
+
 @register.filter(name='add_placeholder')
 def add_placeholder(field, text):
     return field.as_widget(attrs={"placeholder": text})
-
-
-
 
 
 class FileUploadExcelModelForm(forms.Form):

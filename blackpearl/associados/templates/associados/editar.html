@@ -9,8 +9,7 @@
           <div class="row d-flex justify-content-md-center align-items-center h-50">
 
             {% bootstrap_messages %}
-
-              <form class="form-horizontal" action=""  method="post" autocomplete="off" >
+              <form class="form-horizontal" action="" method="POST" autocomplete="off" >
                   {% csrf_token %}
                  <div class="card mb-3 ">
                   <h6 class="card-header">
@@ -133,7 +132,6 @@
                                   <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
                                 </svg>
                             Atualizar
-
                         </button>
                         <a type="submit" class="btn btn-primary" href = "{% url 'home_assoc' %}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">

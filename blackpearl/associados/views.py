@@ -7,7 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from faker import Faker
@@ -124,24 +124,20 @@ def editar(request, associado_id):
     if request.method == 'POST':
         associado = Associado.objects.get(pk=associado_id)
         formAssociado = AssociadoModelForm(request.POST, instance=associado)
+        print(associado_id, associado, request.method)
         if formAssociado.is_valid():
-            assoc = formAssociado.save()
-
-            messages.success(request, 'Dados de {} atualizados com sucesso!'.format(assoc.nomecompleto))
-
-            return render(request, 'associados/editar.html', {
-                'form': formAssociado
-            })
+            formAssociado.save()
+            return redirect('home_assoc')
+        else:
+            print(formAssociado.errors)
     else:
-        associado = Associado.objects.get(pk=associado_id)
+        associado = Associado.objects.get(id=associado_id)
         formAssociado = AssociadoModelForm(
             instance=associado
         )
     return render(request, 'associados/editar.html', {
         'form': formAssociado
     })
-
-
 @login_required(login_url='login')
 def excluir(request, associado_id):
     if request.method == 'POST':

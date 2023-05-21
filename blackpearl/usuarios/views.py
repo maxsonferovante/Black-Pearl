@@ -5,19 +5,20 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, logout
 from django.contrib.auth import login as login_django
 
-from django.views import View
-
 
 # Create your views here.
 def login(request):
-    if request.method != 'GET':
+    if request.method == 'POST':
         usuario = request.POST.get('userName')
         email = request.POST.get('email-address')
         senha = request.POST.get('password')
         user = authenticate(username=usuario, email=email, password=senha)
         if user:
             login_django(request, user)
-            return render(request, 'usuarios/home.html')
+            context = {
+                'user' : user
+            }
+            return render(request, 'usuarios/home.html', context)
         else:
             return render(request, 'registration/login.html', {
                 'form': AuthenticationForm,
@@ -33,7 +34,7 @@ def login(request):
 @login_required
 def sair(request):
     logout(request)
-    return redirect('home')
+    return redirect('login')
 
 
 @login_required(login_url='login')

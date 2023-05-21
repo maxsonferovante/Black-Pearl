@@ -115,8 +115,8 @@
                         <hr>
                         <div class="dropdown pb-4">
                             <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="https://avatars.githubusercontent.com/u/10967077?v=4" alt="hugenerd" width="30" height="30" class="rounded-circle">
-                                <span class="d-none d-sm-inline text-dark ms-2" >Nome</span>
+                                <img src="{% static 'usuarios/logo.svg' %}" alt="My logo"  height="32px" width="28px"  border-radius="70%" class="rounded-circle float-left">
+                                <span class="d-none d-sm-inline text-dark ms-2" >{{ user.username }}</span>
                             </a>
                             <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser1">
                                 <li><a class="dropdown-item" href="#">Meu perfil</a></li>
@@ -124,7 +124,7 @@
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li><a class="dropdown-item" href="#">Sair</a></li>
+                                <li><a class="dropdown-item" href="/sair/">Sair</a></li>
                             </ul>
                         </div>
                     </div>

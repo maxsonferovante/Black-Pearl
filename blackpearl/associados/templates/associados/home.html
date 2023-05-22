@@ -1,6 +1,4 @@
-
 {% extends "base_sidebar.html" %}
-
 {% block bootstrap5_content %}
 {% load bootstrap5 %}
 {% load static %}
@@ -25,7 +23,7 @@
                           </thead>
                               <tbody class="table-group-divider">
 
-                                {% for assoc in list_objs %}
+                                {% for assoc in object_list %}
                                 <tr>
                                 <td>{{ assoc.nomecompleto }}</td>
                                 <td>{{ assoc.cpf }}</td>
@@ -35,49 +33,15 @@
                                 <td>{{ assoc.matricula }}</td>
                                 <td>
 
-                                    <button class="btn btn-success" role="button" href = "{% url 'visualizar' assoc.id%}" data-bs-toggle="modal" data-bs-target="#detalhesModal{{assoc.id}}">
+                                    <a class="btn btn-success" role="button" href = "{% url 'visualizar' assoc.pk %}">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-vcard" viewBox="0 0 16 16">
                                         <path d="M5 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm4-2.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5ZM9 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4A.5.5 0 0 1 9 8Zm1 2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5Z"/>
                                         <path d="M2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2ZM1 4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H8.96c.026-.163.04-.33.04-.5C9 10.567 7.21 9 5 9c-2.086 0-3.8 1.398-3.984 3.181A1.006 1.006 0 0 1 1 12V4Z"/>
                                         </svg>
 
-                                    </button>
+                                    </a>
 
-                                    <!-- Modal -->
-                                    <div class="modal fade " id="detalhesModal{{assoc.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                                    <div class="modal-content">
-                                      <div class="modal-header">
-                                        <h1 class="modal-title fs-5" id="exampleModalLabel">{{assoc.nomecompleto}}</h1>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                      </div>
-                                      <div class="modal-body">
-                                           <ul class="list-unstyled">
 
-                                               <li>Data de Nascimento: <strong>{{ assoc.dataNascimento }}</strong></li>
-                                               <li>CPF: <strong>{{ assoc.cpf }}</strong></li>
-                                           </ul>
-
-                                          <h6>Contatos</h6>
-                                          <ul class="list-unstyled">
-                                               <li>Celular: <strong>({{assoc.dddNumeroContato}}) {{ assoc.numeroContato }}</strong></li>
-                                               <li>E-mail: <strong>{{ assoc.email }}</strong></li>
-                                           </ul>
-                                          <h6>Dependetes</h6>
-                                          <ul class="list-unstyled">
-                                              {% for depen in dependentes %}
-                                               <li><strong>{{depen.nomecompleto}}</strong></li>
-                                               {% endfor %}
-
-                                           </ul>
-                                      </div>
-                                      <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sair</button>
-                                        <button type="button" class="btn btn-primary" >Exportar para PDF</button>
-                                      </div>
-                                    </div>
-                                    </div>
-                                    </div>
 
                                     <a class="btn btn-warning" role="button" href ="{% url 'editar' assoc.id%}" >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-gear" viewBox="0 0 16 16">
@@ -127,6 +91,4 @@
             </div>
         </div>
         {% bootstrap_javascript %}
-
-
 {% endblock bootstrap5_content %}

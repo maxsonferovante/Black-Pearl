@@ -3,14 +3,16 @@ from io import BytesIO
 from random import randint
 
 from _decimal import Decimal
-from django.core.exceptions import ObjectDoesNotExist
+
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.http import HttpResponseRedirect, HttpResponse
-from django.urls import reverse
+from django.http import HttpResponse
+from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
-from faker import Faker
+from django.utils.decorators import method_decorator
+from django.views.generic import TemplateView, UpdateView, DeleteView, DetailView, CreateView
 from reportlab.pdfgen import canvas
 
 from .importExcelToAssociados import import_excel_to_associado
@@ -20,131 +22,97 @@ from ..convenios.models import CartaoConvenioVolus, FaturaCartao
 
 
 # Create your views here.
+#
+@method_decorator(login_required, name='dispatch')
+class HomeTemplateView(TemplateView):
+    template_name = 'associados/home.html'
 
-@login_required(login_url='login')
-def home(request):
-    nome_pesquisa = request.GET.get('obj')
-    if nome_pesquisa:
-        associados = Associado.objects.filter(nomecompleto__icontains=nome_pesquisa).order_by('nomecompleto')
-    else:
-        associados = Associado.objects.all().order_by('nomecompleto')
+    def get_context_data(self, **kwargs):
+        context = super(HomeTemplateView, self).get_context_data(**kwargs)
+        return context
 
-    paramentro_page = request.GET.get('page', '1')
-    paramentro_limit = request.GET.get('limit', '10')
-
-    if not (paramentro_limit.isdigit() and int(paramentro_limit) > 0):
-        paramentro_limit = '10'
-
-    associados_paginator = Paginator(associados, paramentro_limit)
-    try:
-        page = associados_paginator.page(paramentro_page)
-    except (EmptyPage, PageNotAnInteger):
-        page = associados_paginator.page(1)
-
-    ##gerador_dados(5)
-    context = {
-        'list_objs': page
-
-    }
-    return render(request, 'associados/home.html', context)
-
-
-@login_required(login_url='login')
-def cadastrardjango(request):
-    # o formulario pode ou não ter dados, tem quando usuario usa do botão cadastar, não tem quando a pagina carrega
-
-    if str(request.method) == 'POST':
-        formDadosAsssociado = AssociadoModelForm(request.POST)
-        if formDadosAsssociado.is_valid():
-            nomecompleto = formDadosAsssociado.cleaned_data['nomecompleto']
-            cpf = formDadosAsssociado.cleaned_data['cpf']
-            try:
-                associado_existente = Associado.objects.get(nomecompleto=nomecompleto, cpf=cpf)
-                messages.warning(request, f'O associado "{nomecompleto}" já está cadastrado.')
-                return render(request, 'associados/formsdjango.html', {'form': formDadosAsssociado})
-            except ObjectDoesNotExist:
-
-                assoc = formDadosAsssociado.save()
-                messages.success(request, f'Dados de {assoc.nomecompleto} cadastrados com sucesso!')
-                formDadosAsssociado = AssociadoModelForm()
+    def get(self, request, *args, **kwargs):
+        nome_pesquisa = request.GET.get('obj')
+        if nome_pesquisa:
+            associados = Associado.objects.filter(nomecompleto__icontains=nome_pesquisa).order_by('nomecompleto')
         else:
-            messages.error(request, 'Verifique os campos destacados.')
-    else:
-        formDadosAsssociado = AssociadoModelForm()
-    context = {
-        'form': formDadosAsssociado
-    }
-    return render(request, 'associados/formsdjango.html', context)
+            associados = Associado.objects.all().order_by('nomecompleto')
+
+        paramentro_page = request.GET.get('page', '1')
+        paramentro_limit = request.GET.get('limit', '10')
+
+        if not (paramentro_limit.isdigit() and int(paramentro_limit) > 0):
+            paramentro_limit = '10'
+
+        associados_paginator = Paginator(associados, paramentro_limit)
+        try:
+            page = associados_paginator.page(paramentro_page)
+        except (EmptyPage, PageNotAnInteger):
+            page = associados_paginator.page(1)
+
+        ##gerador_dados(5)
+        context = {
+            'object_list': page
+
+        }
+        return render(request, self.template_name, context)
 
 
-@login_required(login_url='login')
-def cadastrardependentes(request):
-    # o formulario pode ou não ter dados, tem quando usuario usa do botão cadastar, não tem quando a pagina carrega
+@method_decorator(login_required, name='dispatch')
+class AssociadoCreateView(CreateView):
+    model = Associado
+    form_class = AssociadoModelForm
+    template_name_suffix = "_criar_form"
+    success_url = reverse_lazy('home_assoc')
 
-    if str(request.method) == 'POST':
-        form = DependenteModelForm(request.POST)
+
+@method_decorator(login_required, name='dispatch')
+class AssociadoUpdateView(UpdateView):
+    model = Associado
+    fields = ['nomecompleto', 'dataNascimento', 'sexo', 'cpf', 'identidade', 'orgemissor', 'estadocivil',
+              'dataAssociacao', 'associacao', 'empresa', 'email', 'dddNumeroContato', 'numeroContato',
+              'cep', 'logradouro', 'num', 'bairro', 'cidade', 'estado', 'matricula']
+    template_name_suffix = "_editar_form"
+    success_url = reverse_lazy('home_assoc')
+
+
+@method_decorator(login_required, name='dispatch')
+class AssociadoDetailView(DetailView):
+    template_name = 'associados/associado_detalhes.html'
+    model = Associado
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        associado_pk = self.kwargs['pk']  # Captura o parâmetro 'associado_pk' da URL
+        associado = Associado.objects.get(pk=associado_pk)
+        context['associado'] = associado
+        return context
+
+
+@method_decorator(login_required, name='dispatch')
+class AssociadoDeleteView(DeleteView):
+    model = Associado
+    success_url = reverse_lazy('home_assoc')
+
+
+@method_decorator(login_required, name='dispatch')
+class DependenteCreateView(SuccessMessageMixin, CreateView):
+    model = Dependente
+    form_class = DependenteModelForm
+    template_name_suffix = "_criar_form"
+    success_url = reverse_lazy('home_assoc')
+
+    def form_valid(self, form):
+        # Verificar a validação do formulário personalizado
         if form.is_valid():
-            nomecompleto = form.cleaned_data['nomecompleto']
-            cpf = form.cleaned_data['cpf']
-
-            try:
-                associado_existente = Dependente.objects.get(nomecompleto=nomecompleto, cpf=cpf)
-                messages.warning(request, f'O dependente "{nomecompleto}" já está cadastrado.')
-                return render(request, 'associados/forms_dependente.html', {'form': form})
-            except ObjectDoesNotExist:
-                depent = form.save()
-                messages.success(request, f'Dados de {depent.nomecompleto} cadastrados com sucesso!')
-                form = DependenteModelForm()
-
+            # Executar a validação padrão do CreateView
+            response = super().form_valid(form)
+            # Redirecionar para a página de sucesso
+            messages.success(self.request, 'Dependente criado com sucesso.')
+            return response
         else:
-            messages.error(request, 'Verifique os campos destacados.')
-
-    else:
-        form = DependenteModelForm()
-    context = {
-        'form': form
-    }
-    return render(request, 'associados/forms_dependente.html', context)
-
-
-@login_required(login_url='login')
-def visualizar(request, associado_id):
-    associado = Associado.objects.get(pk=associado_id)
-
-    dependentes = associado.dependentes.all()
-    context = {
-        'dependentes': dependentes
-
-    }
-    return render(request, 'associados/home.html', context)
-
-
-@login_required(login_url='login')
-def editar(request, associado_id):
-    if request.method == 'POST':
-        associado = Associado.objects.get(pk=associado_id)
-        formAssociado = AssociadoModelForm(request.POST, instance=associado)
-        print(associado_id, associado, request.method)
-        if formAssociado.is_valid():
-            formAssociado.save()
-            return redirect('home_assoc')
-        else:
-            print(formAssociado.errors)
-    else:
-        associado = Associado.objects.get(id=associado_id)
-        formAssociado = AssociadoModelForm(
-            instance=associado
-        )
-    return render(request, 'associados/editar.html', {
-        'form': formAssociado
-    })
-@login_required(login_url='login')
-def excluir(request, associado_id):
-    if request.method == 'POST':
-        associado = Associado.objects.get(pk=associado_id)
-        associado.delete()
-
-    return HttpResponseRedirect(reverse('home_assoc'))
+            messages.success(self.request, 'Já existe um dependente cadastrado com esses dados.')
+            return self.render_to_response(self.get_context_data(form=form))
 
 
 @login_required(login_url='login')
@@ -240,7 +208,7 @@ def gerador_dados(quant):
         cartao = CartaoConvenioVolus(
             nome='Convênio Volus',
             titular=associado,
-            valorLimite=quant*10,
+            valorLimite=quant * 10,
             status='ATIVO',
         )
         cartao.save()
@@ -257,5 +225,3 @@ def gerador_dados(quant):
             competencia=competencia,
         )
         fatura.save()
-
-

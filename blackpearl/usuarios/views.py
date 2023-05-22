@@ -1,14 +1,22 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect
-
 from django.contrib.auth import authenticate, logout
+
 from django.contrib.auth import login as login_django
+from django.utils.decorators import method_decorator
+from django.views.generic import TemplateView
 
 
-# Create your views here.
-def login(request):
-    if request.method == 'POST':
+
+class LoginCustomView(TemplateView):
+    template_name = 'registration/login.html'
+    success_url = 'usuarios/home.html'
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {'form': AuthenticationForm})
+
+    def post(self, request, *args, **kwargs):
         usuario = request.POST.get('userName')
         email = request.POST.get('email-address')
         senha = request.POST.get('password')
@@ -16,30 +24,23 @@ def login(request):
         if user:
             login_django(request, user)
             context = {
-                'user' : user
+                'user': user
             }
-            return render(request, 'usuarios/home.html', context)
+            return render(request, self.success_url, context)
         else:
-            return render(request, 'registration/login.html', {
+            return render(request, self.template_name, {
                 'form': AuthenticationForm,
                 'error': True
             })
-    else:
-        return render(request, 'registration/login.html',
-                      {
-                          'form': AuthenticationForm
-                      })
 
 
-@login_required
-def sair(request):
-    logout(request)
-    return redirect('login')
 
+@method_decorator(login_required, name='dispatch')
+class HomeView(TemplateView):
+    template_name = 'usuarios/home.html'
 
-@login_required(login_url='login')
-def home(request):
-    return render(request, 'usuarios/home.html')
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
 
 
 """

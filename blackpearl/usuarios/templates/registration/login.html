@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load bootstrap5 %}
+{% load crispy_forms_tags %}
   <html lang="en">
   <head>
       {% load static %}
@@ -19,34 +20,27 @@
                   <div class="col-12 col-md-8 col-lg-6 col-xl-5">
                     <div class="card shadow-2-strong" style="border-radius: 1rem;">
                       <div class="card-body p-5 text-center">
-
-                          <img src="{% static 'usuarios/logo.svg' %}" alt="My logo"  height="100px" width="100px" class="rounded-circle float-center">
-
+                        <img src="{% static 'usuarios/logo.svg' %}" alt="My logo"  height="100px" width="100px" class="rounded-circle float-center">
                         <h3 class="mb-5 mt-3">Black Pearl - Login</h3>
-                          {% if error %}
-                            <p>Your username and password didn't match. Please try again.</p>
+                         {% if error %}
+                            <p>Seu nome de usuário e senha não correspondem.</p>
+                            <p>Por favor, tente novamente.</p>
                           {% endif %}
                           {% if next %}
                                 {% if user.is_authenticated %}
-                                <p>Your account doesn't have access to this page. To proceed,
-                                please login with an account that has access.</p>
+                                <p>Sua conta não tem acesso a esta página.</p>
+                                <p> Para prosseguir, faça login com uma conta que tenha acesso.</p>
                                 {% else %}
-                                <p>Please login to see this page.</p>
+                                <p>Por favor, faça login para ver esta página.</p>
                                 {% endif %}
                             {% endif %}
-
-                         <div class="form-outline mb-4">
-                          <input type="text" id="typeText-2" class="form-control form-control-lg" name="userName"/>
-                          <label class="form-label" for="typeText-2">Usuário</label>
-                        </div>
-                        <div class="form-outline mb-4">
-                          <input type="password" id="typePasswordX-2" class="form-control form-control-lg" name="password" />
-                          <label class="form-label" for="typePasswordX-2">Password</label>
-                        </div>
-
-                          <input type="hidden" name="next" value="{{ next_page }}">
-                          <button class="btn btn-primary btn-lg btn-block" type="submit" value="login">Entrar</button>
-                       </div>
+                          <form class="form-outline mb-4" method="post">
+                              {% csrf_token %}
+                              <input type="hidden" name="next" value="{{ next_page }}">
+                              {{ form|crispy }}
+                              <button class="btn btn-primary btn-lg btn-block" type="submit" value="login">Entrar</button>
+                          </form>
+                      </div>
                     </div>
                   </div>
                 </div>

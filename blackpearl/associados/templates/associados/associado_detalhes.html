@@ -1,0 +1,70 @@
+{% extends "base_sidebar.html" %}
+{% block bootstrap5_content %}
+{% load bootstrap5 %}
+{% load static %}
+    <!-- Usado para construção do Datatables -->
+      <link href="https://cdn.datatables.net/v/bs5/jq-3.6.0/jszip-2.5.0/dt-1.13.4/b-2.3.6/b-html5-2.3.6/b-print-2.3.6/datatables.min.css" rel="stylesheet"/>
+        <div class="container ">
+            <div class="row d-flex justify-content-center align-items-center h-50 mt-5">
+                <div class="modal-body">
+                    <h4>{{associado.nomecompleto}}</h4>
+                     <div class="row">
+                         <div class="col-md-6">
+                             <h5>Dados Pessoais</h5>
+                             <ul class="list-unstyled">
+                                    <li>Data de Nascimento: <strong>{{ associado.dataNascimento }}</strong></li>
+                                    <li>Sexo: <strong>{{ associado.get_sexo_display }}</strong></li>
+                                    <li>CPF: <strong>{{ associado.cpf }}</strong></li>
+                                    <li>Número da identidade: <strong>{{ associado.identidade }}</strong></li>
+                                    <li>Estado Civil <strong>{{ associado.get_estadocivil_display }}</strong></li>
+                             </ul>
+                             <h5>Associação</h5>
+                             <ul class="list-unstyled">
+                                 <li>Tipo: <strong>{{associado.get_associacao_display}}</strong></li>
+                                 <li>Data da Asssociação: <strong>{{ associado.dataAssociacao }}</strong></li>
+                                 <li>Empresa: <strong>{{ associado.empresa }}</strong></li>
+                                 <li>Matricúla: <strong>{{ associado.matricula }}</strong></li>
+                             </ul>
+                             <h5>Contatos</h5>
+                             <ul class="list-unstyled">
+                                 <li>Celular: <strong>({{associado.dddNumeroContato}}) {{ associado.numeroContato }}</strong></li>
+                                 <li>E-mail: <strong>{{ associado.email }}</strong></li>
+                             </ul>
+                             <h5>Endereço Residencial</h5>
+                             <ul class="list-unstyled">
+                                 <li>CEP: <strong>{{ associado.cep }}</strong></li>
+                                 <li>Logradouro: <strong>{{ associado.logradouro }}</strong></li>
+                                 <li>Número: <strong>{{ associado.num }}</strong></li>
+                                 <li>Bairro: <strong>{{ associado.bairro }}</strong></li>
+                                 <li>Cidade: <strong>{{ associado.cidade }}</strong></li>
+                                 <li>Estado (UF): <strong>{{ associado.estado }}</strong></li>
+                             </ul>
+                         </div>
+                         <div class="col-md-6">
+                            {% if associado.dependentes.all %}
+                            <h5>Dependentes</h5>
+                            <ul class="list-unstyled">
+                                {% for dependente in associado.dependentes.all %}
+                                    <li>
+                                        <strong>{{ dependente.nomecompleto }}</strong><br>
+                                        Data de Nascimento: <strong>{{ dependente.dataNascimento }}</strong><br>
+                                        Sexo: <strong>{{ dependente.get_sexo_display }}</strong><br>
+                                        CPF: <strong>{{ dependente.cpf }}</strong><br>
+                                        Identidade: <strong>{{ dependente.identidade }}</strong><br>
+                                        Órgão Emissor: <strong>{{ dependente.get_orgemissor_display }}</strong><br>
+                                        Grau de Parentesco: <strong>{{ dependente.get_grauparentesco_display }}</strong>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                         </div>
+                     </div>
+                </div>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                  <a href='/associados/' class="btn btn-secondary me-md-2" type="button">Voltar</a>
+                  <button class="btn btn-primary" type="button">Imprimir</button>
+                </div>
+            </div>
+        </div>
+        {% bootstrap_javascript %}
+{% endblock bootstrap5_content %}

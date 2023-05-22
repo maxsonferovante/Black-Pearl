@@ -11,7 +11,7 @@
 
             {% bootstrap_messages %}
 
-              <form class="form-horizontal" action="{% url 'cadastrardjango' %}" method="post" autocomplete="off" >
+              <form class="form-horizontal" action="{% url 'cadastrar' %}" method="post" autocomplete="off" >
                   {% csrf_token %}
                  <div class="card mb-3">
                      <h6 class="card-header">Dados pessoais e contatos</h6>

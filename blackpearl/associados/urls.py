@@ -2,14 +2,17 @@
 from django.urls import path, include, re_path
 
 from blackpearl.associados import views
-
+from blackpearl.associados.views import HomeTemplateView, AssociadoUpdateView, AssociadoDeleteView, AssociadoDetailView, \
+    AssociadoCreateView, DependenteCreateView
 
 urlpatterns = [
-    path('', views.home, name='home_assoc'),
-    path('cadastrar/', views.cadastrardjango, name='cadastrardjango'),
-    path('cadastrardependentes/', views.cadastrardependentes, name='cadastrardependentes'),
+    path('', HomeTemplateView.as_view(), name='home_assoc'),
+    path('<int:pk>/', AssociadoDetailView.as_view(), name='visualizar'),
+    path('editar/<int:pk>/', AssociadoUpdateView.as_view(), name='editar'),
+    path('excluir/<int:pk>/', AssociadoDeleteView.as_view(), name='excluir'),
+
+    path('cadastrar/', AssociadoCreateView.as_view(), name='cadastrar'),
+    path('cadastrardependentes/', DependenteCreateView.as_view(), name='cadastrardependentes'),
     ##path('importExcel/', views.importExcel, name='importExcel'),
-    path('<int:associado_id>', views.visualizar, name='visualizar'),
-    path('editar/<int:associado_id>/', views.editar, name='editar'),
-    path('excluir/<int:associado_id>/', views.excluir, name='excluir'),
+
 ]

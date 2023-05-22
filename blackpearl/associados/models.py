@@ -6,7 +6,7 @@ from django.db.models import signals
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.template.defaultfilters import slugify
-
+from django.urls import reverse
 
 ESTADOS_CHOICES = [
     ("AC", "Acre"),
@@ -140,12 +140,13 @@ class Associado(Base):
         return dict(SEXO_CHOICES)[self.sexo]
     def get_associacao_display(self):
         return dict(ASSOCIACAO_CHOICES)[self.associacao]
-
-
+    def get_estadocivil_display(self):
+        return dict(ESTADOCIVIL_CHOICES)[self.estadocivil]
+    def get_absolute_url(self):
+        return reverse("editar", kwargs={"pk": self.pk})
 
 class Dependente(Base):
     titular = models.ForeignKey(Associado, on_delete=models.CASCADE, related_name='dependentes')
-
     nomecompleto = models.CharField('Nome Completo', max_length=300)
     dataNascimento = models.DateField('Data de Nascimento')
     sexo = models.CharField('Sexo', max_length=1, choices=SEXO_CHOICES)

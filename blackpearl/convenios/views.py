@@ -56,7 +56,7 @@ def cadastrarCartao(request):
                 titular_existente = CartaoConvenioVolus.objects.get(titular=titular)
                 messages.warning(request, 'O titular {} já tem um cartão contrado, o limite é de {}.'.format(titular,
                                                                                                              titular_existente.valorLimite))
-                return render(request, 'convenios/formsdjango.html', {'form': formCartao})
+                return render(request, 'convenios/associado_criar_form.html', {'form': formCartao})
             except ObjectDoesNotExist:
                 cartao = formCartao.save()
                 messages.success(request, 'Cartão incluido com sucesso!')
@@ -68,7 +68,7 @@ def cadastrarCartao(request):
     context = {
         'form': formCartao
     }
-    return render(request, 'convenios/formsdjango.html', context)
+    return render(request, 'convenios/associado_criar_form.html', context)
 
 @login_required(login_url='login')
 def cadastrarFatura(request):

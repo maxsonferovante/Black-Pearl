@@ -16,17 +16,16 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-
 from django.urls import path, include
-
+from blackpearl.usuarios.views import HomeView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('blackpearl.usuarios.urls')),
+    path('', HomeView.as_view()),
+    path('accounts/', include('blackpearl.usuarios.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),
     path('associados/', include('blackpearl.associados.urls')),
     path('convenios/', include('blackpearl.convenios.urls')),
-
-
     # path('login/', auth_views.LoginView.as_view(), name='login'),
     # path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 

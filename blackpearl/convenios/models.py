@@ -2,6 +2,8 @@ from _decimal import Decimal
 from django.db import models
 from django.db.models.signals import m2m_changed, pre_save
 from django.dispatch import receiver
+from django.urls import reverse
+
 from blackpearl.associados.models import Associado, Dependente
 
 
@@ -60,6 +62,8 @@ class CartaoConvenioVolus(Base):
 
     def __str__(self):
         return '{}'.format(self.titular)
+    def get_absolute_url(self):
+        return reverse("cartao_cadastrar", kwargs={"pk": self.pk})
 
 
 class FaturaCartao(Base):

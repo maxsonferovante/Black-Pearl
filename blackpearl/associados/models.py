@@ -101,16 +101,16 @@ class Associado(Base):
     sexo = models.CharField('Sexo', max_length=1, choices=SEXO_CHOICES)
 
     cpf = models.CharField('CPF', max_length=11)
-    identidade = models.CharField('Identidade', max_length=20, default='')
-    orgemissor = models.CharField('Órgão Emissor', max_length= 6, choices=ORGEMISSOR_CHOICES, default='')
-    estadocivil = models.CharField('Estado Civil', max_length= 2, choices=ESTADOCIVIL_CHOICES, default='')
+    identidade = models.CharField('Identidade', max_length=20, default='', blank=True)
+    orgemissor = models.CharField('Órgão Emissor', max_length= 6, choices=ORGEMISSOR_CHOICES, default='',  blank=True)
+    estadocivil = models.CharField('Estado Civil', max_length= 2, choices=ESTADOCIVIL_CHOICES, default='', blank=True)
 
     dataAssociacao = models.DateField('Data de Associação')
     associacao = models.CharField('Associação', max_length=50, choices=ASSOCIACAO_CHOICES, default= '')
-    matricula = models.IntegerField('Matricula', null=True)
+    matricula = models.IntegerField('Matricula', blank=True)
     empresa  = models.ForeignKey(Empresa, on_delete=models.CASCADE, related_name='empresa')
 
-    email = models.EmailField('e-mail')
+    email = models.EmailField('e-mail', )
     dddNumeroContato = models.CharField('DDD', max_length=2)
     numeroContato = models.CharField('Celular', max_length=9)
 

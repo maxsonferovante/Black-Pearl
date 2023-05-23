@@ -10,4 +10,4 @@ class EmpresaAdmin(admin.ModelAdmin):
     list_display = ('id','nome', 'estado', 'criado', 'ativo')
 @admin.register(Dependente)
 class DependenteAdmin(admin.ModelAdmin):
-    list_display = ('id','nomecompleto', 'dataNascimento', 'titular','criado', 'ativo')
+    list_display = ('nomecompleto','id', 'dataNascimento', 'titular','criado', 'ativo')

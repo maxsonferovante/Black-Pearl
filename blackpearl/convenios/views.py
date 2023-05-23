@@ -7,68 +7,58 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib import messages
+from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
+from django.views.generic import TemplateView, ListView, CreateView
 from reportlab.pdfgen import canvas
 
 from .forms import CartaoConvenioVolusForm, FaturaCartaoForm, ContratacaoPlanoOdontologicoForm
 from .models import CartaoConvenioVolus, FaturaCartao, ContratacaoPlanoOdontologico
 
 
-# Create your views here.
-@login_required(login_url='login')
-def home(request):
-    return render(request, 'convenios/home.html')
+@method_decorator(login_required, name='dispatch')
+class HomeTemplateView(TemplateView):
+    template_name = 'convenios/home.html'
 
-@login_required(login_url='login')
-def listagemcartoes(request):
-    nome_pesquisado = request.GET.get('obj')
-    if nome_pesquisado:
-        cartoes = CartaoConvenioVolus.objects.filter(titular__nomecompleto__icontains=nome_pesquisado).order_by(
-            'titular')
-    else:
-        cartoes = CartaoConvenioVolus.objects.all()
+    def get_context_data(self, **kwargs):
+        context = super(HomeTemplateView, self).get_context_data(**kwargs)
+        return context
 
-    paramentro_page = request.GET.get('page', '1')
-    paramentro_limit = request.GET.get('limit', '10')
 
-    if not (paramentro_limit.isdigit() and int(paramentro_limit) > 0):
-        paramentro_limit = '10'
+@method_decorator(login_required, name='dispatch')
+class CartaoListView(ListView):
+    template_name = 'convenios/listagemcartoes.html'
+    def get_context_data(self, **kwargs):
+        context = super(CartaoListView, self).get_context_data(**kwargs)
+        return context
 
-    cartoes_paginator = Paginator(cartoes, paramentro_limit)
-
-    try:
-        page = cartoes_paginator.page(paramentro_page)
-    except (EmptyPage, PageNotAnInteger):
-        page = cartoes_paginator.page(1)
-
-    context = {
-        'list_objs': page
-    }
-    return render(request, 'convenios/listagemcartoes.html', context)
-
-@login_required(login_url='login')
-def cadastrarCartao(request):
-    if str(request.method) == 'POST':
-        formCartao = CartaoConvenioVolusForm(request.POST)
-        if formCartao.is_valid():
-            titular = formCartao.cleaned_data['titular']
-
-            try:
-                titular_existente = CartaoConvenioVolus.objects.get(titular=titular)
-                messages.warning(request, 'O titular {} já tem um cartão contrado, o limite é de {}.'.format(titular,
-                                                                                                             titular_existente.valorLimite))
-                return render(request, 'convenios/associado_criar_form.html', {'form': formCartao})
-            except ObjectDoesNotExist:
-                cartao = formCartao.save()
-                messages.success(request, 'Cartão incluido com sucesso!')
-                formCartao = CartaoConvenioVolusForm()
+    def get(self, request, *args, **kwargs):
+        nome_pesquisado = self.request.GET.get('obj')
+        if nome_pesquisado:
+            cartoes = CartaoConvenioVolus.objects.filter(titular__nomecompleto__icontains=nome_pesquisado).order_by(
+                'titular')
         else:
-            messages.error(request, 'Verifique os campos destacados.')
-    else:
-        formCartao = CartaoConvenioVolusForm()
-    context = {
-        'form': formCartao
-    }
-    return render(request, 'convenios/associado_criar_form.html', context)
+            cartoes = CartaoConvenioVolus.objects.all()
+        paramentro_page = self.request.GET.get('page', '1')
+        paramentro_limit = self.request.GET.get('limit', '10')
+        if not (paramentro_limit.isdigit() and int(paramentro_limit) > 0):
+            paramentro_limit = '10'
+        cartoes_paginator = Paginator(cartoes, paramentro_limit)
+        try:
+            page = cartoes_paginator.page(paramentro_page)
+        except (EmptyPage, PageNotAnInteger):
+            page = cartoes_paginator.page(1)
+
+        return render(request, self.template_name, {
+            'list_objs': page
+        })
+
+@method_decorator(login_required, name='dispatch')
+class CartaoCreateView(CreateView):
+    model = CartaoConvenioVolus
+    form_class = CartaoConvenioVolusForm
+    template_name_suffix = "_criar_form"
+    success_url = reverse_lazy('listagemcartoes')
 
 @login_required(login_url='login')
 def cadastrarFatura(request):

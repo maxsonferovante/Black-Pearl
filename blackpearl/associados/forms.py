@@ -95,22 +95,23 @@ class DependenteModelForm(forms.ModelForm):
             ),
         }
 
-    def clean(self):
+
+"""   def clean(self):
         cleaned_data = super().clean()
         nomecompleto = cleaned_data.get('nomecompleto')
         dataNascimento = cleaned_data.get('dataNascimento')
         cpf = cleaned_data.get('cpf')
         titular = cleaned_data.get('titular')
 
-        print (nomecompleto, titular, cpf,dataNascimento)
-
         if nomecompleto and dataNascimento and titular and cpf:
             # Verificar se já existe um dependente com o mesmo nome completo e data de nascimento para o associado atual
             if Dependente.objects.filter(titular__nomecompleto=titular, nomecompleto=nomecompleto,
                                          dataNascimento=dataNascimento, cpf=cpf).exists():
+                print(Dependente.objects.filter(titular__nomecompleto=titular, nomecompleto=nomecompleto,
+                                         dataNascimento=dataNascimento, cpf=cpf).exists())
                 raise ValidationError('Esse dependente já foi cadastrado para o associado.')
 
-        return cleaned_data
+        return cleaned_data"""
 
 
 """

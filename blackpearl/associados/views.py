@@ -6,7 +6,7 @@ from _decimal import Decimal
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
@@ -32,14 +32,14 @@ class HomeTemplateView(TemplateView):
         return context
 
     def get(self, request, *args, **kwargs):
-        nome_pesquisa = request.GET.get('obj')
+        nome_pesquisa = self.request.GET.get('obj')
         if nome_pesquisa:
             associados = Associado.objects.filter(nomecompleto__icontains=nome_pesquisa).order_by('nomecompleto')
         else:
             associados = Associado.objects.all().order_by('nomecompleto')
 
-        paramentro_page = request.GET.get('page', '1')
-        paramentro_limit = request.GET.get('limit', '10')
+        paramentro_page = self.request.GET.get('page', '1')
+        paramentro_limit = self.request.GET.get('limit', '10')
 
         if not (paramentro_limit.isdigit() and int(paramentro_limit) > 0):
             paramentro_limit = '10'
@@ -51,11 +51,9 @@ class HomeTemplateView(TemplateView):
             page = associados_paginator.page(1)
 
         ##gerador_dados(5)
-        context = {
+        return render(request, self.template_name, {
             'object_list': page
-
-        }
-        return render(request, self.template_name, context)
+        })
 
 
 @method_decorator(login_required, name='dispatch')
@@ -69,9 +67,7 @@ class AssociadoCreateView(CreateView):
 @method_decorator(login_required, name='dispatch')
 class AssociadoUpdateView(UpdateView):
     model = Associado
-    fields = ['nomecompleto', 'dataNascimento', 'sexo', 'cpf', 'identidade', 'orgemissor', 'estadocivil',
-              'dataAssociacao', 'associacao', 'empresa', 'email', 'dddNumeroContato', 'numeroContato',
-              'cep', 'logradouro', 'num', 'bairro', 'cidade', 'estado', 'matricula']
+    form_class = AssociadoModelForm
     template_name_suffix = "_editar_form"
     success_url = reverse_lazy('home_assoc')
 
@@ -108,11 +104,29 @@ class DependenteCreateView(SuccessMessageMixin, CreateView):
             # Executar a validação padrão do CreateView
             response = super().form_valid(form)
             # Redirecionar para a página de sucesso
-            messages.success(self.request, 'Dependente criado com sucesso.')
             return response
         else:
-            messages.success(self.request, 'Já existe um dependente cadastrado com esses dados.')
             return self.render_to_response(self.get_context_data(form=form))
+
+
+@method_decorator(login_required, name='dispatch')
+class DependenteUpdateView(UpdateView):
+    model = Dependente
+    form_class = DependenteModelForm
+    template_name_suffix = "_editar_form"
+
+    def get_success_url(self):
+        associado_pk = self.object.titular.pk
+        return reverse('visualizar_associado', kwargs={'pk': associado_pk})
+
+
+@method_decorator(login_required, name='dispatch')
+class DependenteDeleteView(DeleteView):
+    model = Dependente
+
+    def get_success_url(self):
+        associado_pk = self.object.titular.pk
+        return reverse('visualizar_associado', kwargs={'pk': associado_pk})
 
 
 @login_required(login_url='login')

@@ -73,17 +73,16 @@ class FaturaCartao(Base):
                                        blank=True)
     competencia = models.DateField('Competência')
 
-    def save(self, *args, **kwargs):
-        taxa_administrativa = TaxasAdministrativa.objects.get(grupos='outros')
-
-        percentual_taxa = taxa_administrativa.percentual
-        taxa = 1 + (percentual_taxa / Decimal(100.0))
-        self.valorComTaxa = self.valor * taxa
-        super().save(*args, **kwargs)
 
     def __str__(self):
         return 'Valor da fatura e competência: {}  / {}'.format(self.valor, self.competencia)
 
+@receiver(pre_save, sender= FaturaCartao)
+def aplicar_taxa_adm_cartao(sender, instance, *args, **kwargs):
+    taxa_administrativa = TaxasAdministrativa.objects.get(grupos='outros')
+    percentual_taxa = taxa_administrativa.percentual
+    taxa = 1 + (percentual_taxa / Decimal(100.0))
+    instance.valorComTaxa = instance.valor * taxa
 
 class PlanoOdontologico(Base):
     nome = models.CharField('Nome', default='Uniodonto Belém', max_length=20)
@@ -105,7 +104,6 @@ class ContratacaoPlanoOdontologico(Base):
         return '{} - {} - Plano: {}'.format(self.id, self.contratante, self.plano_odontologico)
 
 @receiver(pre_save, sender=ContratacaoPlanoOdontologico)
-
 def atualizar_valor_planoOdontologico(sender, instance, *args, **kwargs):
     valorPlano = PlanoOdontologico.objects.get(numContrato='00319').valorUnitario
     taxa = TaxasAdministrativa.objects.get(grupos=instance.contratante.associacao)

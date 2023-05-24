@@ -2,18 +2,21 @@ from io import BytesIO
 import openpyxl
 
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.http import HttpResponse
-from django.shortcuts import render
-from django.contrib import messages
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render, redirect
+from django.urls import reverse_lazy, reverse
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
+from django.views import View
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView, ListView, CreateView
 from reportlab.pdfgen import canvas
 
 from .forms import CartaoConvenioVolusForm, FaturaCartaoForm, ContratacaoPlanoOdontologicoForm
 from .models import CartaoConvenioVolus, FaturaCartao, ContratacaoPlanoOdontologico
+from django.shortcuts import render
+from .models import ContratacaoPlanoOdontologico, Dependente
 
 
 @method_decorator(login_required, name='dispatch')
@@ -28,6 +31,7 @@ class HomeTemplateView(TemplateView):
 @method_decorator(login_required, name='dispatch')
 class CartaoListView(ListView):
     template_name = 'convenios/listagemcartoes.html'
+
     def get_context_data(self, **kwargs):
         context = super(CartaoListView, self).get_context_data(**kwargs)
         return context
@@ -53,6 +57,7 @@ class CartaoListView(ListView):
             'list_objs': page
         })
 
+
 @method_decorator(login_required, name='dispatch')
 class CartaoCreateView(CreateView):
     model = CartaoConvenioVolus
@@ -60,105 +65,97 @@ class CartaoCreateView(CreateView):
     template_name_suffix = "_criar_form"
     success_url = reverse_lazy('listagemcartoes')
 
-@login_required(login_url='login')
-def cadastrarFatura(request):
-    if str(request.method) == 'POST':
-        formFatura = FaturaCartaoForm(request.POST)
-        if formFatura.is_valid():
 
-            cartao = formFatura.cleaned_data['cartao']
-            competencia = formFatura.cleaned_data['competencia']
-            valor = formFatura.cleaned_data['valor']
+@method_decorator(login_required, name='dispatch')
+class FaturaCreateView(CreateView):
+    model = FaturaCartao
+    form_class = FaturaCartaoForm
+    template_name_suffix = '_criar_form'
+    success_url = reverse_lazy('listagemfaturas')
 
-            try:
-                fatura_existente = FaturaCartao.objects.get(cartao=cartao, competencia=competencia)
-                messages.warning(request,
-                                 'O cartão do {} já tem uma fatura registrada para a competencia {}.'
-                                 .format(cartao, fatura_existente.competencia))
 
-                return render(request, 'convenios/formsfatura.html', {'form': formFatura})
-            except ObjectDoesNotExist:
-                fatura = formFatura.save()
-                messages.success(request, 'Fatura de competencia {} incluída com sucesso!'.format(fatura.competencia))
-                formFatura = FaturaCartaoForm()
+@method_decorator(login_required, name='dispatch')
+class FaturaListView(ListView):
+    template_name = 'convenios/listagem_faturas.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(FaturaListView, self).get_context_data(**kwargs)
+        return context
+
+    def get(self, request, *args, **kwargs):
+        nome_pesquisado = self.request.GET.get('obj')
+        if nome_pesquisado:
+            faturas = FaturaCartao.objects.filter(cartao__titular__nomecompleto__icontains=nome_pesquisado).order_by(
+                'cartao')
         else:
-            messages.error(request, formFatura.errors.get('competencia'))
-    else:
-        formFatura = FaturaCartaoForm()
-    context = {
-        'form': formFatura
-    }
-    return render(request, 'convenios/formsfatura.html', context)
+            faturas = FaturaCartao.objects.filter().order_by('competencia')
 
-@login_required(login_url='login')
-def listarFaturas(request):
-    nome_pesquisado = request.GET.get('obj')
-    if nome_pesquisado:
-        faturas = FaturaCartao.objects.filter(cartao__titular__nomecompleto__icontains=nome_pesquisado).order_by(
-            'cartao')
-    else:
-        faturas = FaturaCartao.objects.filter().order_by('competencia')
+        paramentro_page = self.request.GET.get('page', '1')
+        paramentro_limit = self.request.GET.get('limit', '10')
 
-    paramentro_page = request.GET.get('page', '1')
-    paramentro_limit = request.GET.get('limit', '10')
+        if not (paramentro_limit.isdigit() and int(paramentro_limit) > 0):
+            paramentro_limit = '10'
 
-    if not (paramentro_limit.isdigit() and int(paramentro_limit) > 0):
-        paramentro_limit = '10'
+        fatura_paginator = Paginator(faturas, paramentro_limit)
 
-    fatura_paginator = Paginator(faturas, paramentro_limit)
+        try:
+            page = fatura_paginator.page(paramentro_page)
+        except (EmptyPage, PageNotAnInteger):
+            page = fatura_paginator.page(1)
 
-    try:
-        page = fatura_paginator.page(paramentro_page)
-    except (EmptyPage, PageNotAnInteger):
-        page = fatura_paginator.page(1)
+        return render(request, self.template_name, {
+            'list_objs': page
+        })
 
-    context = {
-        'list_objs': page
-    }
-    return render(request, 'convenios/listarFaturas.html', context)
 
-@login_required(login_url='login')
-def contratacaoodontologica(request):
-    if str(request.method) == 'POST':
-        form_contrante = ContratacaoPlanoOdontologicoForm(request.POST)
-        if form_contrante.is_valid():
-            form_contrante.save()
-            messages.success(request,'Contratação feita com sucesso!')
-            form_contrante = ContratacaoPlanoOdontologicoForm()
+@method_decorator(login_required, name='dispatch')
+class ContratacaoOdontologicaCreateView(CreateView):
+    model = ContratacaoPlanoOdontologico
+    form_class = ContratacaoPlanoOdontologicoForm
+    template_name_suffix = '_criar_form'
+    success_url = reverse_lazy('listagemcontratacaoodontologica')
+
+
+class VerificarDependentesView(View):
+    @csrf_exempt
+    def get(self, request):
+        contratante_id = self.request.GET.get('contratante_id')
+        has_dependents = ContratacaoPlanoOdontologico.objects.filter(contratante_id=contratante_id,
+                                                                     dependentes__isnull=False).exists()
+        return JsonResponse({'has_dependents': has_dependents})
+
+
+@method_decorator(login_required, name='dispatch')
+class ContratacaoOdontologicaListView(ListView):
+    template_name = 'convenios/listagem_contratacaoodontologica.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ContratacaoOdontologicaListView, self).get_context_data(**kwargs)
+        return context
+
+    def get(self, request, *args, **kwargs):
+        nome_pesquisado = self.request.GET.get('obj')
+        if nome_pesquisado:
+            contratos = ContratacaoPlanoOdontologico.objects.filter(
+                contratante__nomecompleto__icontains=nome_pesquisado).order_by('contratante')
         else:
-            messages.warning(request,'Verifique os campos destacados!')
-    else:
-        form_contrante = ContratacaoPlanoOdontologicoForm()
+            contratos = ContratacaoPlanoOdontologico.objects.all()
 
-    context = {
-        'form': form_contrante
-    }
-    return render(request, 'convenios/contratacaoodontologica.html', context)
+        paramentro_page = self.request.GET.get('page', '1')
+        paramentro_limit = self.request.GET.get('limit', '10')
+        if not (paramentro_limit.isdigit() and int(paramentro_limit) > 0):
+            paramentro_limit = '10'
 
-def listarcontratacaoodontologica(request):
-    nome_pesquisado = request.GET.get('obj')
-    if nome_pesquisado:
-        contratos = ContratacaoPlanoOdontologico.objects.filter(contratante__nomecompleto__icontains = nome_pesquisado).order_by('contratante')
-    else:
-        contratos = ContratacaoPlanoOdontologico.objects.all()
+        contratos_paginator = Paginator(contratos, paramentro_limit)
+        try:
+            page = contratos_paginator.page(paramentro_page)
+        except (EmptyPage, PageNotAnInteger):
+            page = contratos_paginator.page(1)
 
-    paramentro_page = request.GET.get('page', '1')
-    paramentro_limit = request.GET.get('limit', '10')
+        return render(request, self.template_name, {
+            'list_objs': page
+        })
 
-    if not (paramentro_limit.isdigit() and int(paramentro_limit) > 0):
-        paramentro_limit = '10'
-
-    contratos_paginator = Paginator(contratos, paramentro_limit)
-
-    try:
-        page = contratos_paginator.page(paramentro_page)
-    except (EmptyPage, PageNotAnInteger):
-        page = contratos_paginator.page(1)
-
-    context = {
-        'list_objs': page
-    }
-    return render(request, 'convenios/listagemcontratacaoodontologica.html', context)
 
 def exportar(request):
     empresa_selecionada = request.GET.get('inputGroupSelectEmpresa')
@@ -187,7 +184,9 @@ def exportar(request):
                             nome_arq=nome_arq,
                             tipoArquivo_selecionado=tipoArquivo_selecionado)
 
-    return listarFaturas(request)
+    return reverse_lazy('listagemfaturas')
+
+
 def exporttofile(faturas, nome_arq, tipoArquivo_selecionado):
     filename = f"{nome_arq}"
 
@@ -260,4 +259,3 @@ def exporttofile(faturas, nome_arq, tipoArquivo_selecionado):
         response['Content-Disposition'] = f'attachment; filename="{nome_arq}.txt'"""
 
     return response
-

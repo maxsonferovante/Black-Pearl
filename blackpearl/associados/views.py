@@ -12,7 +12,7 @@ from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.views.generic import TemplateView, UpdateView, DeleteView, DetailView, CreateView
+from django.views.generic import TemplateView, UpdateView, DeleteView, DetailView, CreateView, ListView
 from reportlab.pdfgen import canvas
 
 from .importExcelToAssociados import import_excel_to_associado
@@ -24,8 +24,9 @@ from ..convenios.models import CartaoConvenioVolus, FaturaCartao
 # Create your views here.
 #
 @method_decorator(login_required, name='dispatch')
-class HomeTemplateView(TemplateView):
+class HomeTemplateView(ListView):
     template_name = 'associados/home.html'
+
 
     def get_context_data(self, **kwargs):
         context = super(HomeTemplateView, self).get_context_data(**kwargs)

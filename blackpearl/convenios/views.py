@@ -1,22 +1,23 @@
 from io import BytesIO
 import openpyxl
-
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render, redirect
-from django.urls import reverse_lazy, reverse
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView, ListView, CreateView
+from formtools.wizard.views import SessionWizardView
+
 from reportlab.pdfgen import canvas
 
-from .forms import CartaoConvenioVolusForm, FaturaCartaoForm, ContratacaoPlanoOdontologicoForm
-from .models import CartaoConvenioVolus, FaturaCartao, ContratacaoPlanoOdontologico
-from django.shortcuts import render
-from .models import ContratacaoPlanoOdontologico, Dependente
+from .forms import CartaoConvenioVolusForm, FaturaCartaoForm, ContratoPlanoOdontologicoFormStepOne, \
+    ContratoPlanoOdontologicoDependenteFormStepTwo
+from django.shortcuts import render, redirect
+
+from .models import CartaoConvenioVolus, FaturaCartao, ContratoPlanoOdontologico
+from ..associados.models import Associado
 
 
 @method_decorator(login_required, name='dispatch')
@@ -108,38 +109,56 @@ class FaturaListView(ListView):
         })
 
 
+def show_dependentes_form(wizard):
+    cleaned_data = wizard.get_cleaned_data_for_step('0') or {}
+    return cleaned_data.get('is_dependentes_associado')
+
+
 @method_decorator(login_required, name='dispatch')
-class ContratacaoOdontologicaCreateView(CreateView):
-    model = ContratacaoPlanoOdontologico
-    form_class = ContratacaoPlanoOdontologicoForm
-    template_name_suffix = '_criar_form'
-    success_url = reverse_lazy('listagemcontratacaoodontologica')
+class ContratoPlanoOdontologicoWizardView(SessionWizardView):
+    form_list = [ContratoPlanoOdontologicoFormStepOne, ContratoPlanoOdontologicoDependenteFormStepTwo]
+    template_name = 'convenios/Contratoplanoodontologico_criar_form.html'
+    condition_dict = {'1': show_dependentes_form}
+
+    def done(self, form_list, **kwargs):
+        contratante_form = form_list[0]
+        if contratante_form.cleaned_data.get('is_dependentes_associado'):
+            contratante_form.save()
+            form_list[1].save()
+        else:
+            contratante_form.save()
+        return redirect('listagemContratoodontologica')
 
 
 class VerificarDependentesView(View):
     @csrf_exempt
     def get(self, request):
         contratante_id = self.request.GET.get('contratante_id')
-        has_dependents = ContratacaoPlanoOdontologico.objects.filter(contratante_id=contratante_id,
-                                                                     dependentes__isnull=False).exists()
-        return JsonResponse({'has_dependents': has_dependents})
+        contratante_id = request.GET.get('contratante_id')
+        try:
+            contratante = Associado.objects.get(pk=contratante_id)
+            dependentes = contratante.dependentes.all()
+            dependentes_data = [{'id': dep.pk, 'nomecompleto': dep.nomecompleto} for dep in dependentes]
+            return JsonResponse({'has_dependents': dependentes.exists(), 'dependentes': dependentes_data})
+        except Associado.DoesNotExist:
+            return JsonResponse({'has_dependents': False, 'dependentes': []})
 
 
 @method_decorator(login_required, name='dispatch')
-class ContratacaoOdontologicaListView(ListView):
-    template_name = 'convenios/listagem_contratacaoodontologica.html'
+class ContratoOdontologicaListView(ListView):
+    template_name = 'convenios/listagem_Contratoodontologica.html'
 
     def get_context_data(self, **kwargs):
-        context = super(ContratacaoOdontologicaListView, self).get_context_data(**kwargs)
+        context = super(ContratoOdontologicaListView, self).get_context_data(**kwargs)
         return context
 
     def get(self, request, *args, **kwargs):
         nome_pesquisado = self.request.GET.get('obj')
         if nome_pesquisado:
-            contratos = ContratacaoPlanoOdontologico.objects.filter(
+            contratos = ContratoPlanoOdontologico.objects.filter(
                 contratante__nomecompleto__icontains=nome_pesquisado).order_by('contratante')
         else:
-            contratos = ContratacaoPlanoOdontologico.objects.all()
+            contratos = ContratoPlanoOdontologico.objects.all()
 
         paramentro_page = self.request.GET.get('page', '1')
         paramentro_limit = self.request.GET.get('limit', '10')

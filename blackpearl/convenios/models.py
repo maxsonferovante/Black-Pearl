@@ -62,6 +62,7 @@ class CartaoConvenioVolus(Base):
 
     def __str__(self):
         return '{}'.format(self.titular)
+
     def get_absolute_url(self):
         return reverse("cartao_cadastrar", kwargs={"pk": self.pk})
 
@@ -73,16 +74,17 @@ class FaturaCartao(Base):
                                        blank=True)
     competencia = models.DateField('Competência')
 
-
     def __str__(self):
         return 'Valor da fatura e competência: {}  / {}'.format(self.valor, self.competencia)
 
-@receiver(pre_save, sender= FaturaCartao)
+
+@receiver(pre_save, sender=FaturaCartao)
 def aplicar_taxa_adm_cartao(sender, instance, *args, **kwargs):
     taxa_administrativa = TaxasAdministrativa.objects.get(grupos='outros')
     percentual_taxa = taxa_administrativa.percentual
     taxa = 1 + (percentual_taxa / Decimal(100.0))
     instance.valorComTaxa = instance.valor * taxa
+
 
 class PlanoOdontologico(Base):
     nome = models.CharField('Nome', default='Uniodonto Belém', max_length=20)
@@ -94,28 +96,42 @@ class PlanoOdontologico(Base):
         return '{} - {}'.format(self.nome, self.numContrato)
 
 
-class ContratacaoPlanoOdontologico(Base):
+class ContratoPlanoOdontologico(Base):
     contratante = models.OneToOneField(Associado, on_delete=models.CASCADE, related_name='plano_odontologico')
     plano_odontologico = models.ForeignKey(PlanoOdontologico, on_delete=models.CASCADE)
     dependentes = models.ManyToManyField(Dependente)
     valor = models.DecimalField('Valor', max_digits=8, decimal_places=2, null=True, blank=True)
-
+    def atualizar_valor_planoOdontologico_dependentes(self):
+        valorPlano = PlanoOdontologico.objects.get(numContrato='00319').valorUnitario
+        taxa = TaxasAdministrativa.objects.get(grupos=self.contratante.associacao)
+        try:
+            self.valor = ((valorPlano * (1 + self.dependentes.count())) / (
+                    Decimal(100.0) - taxa.percentual)) * Decimal(100.0)
+        except ValueError:
+            self.valor = (valorPlano / (Decimal(100.0) - taxa.percentual)) * Decimal(100.0)
+        self.save()
     def __str__(self):
         return '{} - {} - Plano: {}'.format(self.id, self.contratante, self.plano_odontologico)
 
-@receiver(pre_save, sender=ContratacaoPlanoOdontologico)
+
+class ContratoPlanoOdontologicoDependete(models.Model):
+    titular_contratante = models.ForeignKey(ContratoPlanoOdontologico, on_delete=models.CASCADE)
+    dependente = models.ForeignKey(Dependente, on_delete=models.CASCADE)
+    valor = models.DecimalField('Valor', max_digits=8, decimal_places=2, null=True, blank=True)
+
+@receiver(pre_save,sender = ContratoPlanoOdontologicoDependete)
+def atualizar_valor_planoOdontologico_dependente(sender, instance, *args, **kwargs):
+    valorPlano = PlanoOdontologico.objects.get(numContrato='00319').valorUnitario
+    taxa = TaxasAdministrativa.objects.get(grupos=instance.dependente.titular.associacao)
+    instance.valor = (valorPlano / (Decimal(100.0) - taxa.percentual)) * Decimal(100.0)
+
+@receiver(pre_save, sender=ContratoPlanoOdontologico)
 def atualizar_valor_planoOdontologico(sender, instance, *args, **kwargs):
     valorPlano = PlanoOdontologico.objects.get(numContrato='00319').valorUnitario
     taxa = TaxasAdministrativa.objects.get(grupos=instance.contratante.associacao)
-    try:
-        instance.valor = ((valorPlano * (1 + instance.dependentes.count())) / (
-                Decimal(100.0) - taxa.percentual)) * Decimal(100.0)
-    except ValueError:
-        instance.valor = (valorPlano / (Decimal(100.0) - taxa.percentual)) * Decimal(100.0)
+    instance.valor = (valorPlano / (Decimal(100.0) - taxa.percentual)) * Decimal(100.0)
 
-@receiver(m2m_changed, sender=ContratacaoPlanoOdontologico.dependentes.through)
-def atualizar_valor_planoOdontologico_dependentes(sender, instance, action, **kwargs):
-    instance.save()
+
 
 
 class Otica(Base):

@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crispy_forms',
     'widget_tweaks',
-    'admin_kit',
     'crispy_bootstrap5',
     'blackpearl.associados',
     'blackpearl.convenios',

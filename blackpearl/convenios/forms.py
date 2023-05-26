@@ -1,7 +1,11 @@
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 from django import forms
 from django.forms import DateInput
 from blackpearl.associados.models import Associado, Dependente
-from blackpearl.convenios.models import CartaoConvenioVolus, FaturaCartao,ContratacaoPlanoOdontologico
+from blackpearl.convenios.models import CartaoConvenioVolus, FaturaCartao, ContratoPlanoOdontologico, \
+    ContratoPlanoOdontologicoDependete
+
 from widget_tweaks.templatetags.widget_tweaks import register
 
 
@@ -12,14 +16,15 @@ class CartaoConvenioVolusForm(forms.ModelForm):
         fields = ['titular', 'valorLimite', 'status']
 
     def __int__(self, *args, **kwargs):
-        super.__init__( *args, **kwargs)
+        super.__init__(*args, **kwargs)
         self.fields['titular'].queryset = Associado.objects.none()
 
         if 'titular' in self.data:
             self.fields['titular'].queryset = Associado.objects.all()
         elif self.instance.pk:
             self.fields['titular'].queryset = Associado.objects.all().filter(
-                pk = self.instance.pk)
+                pk=self.instance.pk)
+
 
 class FaturaCartaoForm(forms.ModelForm):
     class Meta:
@@ -64,17 +69,35 @@ class FaturaCartaoForm(forms.ModelForm):
         return cleaned_data
 
 
-class ContratacaoPlanoOdontologicoForm(forms.ModelForm):
-    valor = forms.DecimalField(max_digits=8, decimal_places=2,  required= False, disabled= True)
+class ContratoPlanoOdontologicoFormStepOne(forms.ModelForm):
+    BOOL_CHOICES = [(True, 'Sim'), (False, 'Não')]
+    is_dependentes_associado = forms.BooleanField(label='Inclua seus dependentes ?',
+                                                  widget=forms.RadioSelect(
+                                                      choices=BOOL_CHOICES),
+                                                  required=False,
+                                                  initial=False
+                                                  )
+    contratante = forms.ModelChoiceField(
+        queryset=Associado.objects.filter(associacao__in=['ag', 'fiativo', 'fiaposent']).exclude(ativo=False)
+    )
+    class Meta:
+        model = ContratoPlanoOdontologico
+        fields = ['contratante', 'plano_odontologico']
+
+
+class ContratoPlanoOdontologicoDependenteFormStepTwo(forms.ModelForm):
+    contratante_id = forms.IntegerField(widget=forms.HiddenInput())
     dependentes = forms.ModelMultipleChoiceField(
-        queryset= Dependente.objects.all(),
-        widget= forms.CheckboxSelectMultiple(
+        queryset=Dependente.objects.filter(titular__associacao__in=['ag', 'fiativo', 'fiaposent']).exclude(titular__ativo=False),
+        widget=forms.CheckboxSelectMultiple(
             attrs={
                 'class': 'chosen-select'
             }), required=False)
+
     class Meta:
-        model = ContratacaoPlanoOdontologico
-        fields = ['contratante', 'plano_odontologico', 'dependentes','valor']
+        model = ContratoPlanoOdontologicoDependete
+        fields = ['contratante_id','dependentes']
+
 
 
 @register.filter(name='add_class')

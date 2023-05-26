@@ -2,8 +2,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
 from blackpearl.convenios.views import HomeTemplateView, CartaoListView, CartaoCreateView, FaturaCreateView, \
-    FaturaListView, ContratacaoOdontologicaCreateView, ContratacaoOdontologicaListView, \
-    VerificarDependentesView
+    FaturaListView, ContratoOdontologicaListView, \
+    VerificarDependentesView, ContratoPlanoOdontologicoWizardView
 
 from blackpearl.convenios import views
 urlpatterns = [
@@ -12,8 +12,9 @@ urlpatterns = [
     path('listagemcartoes/', CartaoListView.as_view(), name ='listagemcartoes'),
     path('cadastrarfatura/', FaturaCreateView.as_view(), name ='fatura_cadastrar'),
     path('listagemfaturas/', FaturaListView.as_view(), name ='listagemfaturas'),
-    path('contratacaoodontologica/', ContratacaoOdontologicaCreateView.as_view(), name='contratacaoodontologica_cadastrar'),
-    path('listagemcontratacaoodontologica/', ContratacaoOdontologicaListView.as_view(), name='listagemcontratacaoodontologica'),
+    path('Contratoodontologica/', ContratoPlanoOdontologicoWizardView.as_view(), name='Contratoodontologica_cadastrar'),
+    path('listagemContratoodontologica/', ContratoOdontologicaListView.as_view(),
+         name='listagemContratoodontologica'),
 
     path('verificardependentes/', VerificarDependentesView.as_view(), name='verificar_dependentes'),
 

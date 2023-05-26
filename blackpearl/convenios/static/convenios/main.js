@@ -1,26 +1,33 @@
+$('#div_id_dependentes').html('');
+
 $(document).ready(function() {
   $('#id_contratante').change(function() {
     var contratanteId = $(this).val();
     if (contratanteId) {
       $.ajax({
+        url: '/convenios/verificardependentes/',
         type: 'GET',
-        url: '/convenios/verificardependentes/',  // Certifique-se de usar uma barra inicial para a URL
         data: {'contratante_id': contratanteId},
         success: function(response) {
           if (response.has_dependents) {
-            $('#dependente-message').text(' Incluir dependentes');
-            $('#adicionar-dependente-btn').prop('disabled', false);
-
+            var dependentes = response.dependentes;
+            var checkboxes = '';
+            for (var i = 0; i < dependentes.length; i++) {
+              checkboxes += '<div class="form-check">';
+              checkboxes += '<input type="checkbox" name="dependentes" value="' + dependentes[i].id + '" id="id_dependentes_' + i + '" class="form-check-input">';
+              checkboxes += '<label for="id_dependentes_' + i + '" class="form-check-label">' + dependentes[i].nomecompleto + '</label>';
+              checkboxes += '</div>';
+            }
+            $('#div_id_dependentes').html(checkboxes);
           } else {
-            $('#dependente-message').text(' Cadastrar dependentes');
-            $('#adicionar-dependente-btn').prop('disabled', true);
+            $('#div_id_dependentes').html('');
           }
         }
       });
     } else {
-      $('#dependente-message').text('');
-      $('#adicionar-dependente-btn').prop('disabled', true);
+      $('#div_id_dependentes').html('');
     }
   });
 });
+
 

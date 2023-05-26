@@ -1,46 +1,61 @@
 from django.contrib import admin
+from django import forms
+from django.contrib import admin
 
-from .forms import ContratacaoPlanoOdontologicoForm
 from .models import ValoresPorFaixa, PlanoSaude, CartaoConvenioVolus, PlanoOdontologico, Otica, TaxasAdministrativa, \
-    FaturaCartao, ContratacaoPlanoOdontologico
+    FaturaCartao, ContratoPlanoOdontologico, ContratoPlanoOdontologicoDependete
+from ..associados.models import Dependente
+
 """, ContratacaoPlanoOdontologico, ContratacaoDependentePlanoOdontologico"""
 
 
 # Register your models here.
 @admin.register(ValoresPorFaixa)
 class ValoresPorFaixaAdmin(admin.ModelAdmin):
-    list_display = ('planoSaude','idadeMin', 'idadeMax', 'valor', 'ativo')
+    list_display = ('planoSaude', 'idadeMin', 'idadeMax', 'valor', 'ativo')
+
 
 @admin.register(PlanoSaude)
 class PlanoSaudeAdmin(admin.ModelAdmin):
-    list_display = ('nome','cnpj', 'segmentacao', 'contrato', 'ativo')
+    list_display = ('nome', 'cnpj', 'segmentacao', 'contrato', 'ativo')
+
 
 @admin.register(CartaoConvenioVolus)
 class CartaoConvenioAdmin(admin.ModelAdmin):
-    list_display = ('titular', 'valorLimite','status', 'ativo')
+    list_display = ('titular', 'valorLimite', 'status', 'ativo')
+
 
 @admin.register(FaturaCartao)
 class FaturaCartaoAdmin(admin.ModelAdmin):
-    list_display = ('cartao', 'valor','valorComTaxa', 'competencia')
+    list_display = ('cartao', 'valor', 'valorComTaxa', 'competencia')
+
 
 @admin.register(PlanoOdontologico)
 class PlanoOdontologicoUniodontoAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'cnpj','numContrato', 'valorUnitario', 'ativo')
+    list_display = ('nome', 'cnpj', 'numContrato', 'valorUnitario', 'ativo')
 
 
 @admin.register(Otica)
 class oticaAdmin(admin.ModelAdmin):
     list_display = ('nome', 'cnpj', 'valorCompra', 'ativo')
 
+
 @admin.register(TaxasAdministrativa)
 class TaxasAdministrativaAdmin(admin.ModelAdmin):
-    list_display = ('grupos','percentual', 'ativo','id')
+    list_display = ('grupos', 'percentual', 'ativo', 'id')
 
 
-@admin.register(ContratacaoPlanoOdontologico)
+@admin.register(ContratoPlanoOdontologico)
 class ContratacaoPlanoOdontologicoAdmin(admin.ModelAdmin):
-    list_display = ('contratante', 'id','plano_odontologico', 'valor', 'display_dependentes')
+    list_display = ('contratante', 'id', 'plano_odontologico', 'valor', 'display_dependentes')
+
     def display_dependentes(self, obj):
         return ' / \n'.join([str(dependente) for dependente in obj.dependentes.all()])
+
     display_dependentes.short_description = 'Dependentes'
+
+@admin.register(ContratoPlanoOdontologicoDependete)
+class ContratoPlanoOdontologicoDependenteAdmin(admin.ModelAdmin):
+    list_display = ['dependente', 'valor', 'titular_contratante']
+
 

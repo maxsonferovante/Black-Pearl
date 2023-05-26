@@ -1,0 +1,34 @@
+ <a class="btn btn-success" role="button" href = "{% url href_view obj %}">
+    <i class="bi bi-person-vcard"></i>
+ </a>
+ <a class="btn btn-warning" role="button" href ="{% url href_update obj%}" >
+     <i class="bi bi-pencil-square"></i>
+ </a>
+ <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete{{obj}}">
+     <i class="bi bi-trash3"></i>
+ </button>
+ <!-- Modal - Delete Associado -->
+ <div class="modal" id="delete{{obj}}" tabindex="-1" aria-labelledby="myModalLabel2" aria-hidden="true">
+     <div class="modal-dialog" role="document">
+         <div class="modal-content">
+             <div class="modal-header">
+                 <h5 class="modal-title">
+                     Dados de {{ obj }}
+                 </h5>
+                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                     <span aria-hidden="true"></span>
+                 </button>
+             </div>
+             <div class="modal-body">
+                 <p>Deseja realmente excluir (a)o associado(a) ?</p>
+             </div>
+             <div class="modal-footer">
+                 <form action="{% url href_delete obj %}" method="POST">
+                     {% csrf_token %}
+                     <input type="submit" class="btn btn-primary" value="Delete">
+                 </form>
+                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+             </div>
+         </div>
+     </div>
+ </div>

@@ -95,6 +95,7 @@ class Empresa(Base):
 
 
 class Associado(Base):
+    DoesNotExist = None
     nomecompleto = models.CharField('Nome Completo', max_length=300)
 
     dataNascimento = models.DateField('Data de Nascimento')

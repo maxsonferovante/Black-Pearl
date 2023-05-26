@@ -42,10 +42,10 @@ https://blackpearl.herokuapp.com/
 
 ## Referência
 
- - [Django](https://www.djangoproject.com/)
+ - [Django 4.2](https://www.djangoproject.com/)
  - [Django-Crispy-Forms](https://django-crispy-forms.readthedocs.io/en/latest/index.html)
- - [Django-Smart-Select](https://django-smart-selects.readthedocs.io/en/latest/)
- - [Bootstrap](https://getbootstrap.com/docs/5.3/getting-started/introduction/)
+ - [Django-Form-Tools](https://django-formtools.readthedocs.io/en/latest/index.html)
+ - [Bootstrap 5](https://getbootstrap.com/docs/5.3/getting-started/introduction/)
  - [Heroku](https://www.heroku.com/home?)
 
 

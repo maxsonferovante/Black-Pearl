@@ -31,6 +31,9 @@
                               <td>{{ cartao.valorLimite }}</td>
                               <td>{{ cartao.status }}</td>
                               <td>
+                                {% include 'buttons_crud_view.html' with href_view='cartao_visualizar' obj=cartao.pk %}
+                                {% include 'buttons_crud_update.html' with href_update='cartao_editar' obj=cartao.pk %}
+                                {% include 'buttons_crud_delete.html' with href_delete='cartao_excluir' obj=cartao.pk %}
 
                               </td>
                               </tr>

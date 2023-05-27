@@ -3,18 +3,25 @@ from django.conf.urls.static import static
 from django.urls import path
 from blackpearl.convenios.views import HomeTemplateView, CartaoListView, CartaoCreateView, FaturaCreateView, \
     FaturaListView, ContratoOdontologicaListView, \
-    VerificarDependentesView, ContratoPlanoOdontologicoWizardView
+    VerificarDependentesView, ContratoPlanoOdontologicoWizardView, CartaoUpdateView, CartaoDetailView, CartaoDeleteView, \
+    FaturaDeleteView, FaturaUpdateView
 
 from blackpearl.convenios import views
 urlpatterns = [
     path('', HomeTemplateView.as_view(), name='home_conv'),
     path('cadastrarcartao/', CartaoCreateView.as_view(), name ='cartao_cadastrar'),
+    path('detalhescartao/<int:pk>/', CartaoDetailView.as_view(), name ='cartao_visualizar'),
+    path('editarcartao/<int:pk>/', CartaoUpdateView.as_view(), name ='cartao_editar'),
+    path('excluircartao/<int:pk>/', CartaoDeleteView.as_view(), name ='cartao_excluir'),
     path('listagemcartoes/', CartaoListView.as_view(), name ='listagemcartoes'),
+
+    path('editarfatura/<int:pk>/', FaturaUpdateView.as_view(), name ='fatura_editar'),
+    path('excluirfatura/<int:pk>/', FaturaDeleteView.as_view(), name ='fatura_excluir'),
     path('cadastrarfatura/', FaturaCreateView.as_view(), name ='fatura_cadastrar'),
     path('listagemfaturas/', FaturaListView.as_view(), name ='listagemfaturas'),
+
     path('Contratoodontologica/', ContratoPlanoOdontologicoWizardView.as_view(), name='Contratoodontologica_cadastrar'),
-    path('listagemContratoodontologica/', ContratoOdontologicaListView.as_view(),
-         name='listagemContratoodontologica'),
+    path('listagemContratoodontologica/', ContratoOdontologicaListView.as_view(),name='listagemContratoodontologica'),
 
     path('verificardependentes/', VerificarDependentesView.as_view(), name='verificar_dependentes'),
 

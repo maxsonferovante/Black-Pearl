@@ -1,3 +1,5 @@
+import datetime
+
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django import forms
@@ -27,6 +29,7 @@ class CartaoConvenioVolusForm(forms.ModelForm):
 
 
 class FaturaCartaoForm(forms.ModelForm):
+    competencia = forms.DateField(widget=forms.SelectDateWidget, initial=datetime.datetime.now)
     class Meta:
         model = FaturaCartao
         exclude = ['ativo']

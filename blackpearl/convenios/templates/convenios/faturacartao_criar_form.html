@@ -9,7 +9,7 @@
           <div class="row d-flex justify-content-md-center align-items-center h-50">
             {% bootstrap_messages %}
 
-              <form class="form-horizontal" action="{% url 'fatura_cadastrar' %}" method="post" autocomplete="off" >
+              <form class="form-horizontal" action="" method="post" autocomplete="off" >
                   {% csrf_token %}
                  <div class="card mb-3">
                      <h6 class="card-header">Cadastro de Fatura do Cartão Volus</h6>
@@ -18,9 +18,9 @@
                             <div class="form-group  col-sm">
 
                               {{ form.cartao|as_crispy_field }}
-                            </div>
-                             <div class="from-group col-sm">
 
+                            </div>
+                            <div class="input-group col-sm">
                               {{ form.competencia|as_crispy_field }}
                             </div>
                         </div>

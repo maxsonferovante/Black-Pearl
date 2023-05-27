@@ -108,7 +108,7 @@ class Associado(Base):
 
     dataAssociacao = models.DateField('Data de Associação')
     associacao = models.CharField('Associação', max_length=50, choices=ASSOCIACAO_CHOICES, default= '')
-    matricula = models.IntegerField('Matricula', blank=True)
+    matricula = models.IntegerField('Matricula', blank=True, default=0)
     empresa  = models.ForeignKey(Empresa, on_delete=models.CASCADE, related_name='empresa')
 
     email = models.EmailField('e-mail', )

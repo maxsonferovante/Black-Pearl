@@ -61,7 +61,7 @@ class HomeTemplateView(ListView):
 class AssociadoCreateView(CreateView):
     model = Associado
     form_class = AssociadoModelForm
-    template_name_suffix = "_criar_form"
+    template_name_suffix = "_form"
     success_url = reverse_lazy('home_assoc')
 
 
@@ -69,7 +69,7 @@ class AssociadoCreateView(CreateView):
 class AssociadoUpdateView(UpdateView):
     model = Associado
     form_class = AssociadoModelForm
-    template_name_suffix = "_editar_form"
+    template_name_suffix = "_form"
     success_url = reverse_lazy('home_assoc')
 
 
@@ -96,7 +96,7 @@ class AssociadoDeleteView(DeleteView):
 class DependenteCreateView(SuccessMessageMixin, CreateView):
     model = Dependente
     form_class = DependenteModelForm
-    template_name_suffix = "_criar_form"
+    template_name_suffix = "_form"
     success_url = reverse_lazy('home_assoc')
 
     def form_valid(self, form):
@@ -114,7 +114,7 @@ class DependenteCreateView(SuccessMessageMixin, CreateView):
 class DependenteUpdateView(UpdateView):
     model = Dependente
     form_class = DependenteModelForm
-    template_name_suffix = "_editar_form"
+    template_name_suffix = "_form"
 
     def get_success_url(self):
         associado_pk = self.object.titular.pk

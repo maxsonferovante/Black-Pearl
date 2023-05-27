@@ -68,7 +68,7 @@ class CartaoConvenioVolus(Base):
 
 
 class FaturaCartao(Base):
-    cartao = models.ForeignKey(CartaoConvenioVolus, on_delete=models.CASCADE, related_name='cartao')
+    cartao = models.ForeignKey(CartaoConvenioVolus, on_delete=models.CASCADE, related_name='faturas')
     valor = models.DecimalField('Valor da Fatura', max_digits=8, decimal_places=2)
     valorComTaxa = models.DecimalField('Valor da Fatura com a Taxa Adm', max_digits=8, decimal_places=2, null=True,
                                        blank=True)

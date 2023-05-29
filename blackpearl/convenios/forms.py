@@ -30,7 +30,6 @@ class CartaoConvenioVolusForm(forms.ModelForm):
 
 class FaturaCartaoForm(forms.ModelForm):
     competencia = forms.DateField(widget=forms.SelectDateWidget, initial=datetime.datetime.now)
-
     class Meta:
         model = FaturaCartao
         exclude = ['ativo']
@@ -77,50 +76,30 @@ class ContratoPlanoOdontologicoFormStepOne(forms.ModelForm):
     BOOL_CHOICES = [(True, 'Sim'), (False, 'Não')]
     is_dependentes_associado = forms.BooleanField(label='Inclua seus dependentes ?',
                                                   widget=forms.RadioSelect(
-                                                      choices=BOOL_CHOICES), required=False,
+                                                      choices=BOOL_CHOICES),
+                                                  required=False,
                                                   initial=False
                                                   )
     contratante = forms.ModelChoiceField(
         queryset=Associado.objects.filter(associacao__in=['ag', 'fiativo', 'fiaposent']).exclude(ativo=False)
     )
-
     class Meta:
         model = ContratoPlanoOdontologico
-        fields = ['contratante', 'plano_odontologico', 'datacontrato']
-        widget = {
-            'datacontrato': forms.SelectDateWidget(
-                attrs={
-                    'label': 'Data da Contratação'
-                }
-            )
-        }
+        fields = ['contratante', 'plano_odontologico']
 
 
 class ContratoPlanoOdontologicoDependenteFormStepTwo(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        choice = kwargs.pop('choice', None)
-        super(ContratoPlanoOdontologicoDependenteFormStepTwo,self).__init__(*args, **kwargs)
-
-        if choice is not None:
-            self.fields['dependente'] = forms.MultipleChoiceField(
-                widget=forms.CheckboxSelectMultiple,
-                choices=choice,
-                required=False
-            )
+    contratante_id = forms.IntegerField(widget=forms.HiddenInput())
+    dependentes = forms.ModelMultipleChoiceField(
+        queryset=Dependente.objects.filter(titular__associacao__in=['ag', 'fiativo', 'fiaposent']).exclude(titular__ativo=False),
+        widget=forms.CheckboxSelectMultiple(
+            attrs={
+                'class': 'chosen-select'
+            }), required=False)
 
     class Meta:
         model = ContratoPlanoOdontologicoDependete
-        fields = ['dependente', 'datainclusao']
-        widget = {
-            'datainclusao': forms.SelectDateWidget(
-                attrs={
-                    'label': 'Data da Inclusão'
-                }
-            )
-        }
-
-
-
+        fields = ['contratante_id','dependentes']
 
 
 

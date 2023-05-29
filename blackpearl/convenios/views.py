@@ -197,6 +197,7 @@ class ContratoPlanoOdontologicoWizardView(SessionWizardView):
                 form.save()
         else:
             contratante_form.save()
+
         return redirect('listagemcontratoodontologica')
 
 

@@ -99,7 +99,7 @@ class ContratoPlanoOdontologicoFormStepOne(forms.ModelForm):
 class ContratoPlanoOdontologicoDependenteFormStepTwo(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         choice = kwargs.pop('choice', None)
-        super(ContratoPlanoOdontologicoDependenteFormStepTwo,self).__init__(*args, **kwargs)
+        super(ContratoPlanoOdontologicoDependenteFormStepTwo, self).__init__(*args, **kwargs)
 
         if choice is not None:
             self.fields['dependente'] = forms.MultipleChoiceField(
@@ -111,17 +111,7 @@ class ContratoPlanoOdontologicoDependenteFormStepTwo(forms.ModelForm):
     class Meta:
         model = ContratoPlanoOdontologicoDependete
         fields = ['dependente', 'datainclusao']
-        widget = {
-            'datainclusao': forms.SelectDateWidget(
-                attrs={
-                    'label': 'Data da Inclusão'
-                }
-            )
-        }
-
-
-
-
+        widget = {'datainclusao': forms.SelectDateWidget(attrs={'label': 'Data da Inclusão'})}
 
 
 @register.filter(name='add_class')

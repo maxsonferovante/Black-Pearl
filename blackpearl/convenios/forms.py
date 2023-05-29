@@ -89,6 +89,7 @@ class ContratoPlanoOdontologicoFormStepOne(forms.ModelForm):
 
 
 class ContratoPlanoOdontologicoDependenteFormStepTwo(forms.ModelForm):
+    contratante_id = forms.IntegerField(widget=forms.HiddenInput())
     dependentes = forms.ModelMultipleChoiceField(
         queryset=Dependente.objects.filter(titular__associacao__in=['ag', 'fiativo', 'fiaposent']).exclude(titular__ativo=False),
         widget=forms.CheckboxSelectMultiple(
@@ -98,7 +99,7 @@ class ContratoPlanoOdontologicoDependenteFormStepTwo(forms.ModelForm):
 
     class Meta:
         model = ContratoPlanoOdontologicoDependete
-        fields = ['dependentes']
+        fields = ['contratante_id','dependentes']
 
 
 

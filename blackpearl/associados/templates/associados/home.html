@@ -35,7 +35,7 @@
 
                                     {% include 'buttons_crud_view.html' with href_view='visualizar_associado' obj=assoc.pk %}
                                     {% include 'buttons_crud_update.html' with href_update='editar_associado' obj=assoc.pk %}
-                                    {% include 'buttons_crud_delete.html' with href_delete='excluir_associado' obj=assoc.pk %}
+                                    {% include 'buttons_crud_delete.html' with href_delete='excluir_associado' obj=assoc.pk obj_titulo=assoc.nomecompleto%}
                                 </td>
                                 </tr>
                                 {% endfor %}

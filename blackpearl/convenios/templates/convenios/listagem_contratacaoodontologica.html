@@ -9,8 +9,8 @@
       <link href="https://cdn.datatables.net/v/bs5/jq-3.6.0/jszip-2.5.0/dt-1.13.4/b-2.3.6/b-html5-2.3.6/b-print-2.3.6/datatables.min.css" rel="stylesheet"/>
         <div class="container">
           <div class="row d-flex justify-content-center align-items-center h-50 mt-5">
-            <h4 class="">Associados com Plano odontologico</h4>
-            {% include 'search.html' with href='listagemcontratacaoodontologica' %}
+            <h4 class="">Plano odontológico</h4>
+            {% include 'search.html' with href='listagemcontratoodontologica' %}
             <table class="table table-hover" >
                         <thead>
                           <tr>
@@ -30,13 +30,18 @@
                                 <td>{{ contratos.plano_odontologico }}</td>
                               <td>{{ contratos.valor }}</td>
                                 <td>{{contratos.dependentes.count}}</td>
+                                <td>
+                                  {% include 'buttons_crud_view.html' with href_view='contratoodontologico_visualizar' obj=contratos.pk %}
+                                  {% include 'buttons_crud_update.html' with href_update='contratoodontologico_editar' obj=contratos.pk %}
+                                  {% include 'buttons_crud_delete.html' with href_delete='contratoodontologico_excluir' obj=contratos.pk obj_titulo=contratos.contratante%}
+                                </td>
 
                               </tr>
                               {% endfor %}
 
                           </tbody>
                        </table>
-            {% include 'pagination.html' with href='listagemcontratacaoodontologica'%}
+            {% include 'pagination.html' with href='listagemcontratoodontologica'%}
           </div>
         </div>
 

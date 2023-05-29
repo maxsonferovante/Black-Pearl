@@ -1,3 +1,5 @@
+import datetime
+
 from _decimal import Decimal
 from django.db import models
 from django.db.models.signals import m2m_changed, pre_save
@@ -99,9 +101,13 @@ class PlanoOdontologico(Base):
 class ContratoPlanoOdontologico(Base):
     contratante = models.OneToOneField(Associado, on_delete=models.CASCADE, related_name='plano_odontologico')
     plano_odontologico = models.ForeignKey(PlanoOdontologico, on_delete=models.CASCADE)
+    datacontrato = models.DateField('Data da Contratação')
     dependentes = models.ManyToManyField(Dependente)
     valor = models.DecimalField('Valor', max_digits=8, decimal_places=2, null=True, blank=True)
-    def atualizar_valor_planoOdontologico_dependentes(self):
+    def __str__(self):
+        return '{} - {}'.format(self.contratante, self.plano_odontologico)
+
+'''    def atualizar_valor_planoOdontologico_dependentes(self):
         valorPlano = PlanoOdontologico.objects.get(numContrato='00319').valorUnitario
         taxa = TaxasAdministrativa.objects.get(grupos=self.contratante.associacao)
         try:
@@ -110,14 +116,16 @@ class ContratoPlanoOdontologico(Base):
         except ValueError:
             self.valor = (valorPlano / (Decimal(100.0) - taxa.percentual)) * Decimal(100.0)
         self.save()
-    def __str__(self):
-        return '{} - {} - Plano: {}'.format(self.id, self.contratante, self.plano_odontologico)
+'''
+
 
 
 class ContratoPlanoOdontologicoDependete(models.Model):
     titular_contratante = models.ForeignKey(ContratoPlanoOdontologico, on_delete=models.CASCADE)
     dependente = models.ForeignKey(Dependente, on_delete=models.CASCADE)
     valor = models.DecimalField('Valor', max_digits=8, decimal_places=2, null=True, blank=True)
+    datainclusao = models.DateField('Data da Inclusão')
+
 
 @receiver(pre_save,sender = ContratoPlanoOdontologicoDependete)
 def atualizar_valor_planoOdontologico_dependente(sender, instance, *args, **kwargs):

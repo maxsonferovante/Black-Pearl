@@ -13,7 +13,7 @@
          <form class="form-horizontal" action="" method="post" autocomplete="off" >
                   {% csrf_token %}
                  <div class="card mb-3">
-                     <h6 class="card-header">Contratação do Plano Odontologico - Passo {{ wizard.steps.step1 }} de {{ wizard.steps.count}}</h6>
+                     <h6 class="card-header">Contratação do Plano Odontologico</h6>
                      <div class="card-body">
                         <div class="row">
                             <div class="form-group row col-sm">
@@ -27,15 +27,7 @@
                                     {{ wizard.form|crispy }}
                                 {% endif %}
                             </div>
-                            <div class="d-grid gap-2 mt-5 d-md-flex justify-content-md-end">
-                                {% buttons %}
-                                   {% if wizard.steps.prev %}
-                                    <button  class="btn btn-primary" name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% translate "first step" %}</button>
-                                    <button  class="btn btn-primary" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% translate "prev step" %}</button>
-                                    {% endif %}
-                                    <input  class="btn btn-primary" type="submit" value="{% translate 'avançar' %}"/>
-                                {% endbuttons %}
-                            </div>
+                            {% include 'button_save.html' %}
                         </div>
                      </div>
                  </div>

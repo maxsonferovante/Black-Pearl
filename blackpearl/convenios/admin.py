@@ -4,9 +4,6 @@ from django.contrib import admin
 
 from .models import ValoresPorFaixa, PlanoSaude, CartaoConvenioVolus, PlanoOdontologico, Otica, TaxasAdministrativa, \
     FaturaCartao, ContratoPlanoOdontologico, ContratoPlanoOdontologicoDependete
-from ..associados.models import Dependente
-
-""", ContratacaoPlanoOdontologico, ContratacaoDependentePlanoOdontologico"""
 
 
 # Register your models here.
@@ -47,7 +44,7 @@ class TaxasAdministrativaAdmin(admin.ModelAdmin):
 
 @admin.register(ContratoPlanoOdontologico)
 class ContratacaoPlanoOdontologicoAdmin(admin.ModelAdmin):
-    list_display = ('contratante', 'id', 'plano_odontologico', 'valor', 'display_dependentes')
+    list_display = ('contratante', 'plano_odontologico', 'valor','datacontrato',  'display_dependentes')
 
     def display_dependentes(self, obj):
         return ' / \n'.join([str(dependente) for dependente in obj.dependentes.all()])
@@ -56,6 +53,6 @@ class ContratacaoPlanoOdontologicoAdmin(admin.ModelAdmin):
 
 @admin.register(ContratoPlanoOdontologicoDependete)
 class ContratoPlanoOdontologicoDependenteAdmin(admin.ModelAdmin):
-    list_display = ['dependente', 'valor', 'titular_contratante']
+    list_display = ['dependente', 'valor', 'datainclusao', 'titular_contratante']
 
 

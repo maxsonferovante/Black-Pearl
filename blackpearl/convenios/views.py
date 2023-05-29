@@ -4,20 +4,19 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse, JsonResponse
 from django.urls import reverse_lazy, reverse
+from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView, DeleteView
 from formtools.wizard.views import SessionWizardView
-
 from reportlab.pdfgen import canvas
 
-from .forms import CartaoConvenioVolusForm, FaturaCartaoForm, ContratoPlanoOdontologicoFormStepOne, \
-    ContratoPlanoOdontologicoDependenteFormStepTwo
-from django.shortcuts import render, redirect
+from .forms import CartaoConvenioVolusForm, FaturaCartaoForm
+from .forms import ContratoPlanoOdontologicoFormStepOne, ContratoPlanoOdontologicoDependenteFormStepTwo
 
-from .models import CartaoConvenioVolus, FaturaCartao, ContratoPlanoOdontologico
-from ..associados.models import Associado
+from .models import CartaoConvenioVolus, FaturaCartao, ContratoPlanoOdontologico, ContratoPlanoOdontologicoDependete
+from ..associados.models import Associado, Dependente
 
 
 @method_decorator(login_required, name='dispatch')
@@ -169,40 +168,63 @@ def show_dependentes_form(wizard):
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoOdontologicoWizardView(SessionWizardView):
     form_list = [ContratoPlanoOdontologicoFormStepOne, ContratoPlanoOdontologicoDependenteFormStepTwo]
-    template_name = 'convenios/Contratoplanoodontologico_criar_form.html'
+    template_name = 'convenios/contratacaoplanoodontologico_criar_form.html'
     condition_dict = {'1': show_dependentes_form}
+
+    def get_form(self, step=None, data=None, files=None):
+        form = super().get_form(step, data, files)
+        stepIndex = self.get_step_index(step)
+        if stepIndex == 1:
+            contratante = self.get_cleaned_data_for_step('0')['contratante']
+            print(contratante.id, type(contratante))
+
+            choice = [(choice.pk, choice.nomecompleto) for choice in Dependente.objects.filter(
+                titular_id=contratante.id
+            )]
+            print(choice)
+            form = ContratoPlanoOdontologicoDependenteFormStepTwo(choice=choice, data=data)
+        return form
 
     def done(self, form_list, **kwargs):
         contratante_form = form_list[0]
         if contratante_form.cleaned_data.get('is_dependentes_associado'):
-            contratante_form.save()
-            form_list[1].save()
+            contratante = contratante_form.save()
+
+            dependentes_form = form_list[1]
+            dependentes = dependentes_form.save(commit=False)
+            for form in dependentes:
+                form.titular_contratante = contratante
+                form.save()
         else:
             contratante_form.save()
-        return redirect('listagemContratoodontologica')
+        return redirect('listagemcontratoodontologica')
 
 
-class VerificarDependentesView(View):
-    @csrf_exempt
-    def get(self, request):
-        contratante_id = self.request.GET.get('contratante_id')
-        contratante_id = request.GET.get('contratante_id')
-        try:
-            contratante = Associado.objects.get(pk=contratante_id)
-            dependentes = contratante.dependentes.all()
-            dependentes_data = [{'id': dep.pk, 'nomecompleto': dep.nomecompleto} for dep in dependentes]
-            return JsonResponse({'has_dependents': dependentes.exists(), 'dependentes': dependentes_data})
-        except Associado.DoesNotExist:
-            return JsonResponse({'has_dependents': False, 'dependentes': []})
+@method_decorator(login_required, name='dispatch')
+class ContratoPlanoOdontologicoDetailView(DetailView):
+    pass
+
+
+@method_decorator(login_required, name='dispatch')
+class ContratoPlanoOdontologicoUpdateView(UpdateView):
+    model = ContratoPlanoOdontologico
+    form_class = ContratoPlanoOdontologicoFormStepOne
+    template_name = 'convenios/contratoplanoOdontologico_update_form.html'
+    success_url = reverse_lazy('listagemcontratoodontologica')
+
+
+@method_decorator(login_required, name='dispatch')
+class ContratoPlanoOdontologicoDeleteView(DeleteView):
+    model = ContratoPlanoOdontologico
+    success_url = reverse_lazy('listagemcontratoodontologica')
 
 
 @method_decorator(login_required, name='dispatch')
 class ContratoOdontologicaListView(ListView):
-    template_name = 'convenios/listagem_Contratoodontologica.html'
+    template_name = 'convenios/listagem_contratacaoodontologica.html'
 
     def get_context_data(self, **kwargs):
         context = super(ContratoOdontologicaListView, self).get_context_data(**kwargs)
-        context['show_button_view'] = True
         return context
 
     def get(self, request, *args, **kwargs):
@@ -227,6 +249,20 @@ class ContratoOdontologicaListView(ListView):
         return render(request, self.template_name, {
             'list_objs': page
         })
+
+
+class VerificarDependentesView(View):
+    @csrf_exempt
+    def get(self, request):
+        contratante_id = self.request.GET.get('contratante_id')
+        contratante_id = request.GET.get('contratante_id')
+        try:
+            contratante = Associado.objects.get(pk=contratante_id)
+            dependentes = contratante.dependentes.all()
+            dependentes_data = [{'id': dep.pk, 'nomecompleto': dep.nomecompleto} for dep in dependentes]
+            return JsonResponse({'has_dependents': dependentes.exists(), 'dependentes': dependentes_data})
+        except Associado.DoesNotExist:
+            return JsonResponse({'has_dependents': False, 'dependentes': []})
 
 
 def exportar(request):

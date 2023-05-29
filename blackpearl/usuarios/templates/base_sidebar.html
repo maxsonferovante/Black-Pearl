@@ -9,9 +9,6 @@
       <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/sidebars/">
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
       <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
-
-      <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet"/>
 
       <title>Black Pearl</title>
       {{ form.media }}
@@ -22,38 +19,42 @@
             <div class="row flex-nowrap">
                 <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-light">
                     <div class="flex flex-column  h-full w-full align-items-center align-items-sm-start px-3 pt-2 min-vh-100">
-                        <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                        <a href="/" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
                             <span class="fs-5 d-none d-sm-inline text-dark">Menu</span>
                         </a>
-                        <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start">
-                            <li class="nav-item">
-                                <a href="/" class="nav-link align-middle px-0">
-                                    <i class="fs-4 bi-house"></i>
-                                    <span class="ms-1 d-none d-sm-inline text-dark">Home</span>
-                                </a>
-                            </li>
-                            <li  class="nav-link px-0 align-middle ">
-                                    <i class="bi bi-people"></i> <span class="ms-1 d-none d-sm-inline text-dark">Associados</span>
-                            </li>
-                                <li class="nav-item">
-                                           <a href="/associados/" class="nav-link px-4"> <i class="bi bi-card-list"></i>
-                                               <span class="d-none d-sm-inline text-dark">Listagem Geral</span></a>
-                                </li>
-                                <li class="nav-item">
-                                            <a href="/associados/cadastrar/" class="nav-link px-4">
+                        <ul class="list-unstyled ps-0">
+                            <li class="mb-4">
+                                 <button class="btn btn-toggle align-items-center rounded" data-bs-toggle="collapse" data-bs-target="#associados-collapse" aria-expanded="true">
+                                    <i class="bi bi-people"></i>Associados
+                                 </button>
+                                <div class="collapse show" id="associados-collapse" style="">
+                                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-4 small">
+                                        <li>
+                                           <a href="/associados/" class="link-dark rounded">
+                                               <i class="bi bi-card-list"></i>
+                                               Listagem Geral</a>
+                                        </li>
+                                        <li>
+                                            <a href="/associados/cadastrar/" class="link-dark rounded">
                                               <i class="bi bi-person-plus"></i>
-                                                <span class="d-none d-sm-inline text-dark">Novo Associado</span></a>
-                                </li>
-                                <li class="nav-item">
-                                            <a href="/associados/cadastrardependentes" class="nav-link px-4">
+                                                Novo Associado</a>
+                                        </li>
+                                        <li>
+                                            <a href="/associados/cadastrardependentes" class="link-dark rounded">
                                                 <i class="bi bi-person-add"></i>
-                                                <span class="d-none d-sm-inline text-dark">Novo Dependente</span></a>
-                                </li>
-                            <li>
-                                        <a href="/convenios/" class="nav-link px-0">
-                                            <i class="bi bi-bag"></i>
-                                            <span class="d-none d-sm-inline text-dark">Convênios</span></a>
+                                               Novo Dependente</a>
+                                        </li>
+
+                                    </ul>
+                                </div>
                             </li>
+
+
+  <li>
+                                            <a href="/convenios/" class="link-dark rounded">
+                                                <i class="bi bi-bag"></i>
+                                                <span class="d-none d-sm-inline text-dark">Convênios</span></a>
+                                        </li>
 
                             <li class="nav-item">
                                         <a href="#" class="nav-link px-2">
@@ -68,12 +69,12 @@
                                         </a>
                             </li>
                                                 <li>
-                                                    <a href="/convenios/contratacaoodontologica/" class="nav-link px-4">
+                                                    <a href="/convenios/contratoodontologica/" class="nav-link px-4">
                                                       <i class="bi bi-plus-square"></i>
                                                         <span class="d-none d-sm-inline text-dark">Contratação</span></a>
                                                 </li>
                                                 <li>
-                                                    <a href="/convenios/listagemcontratacaoodontologica/" class="nav-link px-4">
+                                                    <a href="/convenios/listagemcontratoodontologica/" class="nav-link px-4">
                                                       <i class="bi bi-card-list"></i>
                                                         <span class="d-none d-sm-inline text-dark">Contratos</span></a>
                                                 </li>

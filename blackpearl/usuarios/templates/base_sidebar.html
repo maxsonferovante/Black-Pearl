@@ -5,140 +5,154 @@
       {% load static %}
       {% bootstrap_css %}
       <meta charset="utf-8">
+      <title>Black Pearl</title>
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/sidebars/">
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <!-- Bootstrap CSS CDN -->
 
-      <title>Black Pearl</title>
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+      <!-- Font Awesome JS -->
+      <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+      <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+      <!-- jQuery CDN - Slim version (=without AJAX) -->
+      <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+      <!-- Popper.JS -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+      <!-- Bootstrap JS -->
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script><link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css'>
+      <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+
       {{ form.media }}
       {{ wizard.form.media }}
   </head>
 <body>
-        <div class="container-fluid">
-            <div class="row flex-nowrap">
-                <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-light">
-                    <div class="flex flex-column  h-full w-full align-items-center align-items-sm-start px-3 pt-2 min-vh-100">
-                        <a href="/" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
-                            <span class="fs-5 d-none d-sm-inline text-dark">Menu</span>
-                        </a>
-                        <ul class="list-unstyled ps-0">
-                            <li class="mb-4">
-                                 <button class="btn btn-toggle align-items-center rounded" data-bs-toggle="collapse" data-bs-target="#associados-collapse" aria-expanded="true">
-                                    <i class="bi bi-people"></i>Associados
-                                 </button>
-                                <div class="collapse show" id="associados-collapse" style="">
-                                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-4 small">
-                                        <li>
-                                           <a href="/associados/" class="link-dark rounded">
-                                               <i class="bi bi-card-list"></i>
-                                               Listagem Geral</a>
-                                        </li>
-                                        <li>
-                                            <a href="/associados/cadastrar/" class="link-dark rounded">
-                                              <i class="bi bi-person-plus"></i>
-                                                Novo Associado</a>
-                                        </li>
-                                        <li>
-                                            <a href="/associados/cadastrardependentes" class="link-dark rounded">
-                                                <i class="bi bi-person-add"></i>
-                                               Novo Dependente</a>
-                                        </li>
-
-                                    </ul>
-                                </div>
-                            </li>
-
-
-  <li>
-                                            <a href="/convenios/" class="link-dark rounded">
-                                                <i class="bi bi-bag"></i>
-                                                <span class="d-none d-sm-inline text-dark">Convênios</span></a>
-                                        </li>
-
-                            <li class="nav-item">
-                                        <a href="#" class="nav-link px-2">
-                                            <i class="bi bi-heart-pulse"></i>
-                                            <span class="d-none d-sm-inline text-dark">Plano de Saúde</span></a>
-                            </li>
-                            <li class="nav-item">
-                                        <a href="#" class="nav-link px-2">
-                                            <i class="bi bi-bookmark"></i>
-
-                                            <span class="d-none d-sm-inline text-dark">Plano Odontológico</span>
-                                        </a>
-                            </li>
-                                                <li>
-                                                    <a href="/convenios/contratoodontologica/" class="nav-link px-4">
-                                                      <i class="bi bi-plus-square"></i>
-                                                        <span class="d-none d-sm-inline text-dark">Contratação</span></a>
-                                                </li>
-                                                <li>
-                                                    <a href="/convenios/listagemcontratoodontologica/" class="nav-link px-4">
-                                                      <i class="bi bi-card-list"></i>
-                                                        <span class="d-none d-sm-inline text-dark">Contratos</span></a>
-                                                </li>
-
-
-                            <li class="nav-item">
-                            <li  data-bs-toggle="collapse" class="nav-link px-2 align-middle ">
-                                            <i class="bi bi-credit-card"> </i><span class="d-none d-sm-inline text-dark">Cartão Volus</span></li>
-
-
-                                                <li class="w-100">
-                                                   <a href="/convenios/listagemcartoes" class="nav-link px-4"> <i class="bi bi-card-list"></i>
-                                                       <span class="d-none d-sm-inline text-dark">Listagem Geral</span></a>
-                                                </li>
-                                                <li>
-                                                    <a href="/convenios/cadastrarcartao/" class="nav-link px-4">
-                                                      <i class="bi bi-plus-square"></i>
-                                                        <span class="d-none d-sm-inline text-dark">Novo Cartão</span></a>
-                                                </li>
-                                                <li>
-                                                    <a href="/convenios/listagemfaturas" class="nav-link px-4">
-                                                        <i class="bi bi-card-list"></i>
-                                                        <span class="d-none d-sm-inline text-dark">Lista de Faturas</span></a>
-                                                </li>
-                                                <li>
-                                                    <a href="/convenios/cadastrarfatura/" class="nav-link px-4">
-                                                        <i class="bi bi-file-earmark-plus"></i>
-                                                        <span class="d-none d-sm-inline text-dark">Incluir consumo</span></a>
-                                                </li>
+<div class="wrapper">
+                    <nav id="sidebar" class="bg-light">
+                        <div class="sidebar-header"><h3>Black Pearl</h3></div>
+                        <ul class="list-unstyled components">
+                            <p>Menu</p>
                             <li>
-                                        <a href="#" class="nav-link px-2">
-                                            <i class="bi bi-eyeglasses"></i>
-                                            <span class="d-none d-sm-inline text-dark">Ótica</span></a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link px-0 align-middle">
-                                    <i class="bi bi-bank"></i> <span class="ms-1 d-none d-sm-inline text-dark">Financeiro</span> </a>
+                                <a href="#AssociacaoSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"> <i class="bi bi-people"></i> Associação</a>
+                                <ul class="collapse list-unstyled" id="AssociacaoSubmenu">
+                                    <li>
+                                        <a href="/associados/"><i class="bi bi-card-list"></i> Associados</a>
+                                    </li>
+                                    <li>
+                                        <a href="/associados/cadastrar/"><i class="bi bi-person-plus"></i> Novo Associado</a>
+                                    </li>
+                                    <li>
+                                         <a href="/associados/cadastrardependentes"><i class="bi bi-person-add"></i> Novo Dependente</a>
+                                    </li>
+                                </ul>
                             </li>
                         </ul>
-                        <hr>
-                        <div class="dropdown pb-4">
-                            <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="{% static 'usuarios/logo.svg' %}" alt="My logo"  height="32px" width="28px"  border-radius="70%" class="rounded-circle float-left">
-                                <span class="d-none d-sm-inline text-dark ms-2" >{{ user.username }}</span>
-                            </a>
-                            <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser1">
-                                <li><a class="dropdown-item" href="#">Meu perfil</a></li>
-                                <li><a class="dropdown-item" href="#">Configurações</a></li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                                <li><a class="dropdown-item" href="/accounts/logout/">Sair</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col py-3 d-flex">
-                      {% block bootstrap5_content %}
-                      {% endblock bootstrap5_content %}
-                </div>
-            </div>
-        </div>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-        {% bootstrap_javascript %}
+                        <ul class ="list-unstyled components">
+                            <li>
+                                <a href="#conveniosSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="bi bi-bag"></i> Convênios</a>
+                                <ul class="collapse list-unstyled" id="conveniosSubmenu">
+                                    <li>
+                                        <a href="#cartaoSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="bi bi-bag"></i> Cartão Volus</a>
+                                        <ul class="collapse list-unstyled" id="cartaoSubmenu">
+                                            <li>
+                                                <a href="/convenios/listagemcartoes"><i class="bi bi-card-list"></i> Cartões</a>
+                                            </li>
+                                            <li>
+                                                <a href="/convenios/cadastrarcartao/"><i class="bi bi-plus-square"></i> Novo Cartão</a>
+                                            </li>
+                                            <li>
+                                                <a href="/convenios/listagemfaturas"><i class="bi bi-card-list"></i> Faturas</a>
+                                            </li>
+                                            <li>
+                                                <a href="/convenios/cadastrarfatura/"><i class="bi bi-file-earmark-plus"></i> Incluir fatura</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+
+                                    <li>
+                                        <a href="#planodesaudeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"> <i class="bi bi-heart-pulse"></i> Plano de Saúde</a>
+                                        <ul class="collapse list-unstyled" id="planodesaudeSubmenu">
+                                            <li>
+                                                <a href="#"><i class="bi bi-card-list"></i> Contratos</a>
+                                            </li>
+                                            <li>
+                                                <a href="#"><i class="bi bi-plus-square"></i> Contratação</a>
+                                            </li>
+
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="#planodontologicoSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="bi bi-bookmark"></i> Plano Odontologico</a>
+                                        <ul class="collapse list-unstyled" id="planodontologicoSubmenu">
+                                            <li>
+                                                <a href="/convenios/listagemcontratoodontologica/"><i class="bi bi-card-list"></i> Contratos</a>
+                                            </li>
+                                            <li>
+                                                <a href="/convenios/contratoodontologica/"><i class="bi bi-plus-square"></i> Contratação</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <ul class ="list-unstyled components">
+                            <li>
+                                        <a href="#"> <i class="bi bi-bank"></i> Financeiro</a>
+                            </li>
+                        </ul>
+
+                         <ul class ="list-unstyled components">
+                            <li>
+                                        <a href="#loginSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"> {{ user.username }}</a>
+                                        <ul class="collapse list-unstyled" id="loginSubmenu">
+                                            <li>
+                                                <a href="#"><i class="bi bi-card-list"></i> Meu perfil</a>
+                                            </li>
+                                            <li>
+                                                <a href="/accounts/logout/"><i class="bi bi-plus-square"></i> Sair</a>
+                                            </li>
+                                        </ul>
+                            </li>
+                        </ul>
+                    </nav>
+                    <div id="content">
+                        <nav class="navbar navbar-expand-lg navbar-light  ">
+                            <div class="container-fluid">
+
+                                <button type="button" id="sidebarCollapse" class="btn btn-info">
+                                    <i class="fas fa-align-left"></i>
+                                    <span>Menu</span>
+                                </button>
+                                <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                                    <i class="fas fa-align-justify"></i>
+                                </button>
+
+                                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                                    <ul class="nav navbar-nav ml-auto">
+                                        <li class="nav-item active">
+                                            <a class="nav-link" href="#">Page</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#">Page</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#">Page</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#">Page</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </nav>
+                        {% block bootstrap5_content %}
+                        {% endblock bootstrap5_content %}
+                    </div>
+</div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+    {% bootstrap_javascript %}
 </body>
 </html>

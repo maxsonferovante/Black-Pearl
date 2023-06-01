@@ -17,7 +17,7 @@
                             <th scope="col">Titular - Contratante</th>
                             <th scope="col">Plano Contratado</th>
                             <th scope="col">Valor (R$)</th>
-                            <th scope="col">Dependentes</th>
+
                             <th scope="col">Opções</th>
                           </tr>
                         </thead>
@@ -25,17 +25,14 @@
 
                               {% for contratos in list_objs %}
                               <tr>
-
-                              <td>{{ contratos.contratante }}</td>
+                                <td>{{ contratos.contratante }}</td>
                                 <td>{{ contratos.plano_odontologico }}</td>
-                              <td>{{ contratos.valor }}</td>
-                                <td>{{contratos.dependentes.count}}</td>
+                                <td>{{ contratos.valor }}</td>
                                 <td>
                                   {% include 'buttons_crud_view.html' with href_view='contratoodontologico_visualizar' obj=contratos.pk %}
                                   {% include 'buttons_crud_update.html' with href_update='contratoodontologico_editar' obj=contratos.pk %}
                                   {% include 'buttons_crud_delete.html' with href_delete='contratoodontologico_excluir' obj=contratos.pk obj_titulo=contratos.contratante%}
                                 </td>
-
                               </tr>
                               {% endfor %}
 

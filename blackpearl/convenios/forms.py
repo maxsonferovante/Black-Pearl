@@ -1,12 +1,11 @@
 import datetime
 
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
 from django import forms
-from django.forms import DateInput
-from blackpearl.associados.models import Associado, Dependente
-from blackpearl.convenios.models import CartaoConvenioVolus, FaturaCartao, ContratoPlanoOdontologico, \
-    ContratoPlanoOdontologicoDependete
+from django.forms import DateInput, inlineformset_factory, BaseInlineFormSet
+from django.shortcuts import redirect
+
+from blackpearl.associados.models import Associado
+from blackpearl.convenios.models import CartaoConvenioVolus, FaturaCartao, ContratoPlanoOdontologico
 
 from widget_tweaks.templatetags.widget_tweaks import register
 
@@ -73,13 +72,8 @@ class FaturaCartaoForm(forms.ModelForm):
         return cleaned_data
 
 
-class ContratoPlanoOdontologicoFormStepOne(forms.ModelForm):
-    BOOL_CHOICES = [(True, 'Sim'), (False, 'Não')]
-    is_dependentes_associado = forms.BooleanField(label='Inclua seus dependentes ?',
-                                                  widget=forms.RadioSelect(
-                                                      choices=BOOL_CHOICES), required=False,
-                                                  initial=False
-                                                  )
+class ContratoPlanoOdontologicoForm(forms.ModelForm):
+
     contratante = forms.ModelChoiceField(
         queryset=Associado.objects.filter(associacao__in=['ag', 'fiativo', 'fiaposent']).exclude(ativo=False)
     )
@@ -90,12 +84,22 @@ class ContratoPlanoOdontologicoFormStepOne(forms.ModelForm):
         widget = {
             'datacontrato': forms.SelectDateWidget(
                 attrs={
-                    'label': 'Data da Contratação'
+                    'label': 'Data da Contratação',
+                    'data':'date'
                 }
             )
         }
 
+""" BOOL_CHOICES = [(True, 'Sim'), (False, 'Não')]
+    is_dependentes_associado = forms.BooleanField(label='Inclua seus dependentes ?',
+                                                  widget=forms.RadioSelect(
+                                                      choices=BOOL_CHOICES), required=False,
+                                                  initial=False
+                                                  )
+"""
 
+
+"""
 class ContratoPlanoOdontologicoDependenteFormStepTwo(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         choice = kwargs.pop('choice', None)
@@ -112,7 +116,7 @@ class ContratoPlanoOdontologicoDependenteFormStepTwo(forms.ModelForm):
         model = ContratoPlanoOdontologicoDependete
         fields = ['dependente', 'datainclusao']
         widget = {'datainclusao': forms.SelectDateWidget(attrs={'label': 'Data da Inclusão'})}
-
+"""
 
 @register.filter(name='add_class')
 def add_class(field, css):

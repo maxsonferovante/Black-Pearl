@@ -17,16 +17,15 @@
                      <div class="card-body">
                         <div class="row">
                             <div class="form-group row col-sm">
-                                {{ wizard.management_form }}
-                                {% if wizard.form.forms %}
-                                    {{ wizard.form.management_form }}
-                                    {% for form in wizard.form.forms %}
-                                        {{ form|crispy }}
-                                    {% endfor %}
-                                {% else %}
-                                    {{ wizard.form|crispy }}
-                                {% endif %}
+                                {{form.contratante|as_crispy_field}}
                             </div>
+                            <div class="form-group row col-sm">
+                                {{form.plano_odontologico|as_crispy_field}}
+                            </div>
+                             <div class="form-group row col-sm">
+                                {{form.datacontrato|as_crispy_field}}
+                            </div>
+
                             {% include 'button_save.html' %}
                         </div>
                      </div>

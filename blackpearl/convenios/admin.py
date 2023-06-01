@@ -3,7 +3,7 @@ from django import forms
 from django.contrib import admin
 
 from .models import ValoresPorFaixa, PlanoSaude, CartaoConvenioVolus, PlanoOdontologico, Otica, TaxasAdministrativa, \
-    FaturaCartao, ContratoPlanoOdontologico, ContratoPlanoOdontologicoDependete, ContratoPlanoSaude
+    FaturaCartao, ContratoPlanoOdontologico
 
 
 # Register your models here.
@@ -44,22 +44,7 @@ class TaxasAdministrativaAdmin(admin.ModelAdmin):
 
 @admin.register(ContratoPlanoOdontologico)
 class ContratacaoPlanoOdontologicoAdmin(admin.ModelAdmin):
-    list_display = ('contratante', 'plano_odontologico', 'valor','datacontrato',  'display_dependentes')
+    list_display = ('contratante', 'id','plano_odontologico', 'valor','datacontrato')
 
-    def display_dependentes(self, obj):
-        return ' / \n'.join([str(dependente) for dependente in obj.dependentes.all()])
 
-    display_dependentes.short_description = 'Dependentes'
-
-@admin.register(ContratoPlanoOdontologicoDependete)
-class ContratoPlanoOdontologicoDependenteAdmin(admin.ModelAdmin):
-    list_display = ['dependente', 'valor', 'datainclusao', 'titular_contratante']
-
-@admin.register(ContratoPlanoSaude)
-class ContratoPlanoSaudeAdmin(admin.ModelAdmin):
-    list_display = ['contratante', 'plano', 'faixa', 'dataInclusao', 'valor','atendimentoDomiciliar', 'display_dependentes']
-    def display_dependentes(self, obj):
-        return ' / \n'.join([str(dependente) for dependente in obj.dependentes.all()])
-
-    display_dependentes.short_description = 'Dependentes'
 

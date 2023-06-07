@@ -1,15 +1,13 @@
-{% extends "base_sidebar.html" %}
-{% block bootstrap5_content %}
-{% load bootstrap5 %}
-{% load static %}
-    <!-- Usado para construção do Datatables -->
-      <link href="https://cdn.datatables.net/v/bs5/jq-3.6.0/jszip-2.5.0/dt-1.13.4/b-2.3.6/b-html5-2.3.6/b-print-2.3.6/datatables.min.css" rel="stylesheet"/>
-        <div class="container ">
-            <div class="row d-flex justify-content-center align-items-center h-50 mt-5">
-                <h4 class="">Relação de Associados</h4>
-                {% include 'search.html' with href='home_assoc' %}
-                <table class="table table-hover">
+{% extends "base_blackpearl.html" %}
 
+{% block content %}
+<div class="card shadow mb-4">
+    <div class="card-hearder py-3">
+        <h4 class="">Relação de Associados</h4>
+        {% include 'search.html' with href='home_assoc' %}
+    </div>
+    <div class="card-body">
+        <table class="table table-hover">
                           <thead>
                             <tr>
                               <th scope="col">Nome completo</th>
@@ -41,8 +39,8 @@
                                 {% endfor %}
                         </tbody>
                         </table>
-                 {% include 'pagination.html' with href='home_assoc' %}
-            </div>
-        </div>
-        {% bootstrap_javascript %}
-{% endblock bootstrap5_content %}
+        {% include 'pagination.html' with href='home_assoc' %}
+    </div>
+</div>
+{% endblock content %}
+

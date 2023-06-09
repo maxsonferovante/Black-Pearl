@@ -10,7 +10,6 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView, DeleteView, FormView
 from reportlab.pdfgen import canvas
-
 from .forms import CartaoConvenioVolusForm, FaturaCartaoForm, ContratoPlanoOdontologicoForm
 from .models import CartaoConvenioVolus, FaturaCartao, ContratoPlanoOdontologico
 from ..associados.models import Associado

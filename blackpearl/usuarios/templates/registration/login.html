@@ -11,7 +11,7 @@
 
   </head>
   <body>
-<form class="user" action="{% url 'login' %}" method="POST">
+<form action="{% url 'login' %}" method="POST">
             {% csrf_token %}
 
             <section class="vh-100" style="background-color: #508bfc">
@@ -22,7 +22,7 @@
                       <div class="card-body p-5 text-center">
                         <img src="{% static 'usuarios/logo.svg' %}" alt="My logo"  height="100px" width="100px" class="rounded-circle float-center">
                         <h3 class="mb-5 mt-3">Black Pearl - Login</h3>
-                          {% if error %}
+                         {% if error %}
                             <p>Seu nome de usuário e senha não correspondem.</p>
                             <p>Por favor, tente novamente.</p>
                           {% endif %}
@@ -34,11 +34,12 @@
                                 <p>Por favor, faça login para ver esta página.</p>
                                 {% endif %}
                             {% endif %}
-
+                          <form class="form-outline mb-4" method="post">
+                              {% csrf_token %}
                               <input type="hidden" name="next" value="{{ next_page }}">
                               {{ form|crispy }}
                               <button class="btn btn-primary btn-lg btn-block" type="submit" value="login">Entrar</button>
-
+                          </form>
                       </div>
                     </div>
                   </div>

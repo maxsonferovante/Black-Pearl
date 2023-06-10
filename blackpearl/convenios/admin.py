@@ -44,7 +44,13 @@ class TaxasAdministrativaAdmin(admin.ModelAdmin):
 
 @admin.register(ContratoPlanoOdontologico)
 class ContratacaoPlanoOdontologicoAdmin(admin.ModelAdmin):
-    list_display = ('contratante', 'id','plano_odontologico', 'valor','datacontrato')
+    list_display = ('contratante',
+                    'id',
+                    'planoOdontologico',
+                    'valor',
+                    'dataInicio',
+                    'dataFim',
+                    'ativo')
 
 
 

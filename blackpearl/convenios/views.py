@@ -1,5 +1,6 @@
 from io import BytesIO
 import openpyxl
+from _decimal import Decimal
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse, JsonResponse
@@ -11,8 +12,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView, DeleteView, FormView
 from reportlab.pdfgen import canvas
 from .forms import CartaoConvenioVolusForm, FaturaCartaoForm, ContratoPlanoOdontologicoForm
-from .models import CartaoConvenioVolus, FaturaCartao, ContratoPlanoOdontologico
+from .models import CartaoConvenioVolus, FaturaCartao, ContratoPlanoOdontologico, TaxasAdministrativa, PlanoOdontologico
 from ..associados.models import Associado
+
 
 @method_decorator(login_required, name='dispatch')
 class HomeTemplateView(TemplateView):
@@ -111,13 +113,13 @@ class FaturaDeleteView(DeleteView):
     success_url = reverse_lazy('listagemfaturas')
 
 
-
 @method_decorator(login_required, name='dispatch')
 class FaturaUpdateView(UpdateView):
     model = FaturaCartao
     form_class = FaturaCartaoForm
     template_name_suffix = "_criar_form"
     success_url = reverse_lazy('listagemfaturas')
+
 
 @method_decorator(login_required, name='dispatch')
 class FaturaListView(ListView):
@@ -155,13 +157,11 @@ class FaturaListView(ListView):
         })
 
 
-
 @method_decorator(login_required, name='dispatch')
-class ContratoPlanoOdontologico(CreateView):
+class ContratoPlanoOdontologicoCreateView(CreateView):
     form_class = ContratoPlanoOdontologicoForm
     template_name = 'convenios/contratacaoplanoodontologico_criar_form.html'
     success_url = reverse_lazy('listagemcontratoodontologica')
-
 
     '''def get_form(self, step=None, data=None, files=None):
         form = super().get_form(step, data, files)
@@ -179,16 +179,24 @@ class ContratoPlanoOdontologico(CreateView):
 
 '''
 
+
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoOdontologicoDetailView(DetailView):
-    pass
+    model = ContratoPlanoOdontologico
+    template_name = 'convenios/contratoplanoOdontologico_detalhes.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        contrato_pk = self.kwargs['pk']
+        contrato = ContratoPlanoOdontologico.objects.get(pk=contrato_pk)
+        context['contrato'] = contrato
+        return context
 
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoOdontologicoUpdateView(UpdateView):
     model = ContratoPlanoOdontologico
     form_class = ContratoPlanoOdontologicoForm
-    template_name = 'convenios/contratoplanoOdontologico_update_form.html'
+    template_name = 'convenios/contratacaoplanoodontologico_criar_form.html'
     success_url = reverse_lazy('listagemcontratoodontologica')
 
 
@@ -200,7 +208,6 @@ class ContratoPlanoOdontologicoDeleteView(DeleteView):
 
 @method_decorator(login_required, name='dispatch')
 class ContratoOdontologicaListView(ListView):
-    model = ContratoPlanoOdontologico
     template_name = 'convenios/listagem_contratacaoodontologica.html'
 
     def get_context_data(self, **kwargs):
@@ -210,9 +217,10 @@ class ContratoOdontologicaListView(ListView):
     def get(self, request, *args, **kwargs):
         nome_pesquisado = self.request.GET.get('obj')
         if nome_pesquisado:
-            contratos = ContratoPlanoOdontologico.objects.filter(contratante__nomecompleto__icontains=nome_pesquisado).order_by('contratante')
+            contratos = ContratoPlanoOdontologico.objects.filter(
+                contratante__nomecompleto__icontains=nome_pesquisado).order_by('contratante')
         else:
-            contratos = ContratoPlanoOdontologico.objects.filter().order_by('contratante')
+            contratos = ContratoPlanoOdontologico.objects.filter(ativo=True).order_by('contratante')
 
         paramentro_page = self.request.GET.get('page', '1')
         paramentro_limit = self.request.GET.get('limit', '10')
@@ -229,6 +237,27 @@ class ContratoOdontologicaListView(ListView):
             'list_objs': page
         })
 
+class VerificarAssociacaoView(View):
+    @csrf_exempt
+    def get(self, request):
+        contratante_id = self.request.GET.get('contratante_id')
+        plano_odontologico_id = self.request.GET.get('plano_odontologico_id')
+
+        print(contratante_id, plano_odontologico_id)
+
+        contratante = Associado.objects.get(pk=contratante_id)
+        taxa_administrativa = TaxasAdministrativa.objects.get(grupos=contratante.associacao)
+        percentual_taxa = taxa_administrativa.percentual
+
+        valor_unitario = PlanoOdontologico.objects.get(id=plano_odontologico_id).valorUnitario
+
+        # instance.valor = (valorPlano / (Decimal(100.0) - taxa.percentual)) * Decimal(100.0)
+        valor_total = round((valor_unitario / (100 - percentual_taxa))*100,2)
+
+        print(valor_unitario, percentual_taxa, valor_total)
+
+
+        return JsonResponse({'valor_total': valor_total})
 
 class VerificarDependentesView(View):
     @csrf_exempt

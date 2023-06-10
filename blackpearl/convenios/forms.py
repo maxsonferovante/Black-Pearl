@@ -1,12 +1,7 @@
-import datetime
-
 from django import forms
-from django.forms import DateInput, inlineformset_factory, BaseInlineFormSet
-from django.shortcuts import redirect
-
+from django.forms import DateInput
 from blackpearl.associados.models import Associado
 from blackpearl.convenios.models import CartaoConvenioVolus, FaturaCartao, ContratoPlanoOdontologico
-
 from widget_tweaks.templatetags.widget_tweaks import register
 
 
@@ -71,18 +66,17 @@ class FaturaCartaoForm(forms.ModelForm):
                 raise forms.ValidationError('Valor da fatura não pode ser maior que o limite do cartão.')
         return cleaned_data
 
-
 class ContratoPlanoOdontologicoForm(forms.ModelForm):
 
     contratante = forms.ModelChoiceField(
         queryset=Associado.objects.filter(associacao__in=['ag', 'fiativo', 'fiaposent']).exclude(ativo=False)
     )
-
+    ativo = forms.BooleanField(label='Ativo', required=False, initial=True)
     class Meta:
         model = ContratoPlanoOdontologico
-        fields = ['contratante', 'plano_odontologico', 'datacontrato']
+        fields = ['contratante', 'planoOdontologico', 'dataInicio', 'valor', 'ativo']
         widget = {
-            'datacontrato': forms.SelectDateWidget(
+            'dataInicio': forms.SelectDateWidget(
                 attrs={
                     'label': 'Data da Contratação',
                     'data':'date'

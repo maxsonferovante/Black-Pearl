@@ -1,48 +1,58 @@
 {% extends "base_sidebar.html" %}
-{% block bootstrap5_content %}
-{% load bootstrap5 %}
-{% load static %}
-    <!-- Usado para construção do Datatables -->
-      <link href="https://cdn.datatables.net/v/bs5/jq-3.6.0/jszip-2.5.0/dt-1.13.4/b-2.3.6/b-html5-2.3.6/b-print-2.3.6/datatables.min.css" rel="stylesheet"/>
-        <div class="container ">
-            <div class="row d-flex justify-content-center align-items-center h-50 mt-5">
-                <h4 class="">Relação de Associados</h4>
-                {% include 'search.html' with href='home_assoc' %}
-                <table class="table table-hover">
+{% block content %}
 
-                          <thead>
-                            <tr>
-                              <th scope="col">Nome completo</th>
-                              <th scope="col">CPF</th>
-                              <th scope="col">Data de Nascimento</th>
-                              <th scope="col">Empresa</th>
-
-                              <th scope="col">Matricula</th>
-                              <th scope="col">Opções</th>
-                            </tr>
-                          </thead>
-                              <tbody class="table-group-divider">
-
-                                {% for assoc in object_list %}
+<div class="container-fluid">
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h4 class="m-0 font-weight-bold text-primary">Relação de Associados</h4>
+    </div>
+    {% if object_list %}
+    {% include 'search.html' with href='home_assoc' %}
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                              <thead>
                                 <tr>
-                                <td>{{ assoc.nomecompleto }}</td>
-                                <td>{{ assoc.cpf }}</td>
-                                <td>{{ assoc.dataNascimento }}</td>
-                                <td>{{ assoc.empresa }}</td>
+                                  <th scope="col">Nome completo</th>
+                                  <th scope="col">CPF</th>
+                                  <th scope="col">Data de Nascimento</th>
+                                  <th scope="col">Empresa</th>
 
-                                <td>{{ assoc.matricula }}</td>
-                                <td>
-
-                                    {% include 'buttons_crud_view.html' with href_view='visualizar_associado' obj=assoc.pk %}
-                                    {% include 'buttons_crud_update.html' with href_update='editar_associado' obj=assoc.pk %}
-                                    {% include 'buttons_crud_delete.html' with href_delete='excluir_associado' obj=assoc.pk obj_titulo=assoc.nomecompleto%}
-                                </td>
+                                  <th scope="col">Matricula</th>
+                                  <th scope="col">Opções</th>
                                 </tr>
-                                {% endfor %}
-                        </tbody>
-                        </table>
-                 {% include 'pagination.html' with href='home_assoc' %}
-            </div>
+                              </thead>
+                                  <tbody class="table-group-divider">
+
+                                    {% for assoc in object_list %}
+                                    <tr>
+                                    <td>{{ assoc.nomecompleto }}</td>
+                                    <td>{{ assoc.cpf }}</td>
+                                    <td>{{ assoc.dataNascimento }}</td>
+                                    <td>{{ assoc.empresa }}</td>
+
+                                    <td>{{ assoc.matricula }}</td>
+                                    <td>
+
+                                        {% include 'buttons_crud_view.html' with href_view='visualizar_associado' obj=assoc.pk %}
+                                        {% include 'buttons_crud_update.html' with href_update='editar_associado' obj=assoc.pk %}
+                                        {% include 'buttons_crud_delete.html' with href_delete='excluir_associado' obj=assoc.pk obj_titulo=assoc.nomecompleto%}
+                                    </td>
+                                    </tr>
+                                    {% endfor %}
+                            </tbody>
+                            </table>
+            {% include 'pagination.html' with href='home_assoc' %}
+            {% else %}
+                <div class="card-body">
+                    <div class="d-flex gap-2 d-md-flex">
+                       <h4 class="m-0 font-weight-bold text-primary">Não há associados cadastrados</h4>
+                          <a href="{% url 'cadastrar_associado' %}" class="btn btn-primary btn-sm"><span class="text">Deseja cadastrar ?</span></a>
+                </div>
+            {% endif%}
         </div>
-        {% bootstrap_javascript %}
-{% endblock bootstrap5_content %}
+    </div>
+</div>
+</div>
+
+{% endblock content %}

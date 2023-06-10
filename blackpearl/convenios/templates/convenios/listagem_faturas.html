@@ -1,17 +1,18 @@
-
 {% extends "base_sidebar.html" %}
-
-{% block bootstrap5_content %}
 {% load bootstrap5 %}
-{% load static %}
+{% block content %}
 
+<div class="container-fluid">
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h4 class="m-0 font-weight-bold text-primary">Relação de Faturas</h4>
+    </div>
+    {% if list_objs %}
 
-<div class="container py-5 ">
-    <h5 class="card-heard">Faturas
-    </h5>
-    <div class="row d-flex justify-content-center align-items-center h-50 ">
         {% include 'search.html' with href='listagemfaturas' %}
-        <table class="table table-hover" >
+        <div class="card-body">
+        <div class="table-responsive">
+        <table class="table table-bordered" >
                         <thead>
                           <tr>
                               <th scope="col">Titular</th>
@@ -80,8 +81,18 @@
                 {% endbuttons %}
             </form>
         </div>
+        </div>
     </div>
-</div>
+    {% else %}
+        <div class="card-body">
+              <div class="d-flex gap-2 d-md-flex">
+                <h4 class="m-0 font-weight-bold text-primary">Não há faturas cadastradas</h4>
+                  <a href="{% url 'fatura_cadastrar' %}" class="btn btn-primary btn-sm"><span class="text">Deseja cadastrar ?</span></a>
+              </div>
+        </div>
+    {% endif %}
 
-{% bootstrap_javascript %}
-{% endblock bootstrap5_content %}
+
+</div>
+</div>
+{% endblock content %}

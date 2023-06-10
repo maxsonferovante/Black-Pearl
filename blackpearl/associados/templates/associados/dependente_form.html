@@ -1,16 +1,16 @@
 
 {% extends "base_sidebar.html" %}
+
 {% load crispy_forms_tags %}
 {% load bootstrap5 %}
 {% load static %}
 
-{% block bootstrap5_content %}
-        <div class="container py-5">
-
+{% block content %}
+        <div class="container-fluid py-5">
             {% bootstrap_messages %}
               <form class="form-horizontal" action="" method="post" autocomplete="off" >
                   {% csrf_token %}
-                 <div class="card mb-3">
+                 <div class="card shadow mb-3">
                      <h6 class="card-header">Dados pessoais</h6>
                      <div class="card-body">
 
@@ -54,61 +54,5 @@
                      </div>
                 </div>
               </form>
-              <script>
-
-                const cepInput = document.querySelector('#cep');
-                const addressInput = document.querySelector('#address');
-                const regionInput = document.querySelector('#inputGroupSelectUF');
-                const cityInput = document.querySelector('#textCidade');
-                const neighborhoodInput = document.querySelector('#textBairro');
-                const numeroInput = document.querySelector('#textNumero');
-
-
-                cepInput.addEventListener('keypress', (e) => {
-                  const onlyNumbers = /[0-9]|\./;
-                  const key = String.fromCharCode(e.keyCode);
-
-                  if (!onlyNumbers.test(key)) {
-                    e.preventDefault();
-                    return;
-                  }
-                });
-
-                cepInput.addEventListener('keyup', (e) => {
-                  const inputValue = e.target.value;
-
-                  if (inputValue.length === 8) {
-                    getAddress(inputValue);
-                  }
-                });
-                function getAddress(cep) {
-                  const numeroInput = document.querySelector('#numeroInput');
-
-                  fetch(`https://viacep.com.br/ws/${cep}/json/`)
-                    .then(response => response.json())
-                    .then(data => {
-                      console.log(data);
-                      if (data.erro) {
-                        alert('CEP não encontrado');
-                        return;
-                      }
-
-                      addressInput.value = data.logradouro;
-                      regionInput.value = data.uf;
-                      cityInput.value = data.localidade;
-                      neighborhoodInput.value = data.bairro;
-                      numeroInput.focus();
-
-                      formInputs.forEach((input) => {
-                        if (input !== numeroInput) {
-                          input.setAttribute('disabled', 'disabled');
-                        }
-                      });
-                      numeroInput.removeAttribute('disabled');
-                    })
-                    .catch(error => console.log(error));
-                }
-          </script>
           </div>
-        </div>
-{% endblock bootstrap5_content %}
+{% endblock content %}

@@ -1,51 +1,89 @@
 <!DOCTYPE html>
-{% load bootstrap5 %}
-{% load crispy_forms_tags %}
-  <html lang="en">
-  <head>
-      {% load static %}
-      {% bootstrap_css %}
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>Black Pearl</title>
+<html lang="pt">
+<head>
+       {% load static %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-  </head>
-  <body>
-<form action="{% url 'login' %}" method="POST">
-            {% csrf_token %}
+    <title>Black Pearl</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
-            <section class="vh-100" style="background-color: #508bfc">
-                <div class="container py-5 h-100">
-                <div class="row d-flex justify-content-center align-items-center h-100">
-                  <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-                    <div class="card shadow-2-strong" style="border-radius: 1rem;">
-                      <div class="card-body p-5 text-center">
-                        <img src="{% static 'usuarios/logo.svg' %}" alt="My logo"  height="100px" width="100px" class="rounded-circle float-center">
-                        <h3 class="mb-5 mt-3">Black Pearl - Login</h3>
-                         {% if error %}
-                            <p>Seu nome de usuário e senha não correspondem.</p>
-                            <p>Por favor, tente novamente.</p>
-                          {% endif %}
-                          {% if next %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100&display=swap" rel="stylesheet">
+    <!-- Custom styles for this template-->
+    <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+
+</head>
+
+<body class="bg-gradient-primary">
+    <div class="container h-100">
+        <!-- Outer Row -->
+        <div class="row justify-content-center">
+            <div class="col-xl-5 col-lg-6 col-md-9 col-12">
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-0">
+                        <!-- Nested Row within Card Body -->
+                        <div class="p-5">
+                            <div class="text-center">
+                                <img src="{% static 'usuarios/logo.svg' %}" alt="My logo"  height="100px" width="100px" class="rounded-circle float-center">
+                                <h1 class="h4 text-gray-900 mb-4">Seja bem-vindo!</h1>
+                            </div>
+                            <div class="text-center">
+                                {% if error %}
+                                <p>Seu nome de usuário e senha não correspondem.</p>
+                                <p>Por favor, tente novamente.</p>
+                                {% endif %}
+                                {% if next %}
                                 {% if user.is_authenticated %}
                                 <p>Sua conta não tem acesso a esta página.</p>
                                 <p> Para prosseguir, faça login com uma conta que tenha acesso.</p>
                                 {% else %}
                                 <p>Por favor, faça login para ver esta página.</p>
                                 {% endif %}
-                            {% endif %}
-                          <form class="form-outline mb-4" method="post">
-                              {% csrf_token %}
-                              <input type="hidden" name="next" value="{{ next_page }}">
-                              {{ form|crispy }}
-                              <button class="btn btn-primary btn-lg btn-block" type="submit" value="login">Entrar</button>
-                          </form>
-                      </div>
+                                {% endif %}
+                            </div>
+                            <input type="hidden" name="next" value="{{ next_page }}">
+                            <form class="user" action="{% url 'login' %}" method="post">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <input type="text" class="form-control form-control-user"
+                                           id="id_username" name="username" aria-describedby="usernameHelp"
+                                           placeholder="Enter Username...">
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" class="form-control form-control-user"
+                                           id="id_password" name="password" placeholder="Password">
+                                </div>
+                                <button class="btn btn-primary btn-user btn-block" type="submit" value="login">
+                                    Login
+                                </button>
+                            </form>
+                            <hr>
+                            <div class="text-center">
+                                <a class="small" href="forgot-password.html">Forgot Password?</a>
+                            </div>
+                            <div class="text-center">
+                                <a class="small" href="register.html">Create an Account!</a>
+                            </div>
+                        </div>
                     </div>
-                  </div>
                 </div>
-              </div>
-            </section>
-        </form>
-  </body>
-  </html>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="{% static 'js/sb-admin-2.min.js' %}"></script>
+</body>
+</html>

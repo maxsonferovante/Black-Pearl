@@ -1,105 +1,114 @@
 {% extends "base_sidebar.html" %}
-{% block bootstrap5_content %}
+{% block content %}
 {% load bootstrap5 %}
 {% load static %}
 
-        <div class="container ">
-            <div class="row d-flex justify-content-center align-items-center h-50 mt-5">
-                <div class="modal-body">
-                    <h4>{{associado.nomecompleto}}</h4>
-                     <div class="row">
-                         <div class="col-md-6">
-                             <h5>Dados Pessoais</h5>
-                             <ul class="list-unstyled">
-                                    <li>Data de Nascimento: <strong>{{ associado.dataNascimento }}</strong></li>
-                                    <li>Sexo: <strong>{{ associado.get_sexo_display }}</strong></li>
-                                    <li>CPF: <strong>{{ associado.cpf }}</strong></li>
-                                    <li>Número da identidade: <strong>{{ associado.identidade }}</strong></li>
-                                    <li>Estado Civil <strong>{{ associado.get_estadocivil_display }}</strong></li>
-                             </ul>
-                             <h5>Associação</h5>
-                             <ul class="list-unstyled">
-                                 <li>Tipo: <strong>{{associado.get_associacao_display}}</strong></li>
-                                 <li>Data da Asssociação: <strong>{{ associado.dataAssociacao }}</strong></li>
-                                 <li>Empresa: <strong>{{ associado.empresa }}</strong></li>
-                                 <li>Matricúla: <strong>{{ associado.matricula }}</strong></li>
-                             </ul>
-                             <h5>Contatos</h5>
-                             <ul class="list-unstyled">
-                                 <li>Celular: <strong>({{associado.dddNumeroContato}}) {{ associado.numeroContato }}</strong></li>
-                                 <li>E-mail: <strong>{{ associado.email }}</strong></li>
-                             </ul>
-                             <h5>Endereço Residencial</h5>
-                             <ul class="list-unstyled">
-                                 <li>CEP: <strong>{{ associado.cep }}</strong></li>
-                                 <li>Logradouro: <strong>{{ associado.logradouro }}</strong></li>
-                                 <li>Número: <strong>{{ associado.num }}</strong></li>
-                                 <li>Bairro: <strong>{{ associado.bairro }}</strong></li>
-                                 <li>Cidade: <strong>{{ associado.cidade }}</strong></li>
-                                 <li>Estado (UF): <strong>{{ associado.estado }}</strong></li>
-                             </ul>
-                         </div>
-                         <div class="col-md-6">
-                            {% if associado.dependentes.all %}
-                            <h5>Dependentes</h5>
-                            <ul class="list-unstyled">
-                                {% for dependente in associado.dependentes.all %}
-                                    <li class="mb-5">
-                                        <h6><strong>{{ dependente.nomecompleto }}</strong> </h6>
+        <div class="container-fluid ">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                            <a href='/associados/' class="btn btn-secondary me-md-2" type="button">Voltar</a>
+                                            <button class="btn btn-primary" type="button">Imprimir</button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h5>Titular: <strong>{{associado.nomecompleto}}</strong></h5>
+                                     <div class="row">
+                                         <div class="col-md-6">
+                                             <h5>Dados Pessoais</h5>
+                                             <ul class="list-unstyled">
+                                                    <li>Data de Nascimento: <strong>{{ associado.dataNascimento }}</strong></li>
+                                                    <li>Sexo: <strong>{{ associado.get_sexo_display }}</strong></li>
+                                                    <li>CPF: <strong>{{ associado.cpf }}</strong></li>
+                                                    <li>Número da identidade: <strong>{{ associado.identidade }}</strong></li>
+                                                    <li>Estado Civil <strong>{{ associado.get_estadocivil_display }}</strong></li>
+                                             </ul>
+                                             <h5>Associação</h5>
+                                             <ul class="list-unstyled">
+                                                 <li>Tipo: <strong>{{associado.get_associacao_display}}</strong></li>
+                                                 <li>Data da Asssociação: <strong>{{ associado.dataAssociacao }}</strong></li>
+                                                 <li>Empresa: <strong>{{ associado.empresa }}</strong></li>
+                                                 <li>Matricúla: <strong>{{ associado.matricula }}</strong></li>
+                                             </ul>
+                                             <h5>Contatos</h5>
+                                             <ul class="list-unstyled">
+                                                 <li>Celular: <strong>({{associado.dddNumeroContato}}) {{ associado.numeroContato }}</strong></li>
+                                                 <li>E-mail: <strong>{{ associado.email }}</strong></li>
+                                             </ul>
+                                             <h5>Endereço Residencial</h5>
+                                             <ul class="list-unstyled">
+                                                 <li>CEP: <strong>{{ associado.cep }}</strong></li>
+                                                 <li>Logradouro: <strong>{{ associado.logradouro }}</strong></li>
+                                                 <li>Número: <strong>{{ associado.num }}</strong></li>
+                                                 <li>Bairro: <strong>{{ associado.bairro }}</strong></li>
+                                                 <li>Cidade: <strong>{{ associado.cidade }}</strong></li>
+                                                 <li>Estado (UF): <strong>{{ associado.estado }}</strong></li>
+                                             </ul>
+                                         </div>
+                                         <div class="col-md-6">
+                                            {% if associado.dependentes.all %}
+                                            <h5>Dependentes</h5>
+                                            <ul class="list-unstyled">
+                                                {% for dependente in associado.dependentes.all %}
+                                                    <li class="mb-5">
+                                                        <h6><strong>{{ dependente.nomecompleto }}</strong> </h6>
 
-                                        Data de Nascimento: <strong>{{ dependente.dataNascimento }}</strong><br>
-                                        Sexo: <strong>{{ dependente.get_sexo_display }}</strong><br>
-                                        CPF: <strong>{{ dependente.cpf }}</strong><br>
-                                        Identidade: <strong>{{ dependente.identidade }}</strong><br>
-                                        Órgão Emissor: <strong>{{ dependente.get_orgemissor_display }}</strong><br>
-                                        Grau de Parentesco: <strong>{{ dependente.get_grauparentesco_display }}</strong>
-                                        <div class="mt-3">
-                                            <a href="{% url 'editar_dependente' dependente.pk %}" class="btn btn-outline-warning me-md-2" type="button">
-                                                <i class="bi bi-pencil-square"></i>
-                                            </a>
-                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete{{dependente.pk}}">
-                                           <i class="bi bi-trash3"></i>
-                                        </button>
-                                        <!-- Modal - Delete Associado -->
-                                        <div class="modal" id="delete{{dependente.pk}}" tabindex="-1" aria-labelledby="myModalLabel2" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                              <div class="modal-content">
-                                                <div class="modal-header">
-                                                  <h5 class="modal-title">
-                                                   {{ dependente.nomecompleto }}
-                                                  </h5>
-                                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true"></span>
-                                                  </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                  <p>Deseja realmente excluir (a)o dependente ?</p>
-                                                </div>
-                                                <div class="modal-footer">
-                                                  <form action="{% url 'excluir_dependente' dependente.pk %}" method="POST">
-                                                    {% csrf_token %}
-                                                    <input type="submit" class="btn btn-primary" value="Delete">
-                                                  </form>
-                                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                                </div>
-                                              </div>
-                                            </div>
-                                        </div>
+                                                        Data de Nascimento: <strong>{{ dependente.dataNascimento }}</strong><br>
+                                                        Sexo: <strong>{{ dependente.get_sexo_display }}</strong><br>
+                                                        CPF: <strong>{{ dependente.cpf }}</strong><br>
+                                                        Identidade: <strong>{{ dependente.identidade }}</strong><br>
+                                                        Órgão Emissor: <strong>{{ dependente.get_orgemissor_display }}</strong><br>
+                                                        Grau de Parentesco: <strong>{{ dependente.get_grauparentesco_display }}</strong>
+                                                        <div class="mt-3">
+                                                            <a href="{% url 'editar_dependente' dependente.pk %}" class="btn btn-outline-warning me-md-2" type="button">
+                                                                <i class="bi bi-pencil-square"></i>
+                                                            </a>
+                                                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete{{dependente.pk}}">
+                                                           <i class="bi bi-trash3"></i>
+                                                        </button>
+                                                        <!-- Modal - Delete Associado -->
+                                                        <div class="modal" id="delete{{dependente.pk}}" tabindex="-1" aria-labelledby="myModalLabel2" aria-hidden="true">
+                                                            <div class="modal-dialog" role="document">
+                                                              <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                  <h5 class="modal-title">
+                                                                   {{ dependente.nomecompleto }}
+                                                                  </h5>
+                                                                  <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true"></span>
+                                                                  </button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                  <p>Deseja realmente excluir (a)o dependente ?</p>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                  <form action="{% url 'excluir_dependente' dependente.pk %}" method="POST">
+                                                                    {% csrf_token %}
+                                                                    <input type="submit" class="btn btn-primary" value="Delete">
+                                                                  </form>
+                                                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                                                </div>
+                                                              </div>
+                                                            </div>
+                                                        </div>
+                                                        </div>
+                                                    </li>
+                                                {% endfor %}
 
-                                        </div>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                            {% endif %}
-                         </div>
-                     </div>
-                </div>
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                  <a href='/associados/' class="btn btn-secondary me-md-2" type="button">Voltar</a>
-                  <button class="btn btn-primary" type="button">Imprimir</button>
-                </div>
-            </div>
+
+
+                                            </ul>
+                                             <a href="{% url 'cadastrar_dependentes' %}"> Deseja cadastrar outro ?</a>
+                                            {% else %}
+                                                <h5>Dependentes</h5>
+                                                <p>Nenhum dependente cadastrado. <a href="{% url 'cadastrar_dependentes' %}"> Deseja cadastrar ?</a></p>
+                                            {% endif %}
+                                         </div>
+                                     </div>
+
+                                </div>
+                            </div>
+
         </div>
 
-{% bootstrap_javascript %}
-{% endblock bootstrap5_content %}
+{% endblock content %}

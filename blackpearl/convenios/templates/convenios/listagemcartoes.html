@@ -1,18 +1,19 @@
-
 {% extends "base_sidebar.html" %}
+{% block content %}
 
-{% block bootstrap5_content %}
-{% load bootstrap5 %}
-{% load static %}
+<div class="container-fluid">
+  <div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h4 class="m-0 font-weight-bold text-primary">Relação de Cartões</h4>
 
-    <!-- Usado para construção do Datatables -->
-      <link href="https://cdn.datatables.net/v/bs5/jq-3.6.0/jszip-2.5.0/dt-1.13.4/b-2.3.6/b-html5-2.3.6/b-print-2.3.6/datatables.min.css" rel="stylesheet"/>
-        <div class="container">
-          <div class="row d-flex justify-content-center align-items-center h-50 mt-5">
-            <h4 class="">Cartões Volus</h4>
-            {% include 'search.html' with href='listagemcartoes' %}
-            <table class="table table-hover" >
-                        <thead>
+    </div>
+      {% if list_objs %}
+        {% include 'search.html' with href='home_conv' %}
+        <div class="card-body">
+
+        <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
                           <tr>
                             <th scope="col">Titular</th>
                             <th scope="col">Empresa</th>
@@ -20,12 +21,10 @@
                             <th scope="col">Status</th>
                             <th scope="col">Opções</th>
                           </tr>
-                        </thead>
-                            <tbody class="table-group-divider">
-
+              </thead>
+              <tbody class="table-group-divider">
                               {% for cartao in list_objs %}
                               <tr>
-
                               <td>{{ cartao.titular }}</td>
                                 <td>{{ cartao.titular.empresa }}</td>
                               <td>{{ cartao.valorLimite }}</td>
@@ -34,7 +33,6 @@
                                 {% include 'buttons_crud_view.html' with href_view='cartao_visualizar' obj=cartao.pk %}
                                 {% include 'buttons_crud_update.html' with href_update='cartao_editar' obj=cartao.pk %}
                                 {% include 'buttons_crud_delete.html' with href_delete='cartao_excluir' obj=cartao.pk obj_titulo=cartao.titular%}
-
                               </td>
                               </tr>
                               {% endfor %}
@@ -42,9 +40,16 @@
                           </tbody>
                        </table>
             {% include 'pagination.html' with href='listagemcartoes'%}
-
-          </div>
+            {% else %}
+            <div class="card-body" role="alert">
+                <div class="d-flex gap-2 d-md-flex">
+                    <h4 class="m-0 font-weight-bold text-primary md-3">Não há cartões cadastrados!</h4>
+                    <a href="{% url 'cartao_cadastrar' %}" class="btn btn-primary btn-sm"><span class="text">Deseja cadastrar ?</span></a>
+                </div>
+            </div>
+            {% endif %}
         </div>
-
-
-{% endblock bootstrap5_content %}
+    </div>
+  </div>
+</div>
+{% endblock content %}

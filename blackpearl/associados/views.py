@@ -109,6 +109,14 @@ class DependenteCreateView(SuccessMessageMixin, CreateView):
         else:
             return self.render_to_response(self.get_context_data(form=form))
 
+    def get_success_url(self):
+        origen = self.request.GET.get('dependente_create_origen')
+        if origen == 'home_assoc':
+            return reverse('home_assoc')
+        else:
+            associado_pk = self.object.titular.pk
+            return reverse('visualizar_associado', kwargs={'pk': associado_pk})
+
 
 @method_decorator(login_required, name='dispatch')
 class DependenteUpdateView(UpdateView):

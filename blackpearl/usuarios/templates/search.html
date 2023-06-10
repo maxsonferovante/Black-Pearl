@@ -1,10 +1,13 @@
-<form class=" d-flex gap-3 mt-2" action="{% url href %}" method="GET">
-  <input name="obj" type="text" value="{{request.GET.obj}}" class="form-control" placeholder="pesquisar pelo nome...">
-  <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
-    <button type="submit" class="btn btn-primary">
-      <i class="bi bi-search"></i>Buscar</button>
-    {% if request.GET.obj %}
-    <a class="btn btn-secondary" href="{% url href %}">Reset</a>
-    {% endif %}
-  </div>
-</form>
+<div class="container-fluid mt-3">
+  <form class="d-flex justify-content-end" role="search" action="{% url href %}" method="GET">
+    <div class="input-group">
+      <input name="obj" type="text" value="{{request.GET.obj}}" class="form-control me-2" placeholder="Pesquisa ...">
+      <button type="submit" class="btn btn-primary btn-sm me-2">
+        <i class="bi bi-search"></i> Buscar
+      </button>
+      {% if request.GET.obj %}
+        <a class="btn btn-secondary btn-sm me-2" href="{% url href %}"><i class="bi bi-arrow-clockwise"></i>Reset</a>
+      {% endif %}
+    </div>
+  </form>
+</div>

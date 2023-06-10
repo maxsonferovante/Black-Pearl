@@ -1,0 +1,30 @@
+{% extends "base_sidebar.html" %}
+{% block content %}
+{% load bootstrap5 %}
+        <div class="container-fluid ">
+            <div class="card shadow md-4">
+
+                <div class="card-header py-3">
+                    <h5>Plano Odontologico de {{contrato.contratante}}</h5>
+            </div>
+                <div class="card-body">
+
+                <h5>Dados do Contrato</h5>
+                <ul class="list-unstyled">
+                    <li>Contratante: <strong>{{ contrato.contratante }}</strong></li>
+                    <li>Contratado: <strong>{{ contrato.planoOdontologico }}</strong></li>
+                    <li>Valor: <strong>{{ contrato.valor }}</strong></li>
+                    <li>Data de Contratação: <strong>{{ contrato.dataInicio }}</strong></li>
+                    <li>Ativo: <strong>{{ contrato.get_ativo_display }}</strong></li>
+                </ul>
+            </div>
+            <div class="card-footer">
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="{% url 'listagemcontratoodontologica' %}" class="btn btn-secondary me-md-2" >Voltar</a>
+                    <button class="btn btn-primary" type="button">Imprimir</button>
+                </div>
+            </div>
+        </div>
+
+{% bootstrap_javascript %}
+{% endblock content %}

@@ -1,23 +1,26 @@
-
 {% extends "base_sidebar.html" %}
-
-{% block bootstrap5_content %}
+{% block content %}
 {% load bootstrap5 %}
 {% load static %}
 
-    <!-- Usado para construção do Datatables -->
-      <link href="https://cdn.datatables.net/v/bs5/jq-3.6.0/jszip-2.5.0/dt-1.13.4/b-2.3.6/b-html5-2.3.6/b-print-2.3.6/datatables.min.css" rel="stylesheet"/>
-        <div class="container">
-          <div class="row d-flex justify-content-center align-items-center h-50 mt-5">
-            <h4 class="">Plano odontológico</h4>
-            {% include 'search.html' with href='listagemcontratoodontologica' %}
-            <table class="table table-hover" >
+<div class="container-fluid">
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h4 class="m-0 font-weight-bold text-primary">Contratos do Plano Odontologico</h4>
+    </div>
+    {% if list_objs %}
+    {% include 'search.html' with href='listagemcontratoodontologica' %}
+            <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-bordered" >
                         <thead>
                           <tr>
                             <th scope="col">Titular - Contratante</th>
                             <th scope="col">Plano Contratado</th>
                             <th scope="col">Valor (R$)</th>
-
+                            <th scope="col">Data de Início</th>
+                            <th scope="col">Data de Término</th>
+                            <th scope="col">Ativo</th>
                             <th scope="col">Opções</th>
                           </tr>
                         </thead>
@@ -26,8 +29,11 @@
                               {% for contratos in list_objs %}
                               <tr>
                                 <td>{{ contratos.contratante }}</td>
-                                <td>{{ contratos.plano_odontologico }}</td>
+                                <td>{{ contratos.planoOdontologico }}</td>
                                 <td>{{ contratos.valor }}</td>
+                                <td>{{ contratos.dataInicio }}</td>
+                                <td>{{ contratos.get_dataFim_display }}</td>
+                                <td>{{ contratos.get_ativo_display }}</td>
                                 <td>
                                   {% include 'buttons_crud_view.html' with href_view='contratoodontologico_visualizar' obj=contratos.pk %}
                                   {% include 'buttons_crud_update.html' with href_update='contratoodontologico_editar' obj=contratos.pk %}
@@ -41,6 +47,15 @@
             {% include 'pagination.html' with href='listagemcontratoodontologica'%}
           </div>
         </div>
+  {% else %}
+  <div class="card-body">
+    <div class="d-flex gap-2 d-md-flex">
+      <h4 class="m-0 font-weight-bold text-primary">Não há contratos cadastrados</h4>
+        <a href="{% url 'contratoodontologica_cadastrar' %}" class="btn btn-primary btn-sm"><span class="text">Deseja cadastrar ?</span></a>
+    </div>
+  </div>
+  {% endif%}
+  </div>
+</div>
 
-
-{% endblock bootstrap5_content %}
+{% endblock content %}

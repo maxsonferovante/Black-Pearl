@@ -6,10 +6,7 @@
         <div class="container-fluid ">
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
-                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                            <a href='/associados/' class="btn btn-secondary me-md-2" type="button">Voltar</a>
-                                            <button class="btn btn-primary" type="button">Imprimir</button>
-                                    </div>
+                                    <h5>Associado: {{associado.nomecompleto}}</h5>
                                 </div>
                                 <div class="card-body">
                                     <h5>Titular: <strong>{{associado.nomecompleto}}</strong></h5>
@@ -107,6 +104,13 @@
                                      </div>
 
                                 </div>
+
+                                 <div class="card-footer">
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                            <a href='/associados/' class="btn btn-secondary me-md-2" type="button">Voltar</a>
+                                            <button class="btn btn-primary" type="button">Imprimir</button>
+                                    </div>
+                                 </div>
                             </div>
 
         </div>

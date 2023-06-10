@@ -96,16 +96,25 @@ class PlanoOdontologico(Base):
     def __str__(self):
         return '{} - {}'.format(self.nome, self.numContrato)
 
-
 class ContratoPlanoOdontologico(Base):
-    contratante = models.OneToOneField(Associado, on_delete=models.CASCADE, related_name='plano_odontologico')
-    plano_odontologico = models.ForeignKey(PlanoOdontologico, on_delete=models.CASCADE)
-    datacontrato = models.DateField('Data da Contratação')
-    valor = models.DecimalField('Valor', max_digits=8, decimal_places=2, null=True, blank=True)
+    contratante = models.ForeignKey(Associado, on_delete=models.CASCADE, related_name='contratos')
+    planoOdontologico = models.ForeignKey(PlanoOdontologico, on_delete=models.CASCADE, related_name='contratos')
+    valor = models.DecimalField('Valor', max_digits=8, decimal_places=2)
+    dataInicio = models.DateField('Data de Início')
+    dataFim = models.DateField('Data de Fim', null=True, blank=True)
 
     def __str__(self):
-        return '{} - {}'.format(self.contratante, self.plano_odontologico)
+        return '{} - {}'.format(self.contratante, self.planoOdontologico)
+    def get_ativo_display(self):
+        return 'Sim' if self.ativo else 'Não'
+    def get_dataFim_display(self):
+        if not self.dataFim:
+            return "Vigente"
+        else:
+            return str(self.valor)
 
+    def get_absolute_url(self):
+        return reverse("contrato_cadastrar", kwargs={"pk": self.pk})
 
 @receiver(pre_save, sender=ContratoPlanoOdontologico)
 def atualizar_valor_planoOdontologico(sender, instance, *args, **kwargs):

@@ -28,7 +28,7 @@ class CartaoConvenioVolusForm(forms.ModelForm):
 
 
 class FaturaCartaoForm(forms.ModelForm):
-    competencia = forms.DateField(widget=forms.SelectDateWidget, initial=datetime.datetime.now)
+
 
     class Meta:
         model = FaturaCartao
@@ -37,7 +37,7 @@ class FaturaCartaoForm(forms.ModelForm):
         widgets = {
             'competencia': DateInput(
                 attrs={
-                    'type': 'text',
+                    'type': 'date',
                     'class': 'form-control',
                     'autocomplete': 'off',
                     'placeholder': 'dd/mm/yyyy',

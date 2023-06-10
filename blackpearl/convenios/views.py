@@ -10,7 +10,6 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView, DeleteView, FormView
 from reportlab.pdfgen import canvas
-
 from .forms import CartaoConvenioVolusForm, FaturaCartaoForm, ContratoPlanoOdontologicoForm
 from .models import CartaoConvenioVolus, FaturaCartao, ContratoPlanoOdontologico
 from ..associados.models import Associado
@@ -98,7 +97,7 @@ class FaturaCreateView(CreateView):
 
     def get_success_url(self):
         # Verifica a origem da solicitação na sessão
-        origin = self.request.session.get('fatura_create_origin')
+        origin = self.request.GET.get('fatura_create_origin')
         if origin == 'listagemfaturas':
             return reverse_lazy('listagemfaturas')
         else:
@@ -112,13 +111,13 @@ class FaturaDeleteView(DeleteView):
     success_url = reverse_lazy('listagemfaturas')
 
 
+
 @method_decorator(login_required, name='dispatch')
 class FaturaUpdateView(UpdateView):
     model = FaturaCartao
     form_class = FaturaCartaoForm
     template_name_suffix = "_criar_form"
     success_url = reverse_lazy('listagemfaturas')
-
 
 @method_decorator(login_required, name='dispatch')
 class FaturaListView(ListView):

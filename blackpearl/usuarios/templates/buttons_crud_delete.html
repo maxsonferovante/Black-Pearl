@@ -1,5 +1,5 @@
 
- <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete{{obj}}">
+ <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete{{obj}}">
      <i class="bi bi-trash3"></i>
  </button>
 
@@ -10,7 +10,7 @@
                  <h5 class="modal-title">
                      Dados de {{ obj_titulo }}
                  </h5>
-                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                 <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
                      <span aria-hidden="true"></span>
                  </button>
              </div>
@@ -22,7 +22,7 @@
                      {% csrf_token %}
                      <input type="submit" class="btn btn-primary" value="Delete">
                  </form>
-                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
              </div>
          </div>
      </div>

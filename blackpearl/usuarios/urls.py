@@ -1,10 +1,6 @@
-from django.contrib.auth.decorators import login_required
-from django.urls import path, include
-
-from blackpearl.usuarios import views
+from django.urls import path
 from blackpearl.usuarios.views import HomeView, LoginCustomView
 
 urlpatterns = [
-    path('', LoginCustomView.as_view(), name='login'),
-    path('home/', HomeView.as_view()),
+    path('login/', LoginCustomView.as_view(), name='login'),
 ]

@@ -21,13 +21,10 @@ from blackpearl.usuarios.views import HomeView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', HomeView.as_view()),
+    path('', HomeView.as_view(), name='home'),
     path('accounts/', include('blackpearl.usuarios.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('associados/', include('blackpearl.associados.urls')),
     path('convenios/', include('blackpearl.convenios.urls')),
-    # path('login/', auth_views.LoginView.as_view(), name='login'),
-    # path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

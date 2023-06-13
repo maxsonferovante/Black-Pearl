@@ -102,7 +102,6 @@ class ContratoPlanoOdontologico(Base):
     valor = models.DecimalField('Valor', max_digits=8, decimal_places=2)
     dataInicio = models.DateField('Data de Início')
     dataFim = models.DateField('Data de Fim', null=True, blank=True)
-
     def __str__(self):
         return '{} - {}'.format(self.contratante, self.planoOdontologico)
     def get_ativo_display(self):
@@ -115,6 +114,9 @@ class ContratoPlanoOdontologico(Base):
 
     def get_absolute_url(self):
         return reverse("contrato_cadastrar", kwargs={"pk": self.pk})
+
+    def __str__(self):
+        return '{} - {}'.format(self.nome, self.contrato)
 
 @receiver(pre_save, sender=ContratoPlanoOdontologico)
 def atualizar_valor_planoOdontologico(sender, instance, *args, **kwargs):

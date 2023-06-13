@@ -33,6 +33,7 @@ class HomeTemplateView(ListView):
         return context
 
     def get(self, request, *args, **kwargs):
+
         nome_pesquisa = self.request.GET.get('obj')
         if nome_pesquisa:
             associados = Associado.objects.filter(nomecompleto__icontains=nome_pesquisa).order_by('nomecompleto')
@@ -199,52 +200,3 @@ def export_pdf(request, assoc_id):
     buffer.close()
     return response
 
-
-def gerador_dados(quant):
-    for i in range(quant):
-        # Cria um objeto Associado com os dados gerados
-        associado = Associado(
-            nomecompleto="vinicius almeida campos",
-            dataNascimento="1999-05-29",
-            sexo="M",
-            cpf="12312312323",
-            identidade="4764825",
-            orgemissor="SSP",
-            estadocivil="S",
-            dataAssociacao="2019-04-01",
-            associacao="Agredado(a)",
-            matricula=randint(1, 1500),
-            empresa=Empresa.objects.get(nome="SINDIPORTO"),
-            email="vidalok@gmail.com",
-            dddNumeroContato="91 982299627",
-            numeroContato="982299627",
-            cep="66650550",
-            logradouro="PASSAGEM COMERCIÁRIOS",
-            num=3,
-            bairro="COQUEIRO",
-            cidade="BELÉM",
-            estado="PA",
-        )
-
-        # Salva o objeto no banco de dados
-        associado.save()
-        cartao = CartaoConvenioVolus(
-            nome='Convênio Volus',
-            titular=associado,
-            valorLimite=quant * 10,
-            status='ATIVO',
-        )
-        cartao.save()
-        valor = Decimal(randint(300, 1500))  # gerar um valor aleatório entre 500 e 1500
-        taxa_adm = valor * Decimal('0.05')  # taxa de administração de 5%
-        valor_com_taxa = valor + taxa_adm
-        competencia = datetime.now().date() - timedelta(days=30 * i)  # gerar a data de competência retroativamente
-
-        # criar a fatura
-        fatura = FaturaCartao(
-            cartao=cartao,
-            valor=valor,
-            valorComTaxa=valor_com_taxa,
-            competencia=competencia,
-        )
-        fatura.save()

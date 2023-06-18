@@ -19,7 +19,7 @@ class LoginCustomView(View):
     def post(self, request, *args, **kwargs):
         usuario = request.POST.get('username')
         senha = request.POST.get('password')
-        print(usuario, senha)
+
         user = authenticate(username=usuario, password=senha)
         if user:
             login_django(request, user)

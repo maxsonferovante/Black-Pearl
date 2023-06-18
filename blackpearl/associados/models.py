@@ -137,6 +137,8 @@ class Associado(Base):
     def __str__(self):
         return '{}'.format(self.nomecompleto)
 
+    def get_nomecompleto_display(self):
+        return self.nomecompleto.title()
     def get_sexo_display(self):
         return dict(SEXO_CHOICES)[self.sexo]
     def get_associacao_display(self):
@@ -157,13 +159,21 @@ class Dependente(Base):
     orgemissor = models.CharField('Órgão Emissor', max_length=6, choices=ORGEMISSOR_CHOICES, default='', blank=True)
     grauparentesco = models.CharField('Grau de Parentesco', max_length=6, choices=GRAUS_PARENTESCO_CHOICES, default='')
 
+
+    def get_sexo_display(self):
+        return dict(SEXO_CHOICES)[self.sexo]
+    def get_grauparentesco_display(self):
+        return dict(GRAUS_PARENTESCO_CHOICES)[self.grauparentesco]
+    def get_nomecompleto_display(self):
+        return self.nomecompleto.title()
+    def get_absolute_url(self):
+        return reverse("editar", kwargs={"pk": self.pk})
     def save(self, *args, **kwargs):
         self.nomecompleto = self.nomecompleto.upper()
         super().save(*args, **kwargs)
     def __str__(self):
-        return '{} - {} - {}'.format(self.nomecompleto,
-                                     self.dataNascimento,
-                                     dict(GRAUS_PARENTESCO_CHOICES)[self.grauparentesco].upper())
+        return '{} '.format(self.nomecompleto)
+    ##dict(GRAUS_PARENTESCO_CHOICES)[self.grauparentesco].upper())
 def associado_pre_save(instance, sender, **kwargs):
     instance.slug = slugify(instance.nomecompleto)
 signals.pre_save.connect(associado_pre_save, sender=Associado)

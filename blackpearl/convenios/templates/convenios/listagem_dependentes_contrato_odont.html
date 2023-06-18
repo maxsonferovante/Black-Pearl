@@ -5,7 +5,7 @@
 {% load static %}
 
 <div class="container-fluid">
-<div class="card shadow mb-4">
+    <div class="card shadow mb-4">
     <div class="card-header py-3">
         <div class="row align-items-center">
             <div class="col-md-4 ">
@@ -14,15 +14,16 @@
         </div>
     </div>
     {% if list_objs %}
-    {% include 'search.html' with href='listagemcontratoodontologica' %}
+    {% include 'search.html' with href='listar_dependentes_contrato_plano_odont' %}
             <div class="card-body">
                 <div class="table-responsive">
                   <table class="table table-bordered" >
                         <thead>
                           <tr>
+                            <th scope="col">Dependente</th>
+                            <th scope="col">Valor (R$)</th>
                             <th scope="col">Titular - Contratante</th>
                             <th scope="col">Plano Contratado</th>
-                            <th scope="col">Valor (R$)</th>
                             <th scope="col">Data de Início</th>
                             <th scope="col">Data de Término</th>
                             <th scope="col">Ativo</th>
@@ -33,29 +34,29 @@
 
                               {% for contratos in list_objs %}
                               <tr>
-                                <td>{{ contratos.contratante }}</td>
-                                <td>{{ contratos.planoOdontologico }}</td>
+                                <td>{{ contratos.dependente }}</td>
                                 <td>{{ contratos.valor }}</td>
+                                <td>{{ contratos.contrato }}</td>
+                                <td>{{ contratos.contrato.planoOdontologico}}</td>
                                 <td>{{ contratos.dataInicio }}</td>
-                                <td>{{ contratos.get_dataFim_display }}</td>
-                                <td>{{ contratos.get_ativo_display }}</td>
+                                <td>{{ contratos.get__dataFim_display }}</td>
+                                <td>{{ contratos.get__ativo_display }}</td>
                                 <td>
-                                  {% include 'convenios/button_view_model_contratos_plano_odont.html' with  contrato=contratos%}
-                                  {% include 'buttons_crud_update.html' with href_update='contratoodontologico_editar' obj=contratos.pk %}
-                                  {% include 'buttons_crud_delete.html' with href_delete='contratoodontologico_excluir' obj=contratos.pk obj_titulo=contratos.contratante%}
+                                  {% include 'convenios/button_view_model_dependente_contratos_plano_odont.html' with  contrato=contratos%}
+                                  {% include 'buttons_crud_update.html' with href_update='editar_dependentes_contrato_plano_odonto' obj=contratos.pk %}
+                                  {% include 'buttons_crud_delete.html' with href_delete='excluir_dependentes_contrato_plano_odonto' obj=contratos.pk obj_titulo=contratos.dependente%}
                                 </td>
                               </tr>
                               {% endfor %}
-
                           </tbody>
                        </table>
-            {% include 'pagination.html' with href='listagemcontratoodontologica'%}
+            {% include 'pagination.html' with href='listar_dependentes_contrato_plano_odonta'%}
           </div>
         </div>
     {% else %}
       <div class="card-body">
         <div class="d-flex gap-2 d-md-flex">
-          <h4 class="m-0 font-weight-bold text-primary">Não há contratos cadastrados</h4>
+          <h4 class="m-0 font-weight-bold text-primary">Não há dependentes cadastratos</h4>
         </div>
       </div>
   {% endif%}

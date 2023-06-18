@@ -1,0 +1,72 @@
+{% extends "base_sidebar.html" %}
+{% block content %}
+
+{% load bootstrap5 %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+<div class="container">
+    <div class="row d-flex justify-content-center align-items-center h-50 mt-5">
+        {% bootstrap_messages %}
+    <form class="form-horizontal" method="POST" action="">
+          {% csrf_token %}
+        <div class="card shadow mb-3">
+            <h6 class="card-header">Novo dependente</h6>
+            <div class="card-body">
+                <div class="row">
+                    <div class="form-group  col-sm">
+                        {{ form.contrato|as_crispy_field }}
+                    </div>
+                    <div class="form-group col-sm">
+                        {{ form.dependente|as_crispy_field}}
+                    </div>
+                    <div class="form-group  col-sm">
+                        {{ form.ativo|as_crispy_field}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group  col-sm">
+                        {{ form.valor|as_crispy_field}}
+                    </div>
+                    <div class="form-group  col-sm">
+                        {{ form.dataInicio|as_crispy_field}}
+                    </div>
+                </div>
+                {% include 'button_save.html' %}
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+  $('.select').change(function() {
+    var contratoId = $(this).val();
+    var dependenteId = $('#id_dependente').val();
+    console.log(contratoId, dependenteId);
+    if (contratoId && dependenteId) {
+       $.ajax({
+              url: '/convenios/contratoodontologica/verificarassociacaodependente/',
+              type: 'GET',
+              data: { 'contrato_id': contratoId,
+                      'dependente_id': dependenteId
+               },
+              dataType: 'json',
+              success: function(response) {
+                console.log(response);
+                var novoValor = response.valor;
+                $('#id_valor').val(novoValor);
+              },
+              error: function(xhr, status, error) {
+                console.log(error);
+                console.log(status);
+              }
+       });
+    }
+  });
+});
+</script>
+
+{% bootstrap_javascript %}
+{% endblock content %}

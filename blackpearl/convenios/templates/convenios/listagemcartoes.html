@@ -5,13 +5,11 @@
   <div class="card shadow mb-4">
     <div class="card-header py-3">
         <h4 class="m-0 font-weight-bold text-primary">Relação de Cartões</h4>
-
     </div>
-      {% if list_objs %}
-        {% include 'search.html' with href='home_conv' %}
+    <div class="table-responsive">
+        {% if list_objs %}
+        {% include 'search.html' with href='listagemcartoes' %}
         <div class="card-body">
-
-        <div class="table-responsive">
             <table class="table table-bordered">
               <thead>
                           <tr>
@@ -30,6 +28,7 @@
                               <td>{{ cartao.valorLimite }}</td>
                               <td>{{ cartao.status }}</td>
                               <td>
+
                                 {% include 'buttons_crud_view.html' with href_view='cartao_visualizar' obj=cartao.pk %}
                                 {% include 'buttons_crud_update.html' with href_update='cartao_editar' obj=cartao.pk %}
                                 {% include 'buttons_crud_delete.html' with href_delete='cartao_excluir' obj=cartao.pk obj_titulo=cartao.titular%}
@@ -39,15 +38,15 @@
 
                           </tbody>
                        </table>
-            {% include 'pagination.html' with href='listagemcartoes'%}
-            {% else %}
+        {% include 'pagination.html' with href='listagemcartoes' %}
+        {% else %}
             <div class="card-body" role="alert">
                 <div class="d-flex gap-2 d-md-flex">
                     <h4 class="m-0 font-weight-bold text-primary md-3">Não há cartões cadastrados!</h4>
                     <a href="{% url 'cartao_cadastrar' %}" class="btn btn-primary btn-sm"><span class="text">Deseja cadastrar ?</span></a>
                 </div>
             </div>
-            {% endif %}
+        {% endif %}
         </div>
     </div>
   </div>

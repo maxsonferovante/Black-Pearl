@@ -96,29 +96,12 @@ class DependenteModelForm(forms.ModelForm):
         }
 
 
-"""   def clean(self):
-        cleaned_data = super().clean()
-        nomecompleto = cleaned_data.get('nomecompleto')
-        dataNascimento = cleaned_data.get('dataNascimento')
-        cpf = cleaned_data.get('cpf')
-        titular = cleaned_data.get('titular')
 
-        if nomecompleto and dataNascimento and titular and cpf:
-            # Verificar se já existe um dependente com o mesmo nome completo e data de nascimento para o associado atual
-            if Dependente.objects.filter(titular__nomecompleto=titular, nomecompleto=nomecompleto,
-                                         dataNascimento=dataNascimento, cpf=cpf).exists():
-                print(Dependente.objects.filter(titular__nomecompleto=titular, nomecompleto=nomecompleto,
-                                         dataNascimento=dataNascimento, cpf=cpf).exists())
-                raise ValidationError('Esse dependente já foi cadastrado para o associado.')
-
-        return cleaned_data"""
-
-
-"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['dataNascimento'].label = _('Data de Nascimento')
         self.fields['dataNascimento'].widget.attrs.update({'placeholder': '__/__/____'})
+
 """
 
 
@@ -131,10 +114,11 @@ def add_class(field, css):
 def add_placeholder(field, text):
     return field.as_widget(attrs={"placeholder": text})
 
-
+"""
 class FileUploadExcelModelForm(forms.Form):
     class meta:
         model = FileUploadExcelModel
+
         fields = '__all__'
         widgets = {
             'arquivo': forms.FileField()

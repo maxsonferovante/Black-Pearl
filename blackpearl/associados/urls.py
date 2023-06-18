@@ -3,7 +3,7 @@ from django.urls import path, include, re_path
 
 from blackpearl.associados import views
 from blackpearl.associados.views import HomeTemplateView, AssociadoUpdateView, AssociadoDeleteView, AssociadoDetailView, \
-    AssociadoCreateView, DependenteCreateView, DependenteUpdateView, DependenteDeleteView
+    AssociadoCreateView, DependenteCreateView, DependenteUpdateView, DependenteDeleteView, ImportExcelView
 
 urlpatterns = [
     path('', HomeTemplateView.as_view(), name='home_assoc'),
@@ -17,5 +17,6 @@ urlpatterns = [
     path('excluirdependente/<int:pk>/', DependenteDeleteView.as_view(), name='excluir_dependente'),
 
     ##path('importExcel/', views.importExcel, name='importExcel'),
+    path('importExcel/', ImportExcelView.as_view(), name='importExcel'),
 
 ]

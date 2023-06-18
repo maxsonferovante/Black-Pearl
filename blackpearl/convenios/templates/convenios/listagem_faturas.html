@@ -43,11 +43,11 @@
 
                           </tbody>
         </table>
-        {% include 'pagination.html' with href='listarFaturas'%}
+        {% include 'pagination.html' with href='listagemfaturas'%}
 
         <div class="filtros d-grid gap-2 d-md-flex justify-content-md-end">
             <form class="form" action="{% url 'exportar' %}" method="GET">
-                {% buttons %}
+
                 <span class="fw-bold"> Filtro de Exportação</span>
 
                 <div class="form-group col-sm">
@@ -56,8 +56,8 @@
                         <select class="form-select" id="inputGroupSelectEmpresa" name="inputGroupSelectEmpresa">
                         <option selected>opções...</option>
                         <option value="1">SINDIPORTO</option>
-                        <option value="2">Companhia Docas do Pará</option>
-                        <option value="3">Companhia Docas de Santana</option>
+                        <option value="3">Companhia Docas do Pará</option>
+                        <option value="2">Companhia Docas de Santana</option>
                         <option value="4">Hidrovias do Brasil</option>
                         <option value="5">Todas</option>
                         </select>
@@ -73,12 +73,13 @@
                             <option selected>opções...</option>
                             <option value="1">PDF (.pdf)</option>
                             <option value="2">Planilhas (.xlsx)</option>
-
+                            <option value="3">Formato de Text (.txt)</option>
                         </select>
                     </div>
+                    {% buttons %}
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-download"></i> Exportar</button>
+                    {% endbuttons %}
                 </div>
-                <button type="submit" class="btn btn-primary"><i class="bi bi-download"></i> Exportar</button>
-                {% endbuttons %}
             </form>
         </div>
         </div>

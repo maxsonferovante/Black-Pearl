@@ -11,8 +11,10 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView, DeleteView, FormView
 from reportlab.pdfgen import canvas
-from .forms import CartaoConvenioVolusForm, FaturaCartaoForm, ContratoPlanoOdontologicoForm
-from .models import CartaoConvenioVolus, FaturaCartao, ContratoPlanoOdontologico, TaxasAdministrativa, PlanoOdontologico
+from .forms import CartaoConvenioVolusForm, FaturaCartaoForm, ContratoPlanoOdontologicoForm, \
+    ContratoPlanoOdontologicoDependenteForm
+from .models import CartaoConvenioVolus, FaturaCartao, ContratoPlanoOdontologico, TaxasAdministrativa, \
+    PlanoOdontologico, ContratoPlanoOdontologicoDependente
 from ..associados.models import Associado
 
 
@@ -25,35 +27,31 @@ class HomeTemplateView(TemplateView):
         return context
 
 
+from django.views.generic import ListView
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+
+
 @method_decorator(login_required, name='dispatch')
 class CartaoListView(ListView):
     template_name = 'convenios/listagemcartoes.html'
+    model = CartaoConvenioVolus
+    paginate_by = 5
+    context_object_name = 'list_objs'
 
-    def get_context_data(self, **kwargs):
-        context = super(CartaoListView, self).get_context_data(**kwargs)
-
-        return context
-
-    def get(self, request, *args, **kwargs):
+    def get_queryset(self):
+        queryset = super().get_queryset()
         nome_pesquisado = self.request.GET.get('obj')
         if nome_pesquisado:
-            cartoes = CartaoConvenioVolus.objects.filter(titular__nomecompleto__icontains=nome_pesquisado).order_by(
-                'titular')
+            queryset = queryset.filter(titular__nomecompleto__icontains=nome_pesquisado).order_by('titular')
         else:
-            cartoes = CartaoConvenioVolus.objects.all()
-        paramentro_page = self.request.GET.get('page', '1')
-        paramentro_limit = self.request.GET.get('limit', '10')
-        if not (paramentro_limit.isdigit() and int(paramentro_limit) > 0):
-            paramentro_limit = '10'
-        cartoes_paginator = Paginator(cartoes, paramentro_limit)
-        try:
-            page = cartoes_paginator.page(paramentro_page)
-        except (EmptyPage, PageNotAnInteger):
-            page = cartoes_paginator.page(1)
+            queryset = queryset.all().order_by('titular')
+        return queryset
 
-        return render(request, self.template_name, {
-            'list_objs': page
-        })
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
 
 
 @method_decorator(login_required, name='dispatch')
@@ -124,60 +122,27 @@ class FaturaUpdateView(UpdateView):
 @method_decorator(login_required, name='dispatch')
 class FaturaListView(ListView):
     template_name = 'convenios/listagem_faturas.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(FaturaListView, self).get_context_data(**kwargs)
-
-        return context
-
-    def get(self, request, *args, **kwargs):
-        request.session['fatura_create_origin'] = 'listagemfaturas'
+    model = FaturaCartao
+    context_object_name = 'list_objs'
+    paginate_by = 5
+    def get_queryset(self):
+        queryset = super().get_queryset()
         nome_pesquisado = self.request.GET.get('obj')
         if nome_pesquisado:
-            faturas = FaturaCartao.objects.filter(cartao__titular__nomecompleto__icontains=nome_pesquisado).order_by(
-                'cartao')
+            queryset = queryset.filter(cartao__titular__nomecompleto__icontains=nome_pesquisado).order_by('cartao')
         else:
-            faturas = FaturaCartao.objects.filter().order_by('competencia')
+            queryset = queryset.all().order_by('cartao')
+        return queryset
 
-        paramentro_page = self.request.GET.get('page', '1')
-        paramentro_limit = self.request.GET.get('limit', '10')
-
-        if not (paramentro_limit.isdigit() and int(paramentro_limit) > 0):
-            paramentro_limit = '10'
-
-        fatura_paginator = Paginator(faturas, paramentro_limit)
-
-        try:
-            page = fatura_paginator.page(paramentro_page)
-        except (EmptyPage, PageNotAnInteger):
-            page = fatura_paginator.page(1)
-
-        return render(request, self.template_name, {
-            'list_objs': page
-        })
-
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
 
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoOdontologicoCreateView(CreateView):
     form_class = ContratoPlanoOdontologicoForm
     template_name = 'convenios/contratacaoplanoodontologico_criar_form.html'
     success_url = reverse_lazy('listagemcontratoodontologica')
-
-    '''def get_form(self, step=None, data=None, files=None):
-        form = super().get_form(step, data, files)
-        stepIndex = self.get_step_index(step)
-        if stepIndex == 1:
-            contratante = self.get_cleaned_data_for_step('0')['contratante']
-            print(contratante.id, type(contratante))
-
-            choice = [(choice.pk, choice.nomecompleto) for choice in Dependente.objects.filter(
-                titular_id=contratante.id
-            )]
-            print(choice)
-            form = ContratoPlanoOdontologicoDependenteFormStepTwo(choice=choice, data=data)
-        return form
-
-'''
 
 
 @method_decorator(login_required, name='dispatch')
@@ -191,6 +156,7 @@ class ContratoPlanoOdontologicoDetailView(DetailView):
         contrato = ContratoPlanoOdontologico.objects.get(pk=contrato_pk)
         context['contrato'] = contrato
         return context
+
 
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoOdontologicoUpdateView(UpdateView):
@@ -209,33 +175,21 @@ class ContratoPlanoOdontologicoDeleteView(DeleteView):
 @method_decorator(login_required, name='dispatch')
 class ContratoOdontologicaListView(ListView):
     template_name = 'convenios/listagem_contratacaoodontologica.html'
+    model = ContratoPlanoOdontologico
+    context_object_name = 'list_objs'
+    paginate_by = 5
 
-    def get_context_data(self, **kwargs):
-        context = super(ContratoOdontologicaListView, self).get_context_data(**kwargs)
-        return context
-
-    def get(self, request, *args, **kwargs):
+    def get_queryset(self):
+        queryset = super().get_queryset()
         nome_pesquisado = self.request.GET.get('obj')
         if nome_pesquisado:
-            contratos = ContratoPlanoOdontologico.objects.filter(
-                contratante__nomecompleto__icontains=nome_pesquisado).order_by('contratante')
+            queryset = queryset.filter(contratante__nomecompleto__icontains=nome_pesquisado).order_by('contratante')
         else:
-            contratos = ContratoPlanoOdontologico.objects.filter(ativo=True).order_by('contratante')
-
-        paramentro_page = self.request.GET.get('page', '1')
-        paramentro_limit = self.request.GET.get('limit', '10')
-        if not (paramentro_limit.isdigit() and int(paramentro_limit) > 0):
-            paramentro_limit = '10'
-
-        contratos_paginator = Paginator(contratos, paramentro_limit)
-        try:
-            page = contratos_paginator.page(paramentro_page)
-        except (EmptyPage, PageNotAnInteger):
-            page = contratos_paginator.page(1)
-
-        return render(request, self.template_name, {
-            'list_objs': page
-        })
+            queryset = queryset.order_by('contratante')
+        return queryset
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
 
 class VerificarAssociacaoView(View):
     @csrf_exempt
@@ -252,12 +206,12 @@ class VerificarAssociacaoView(View):
         valor_unitario = PlanoOdontologico.objects.get(id=plano_odontologico_id).valorUnitario
 
         # instance.valor = (valorPlano / (Decimal(100.0) - taxa.percentual)) * Decimal(100.0)
-        valor_total = round((valor_unitario / (100 - percentual_taxa))*100,2)
+        valor_total = round((valor_unitario / (100 - percentual_taxa)) * 100, 2)
 
         print(valor_unitario, percentual_taxa, valor_total)
 
-
         return JsonResponse({'valor_total': valor_total})
+
 
 class VerificarDependentesView(View):
     @csrf_exempt
@@ -271,6 +225,59 @@ class VerificarDependentesView(View):
             return JsonResponse({'has_dependents': dependentes.exists(), 'dependentes': dependentes_data})
         except Associado.DoesNotExist:
             return JsonResponse({'has_dependents': False, 'dependentes': []})
+
+
+@method_decorator(login_required, name='dispatch')
+class ContratoOdontologicaDependenteCreateView(CreateView):
+    model = ContratoPlanoOdontologicoDependente
+    form_class = ContratoPlanoOdontologicoDependenteForm
+    template_name = 'convenios/dependentes_contrato_plano_odont_add.html'
+    success_url = reverse_lazy('listar_dependentes_contrato_plano_odont')
+
+
+@method_decorator(login_required, name='dispatch')
+class ContratoOdontologicaDependenteListView(ListView):
+    template_name = 'convenios/listagem_dependentes_contrato_odont.html'
+    model = ContratoPlanoOdontologicoDependente
+    context_object_name = 'list_objs'
+    paginate_by = 5
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        nome_pesquisado = self.request.GET.get('obj')
+        if nome_pesquisado:
+            queryset = queryset.filter(dependente__nomecompleto__icontains=nome_pesquisado).order_by('dependente')
+        else:
+            queryset = queryset.order_by('dependente')
+        return queryset
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+@method_decorator(login_required, name='dispatch')
+class ContratoOdontologicaDependenteUpdateView(UpdateView):
+    model = ContratoPlanoOdontologicoDependente
+    form_class = ContratoPlanoOdontologicoDependenteForm
+    template_name = 'convenios/dependentes_contrato_plano_odont_add.html'
+    success_url = reverse_lazy('listar_dependentes_contrato_plano_odont')
+
+
+@method_decorator(login_required, name='dispatch')
+class ContratoOdontologicaDependenteDeleteView(DeleteView):
+    model = ContratoPlanoOdontologicoDependente
+    success_url = reverse_lazy('listar_dependentes_contrato_plano_odont')
+
+
+@method_decorator(login_required, name='dispatch')
+class VerificarAssociacaoDependente(View):
+    @csrf_exempt
+    def get(self, request):
+        contratante_id = self.request.GET.get('contrato_id')
+        dependente_id = self.request.GET.get('dependente_id')
+        print(contratante_id, dependente_id)
+        titular_contratante = ContratoPlanoOdontologico.objects.get(pk=contratante_id)
+        return JsonResponse({'valor': titular_contratante.valor})
 
 
 def exportar(request):
@@ -304,6 +311,7 @@ def exportar(request):
 
 
 def exporttofile(faturas, nome_arq, tipoArquivo_selecionado):
+    global response
     filename = f"{nome_arq}"
 
     if tipoArquivo_selecionado == '1':
@@ -365,13 +373,13 @@ def exporttofile(faturas, nome_arq, tipoArquivo_selecionado):
 
 
     elif tipoArquivo_selecionado == '3':
-        """faturas_txt = ''
+        faturas_txt = ''
         for fatura in faturas:
             matricula = str(fatura.cartao.titular.matricula).zfill(6)
             valorComTaxa = str(fatura.valorComTaxa)[:4].replace('.', '').zfill(12)
             faturas_txt += '{} {}\n'.format(matricula, valorComTaxa)
 
         response = HttpResponse(faturas_txt, content_type='text/plain')
-        response['Content-Disposition'] = f'attachment; filename="{nome_arq}.txt'"""
+        response['Content-Disposition'] = f'attachment; filename="{nome_arq}.txt'
 
     return response

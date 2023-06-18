@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import DateInput
-from blackpearl.associados.models import Associado
-from blackpearl.convenios.models import CartaoConvenioVolus, FaturaCartao, ContratoPlanoOdontologico
+from blackpearl.associados.models import Associado, Dependente
+from blackpearl.convenios.models import CartaoConvenioVolus, FaturaCartao, ContratoPlanoOdontologico, ContratoPlanoOdontologicoDependente
 from widget_tweaks.templatetags.widget_tweaks import register
 
 
@@ -23,8 +23,6 @@ class CartaoConvenioVolusForm(forms.ModelForm):
 
 
 class FaturaCartaoForm(forms.ModelForm):
-
-
     class Meta:
         model = FaturaCartao
         exclude = ['ativo']
@@ -66,51 +64,60 @@ class FaturaCartaoForm(forms.ModelForm):
                 raise forms.ValidationError('Valor da fatura não pode ser maior que o limite do cartão.')
         return cleaned_data
 
-class ContratoPlanoOdontologicoForm(forms.ModelForm):
 
+class ContratoPlanoOdontologicoForm(forms.ModelForm):
     contratante = forms.ModelChoiceField(
         queryset=Associado.objects.filter(associacao__in=['ag', 'fiativo', 'fiaposent']).exclude(ativo=False)
     )
     ativo = forms.BooleanField(label='Ativo', required=False, initial=True)
+
     class Meta:
         model = ContratoPlanoOdontologico
         fields = ['contratante', 'planoOdontologico', 'dataInicio', 'valor', 'ativo']
         widget = {
-            'dataInicio': forms.SelectDateWidget(
+            'dataInicio': DateInput(
                 attrs={
                     'label': 'Data da Contratação',
-                    'data':'date'
+                    'type': 'date',
+                    'class': 'form-control'
                 }
             )
         }
 
-""" BOOL_CHOICES = [(True, 'Sim'), (False, 'Não')]
-    is_dependentes_associado = forms.BooleanField(label='Inclua seus dependentes ?',
-                                                  widget=forms.RadioSelect(
-                                                      choices=BOOL_CHOICES), required=False,
-                                                  initial=False
-                                                  )
-"""
-
-
-"""
-class ContratoPlanoOdontologicoDependenteFormStepTwo(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        choice = kwargs.pop('choice', None)
-        super(ContratoPlanoOdontologicoDependenteFormStepTwo, self).__init__(*args, **kwargs)
-
-        if choice is not None:
-            self.fields['dependente'] = forms.MultipleChoiceField(
-                widget=forms.CheckboxSelectMultiple,
-                choices=choice,
-                required=False
-            )
-
+class ContratoPlanoOdontologicoDependenteForm(forms.ModelForm):
+    titular = forms.ModelChoiceField(
+        queryset=ContratoPlanoOdontologico.objects.filter(ativo=True)
+    )
+    dependente = forms.ModelChoiceField(
+        queryset=Dependente.objects.filter(ativo=True)
+    )
+    ativo = forms.BooleanField(label='Ativo', required=False, initial=True)
     class Meta:
-        model = ContratoPlanoOdontologicoDependete
-        fields = ['dependente', 'datainclusao']
-        widget = {'datainclusao': forms.SelectDateWidget(attrs={'label': 'Data da Inclusão'})}
-"""
+        model = ContratoPlanoOdontologicoDependente
+        fields = ['contrato','dependente', 'dataInicio', 'valor', 'ativo']
+        exclude = ['dataFim']
+        widget = {
+            'dataInicio': DateInput(
+                attrs={
+                    'label': 'Data da Contratação',
+                    'type': 'date',
+                    'class': 'form-control'
+                }
+            ),
+            'contrato': forms.Select(
+                attrs={
+                    'label': 'Titular',
+                    'class': 'form-control'
+                }
+            )
+        }
+
+    def clean_titular(self):
+        titular = self.cleaned_data['contrato']
+        if not titular.ativo:
+            raise forms.ValidationError('O titular do plano selecionado não está ativo.')
+        return titular
+
 
 @register.filter(name='add_class')
 def add_class(field, css):

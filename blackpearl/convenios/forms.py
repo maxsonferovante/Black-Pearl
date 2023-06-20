@@ -1,7 +1,8 @@
 from django import forms
 from django.forms import DateInput
 from blackpearl.associados.models import Associado, Dependente
-from blackpearl.convenios.models import CartaoConvenioVolus, FaturaCartao, ContratoPlanoOdontologico, ContratoPlanoOdontologicoDependente
+from blackpearl.convenios.models import CartaoConvenioVolus, FaturaCartao, ContratoPlanoOdontologico, \
+    ContratoPlanoOdontologicoDependente, ContratoPlanoSaude, PlanoSaude, ValoresPorFaixa
 from widget_tweaks.templatetags.widget_tweaks import register
 
 
@@ -70,19 +71,21 @@ class ContratoPlanoOdontologicoForm(forms.ModelForm):
         queryset=Associado.objects.filter(associacao__in=['ag', 'fiativo', 'fiaposent']).exclude(ativo=False)
     )
     ativo = forms.BooleanField(label='Ativo', required=False, initial=True)
-
+    dataInicio = forms.DateField(
+        label='Data da Contratação',
+        widget=forms.DateInput(
+            attrs={
+                'type': 'date',
+                'class': 'form-control',
+                'autocomplete': 'off',
+                'placeholder': 'dd/mm/yyyy',
+                'data-mask': '00/00/0000'
+            }
+    ))
     class Meta:
         model = ContratoPlanoOdontologico
-        fields = ['contratante', 'planoOdontologico', 'dataInicio', 'valor', 'ativo']
-        widget = {
-            'dataInicio': DateInput(
-                attrs={
-                    'label': 'Data da Contratação',
-                    'type': 'date',
-                    'class': 'form-control'
-                }
-            )
-        }
+        fields = ['contratante', 'planoOdontologico','formaPagamento', 'dataInicio', 'valor', 'ativo']
+        exclude = ['dataFim']
 
 class ContratoPlanoOdontologicoDependenteForm(forms.ModelForm):
     titular = forms.ModelChoiceField(
@@ -92,33 +95,49 @@ class ContratoPlanoOdontologicoDependenteForm(forms.ModelForm):
         queryset=Dependente.objects.filter(ativo=True)
     )
     ativo = forms.BooleanField(label='Ativo', required=False, initial=True)
+    dataInicio = forms.DateField(
+        label='Data da Contratação',
+        widget=forms.DateInput(
+            attrs={
+                'type': 'date',
+                'class': 'form-control',
+                'autocomplete': 'off',
+                'placeholder': 'dd/mm/yyyy',
+                'data-mask': '00/00/0000'
+            }
+        ))
     class Meta:
         model = ContratoPlanoOdontologicoDependente
         fields = ['contrato','dependente', 'dataInicio', 'valor', 'ativo']
         exclude = ['dataFim']
-        widget = {
-            'dataInicio': DateInput(
-                attrs={
-                    'label': 'Data da Contratação',
-                    'type': 'date',
-                    'class': 'form-control'
-                }
-            ),
-            'contrato': forms.Select(
-                attrs={
-                    'label': 'Titular',
-                    'class': 'form-control'
-                }
-            )
-        }
 
-    def clean_titular(self):
-        titular = self.cleaned_data['contrato']
-        if not titular.ativo:
-            raise forms.ValidationError('O titular do plano selecionado não está ativo.')
-        return titular
+class ContratoPlanoSaudeForm(forms.ModelForm):
+    contratante = forms.ModelChoiceField(
+        queryset=Associado.objects.filter(associacao__in=['ag', 'fiativo', 'fiaposent']).exclude(ativo=False))
+    ativo = forms.BooleanField(label='Ativo', required=False, initial=True)
+    dataInicio = forms.DateField(
+        label='Data da Contratação',
+        widget=forms.DateInput(
+            attrs={
+                'type': 'date',
+                'class': 'form-control',
+                'autocomplete': 'off',
+                'placeholder': 'dd/mm/yyyy',
+                'data-mask': '00/00/0000'
+            }
+        ))
+    planoSaude = forms.ModelChoiceField(
+        label= 'Plano de Saúde',
+        queryset=PlanoSaude.objects.filter(ativo=True))
 
+    faixa = forms.ModelChoiceField(
+        queryset=ValoresPorFaixa.objects.filter(ativo=True),
+        label='Faixa Etária', widget=forms.Select(attrs={'class': 'form-control'}))
 
+    class Meta:
+        model = ContratoPlanoSaude
+        fields = ['contratante', 'planoSaude','faixa', 'formaPagamento','atendimentoDomiciliar', 'dataInicio', 'valor', 'ativo', 'faixa']
+        exclude = ['dataFim']
 @register.filter(name='add_class')
 def add_class(field, css):
     return field.as_widget(attrs={"class": css})

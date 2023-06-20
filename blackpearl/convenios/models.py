@@ -13,7 +13,7 @@ from blackpearl.associados.models import Associado, Dependente
 class Base(models.Model):
     criado = models.DateField('Data de Criação', auto_now_add=True)
     modificado = models.DateField('Data de Atualização', auto_now_add=True)
-    ativo = models.BooleanField('Ativo?', default=True)
+    ativo = models.BooleanField('Ativo?', default=True,  choices=[(True, 'Sim'), (False, 'Não')])
 
     class Meta:
         abstract = True
@@ -49,6 +49,37 @@ class ValoresPorFaixa(Base):
     def __str__(self):
         return '{} - {}'.format(self.idadeMin, self.idadeMax)
 
+class ContratoPlanoSaude(Base):
+    contratante = models.OneToOneField(Associado, on_delete=models.CASCADE, related_name='contratos_saude')
+    planoSaude = models.ForeignKey(PlanoSaude, on_delete=models.CASCADE, related_name='contratos')
+    faixa = models.ForeignKey(ValoresPorFaixa, on_delete=models.CASCADE, related_name='contratos')
+
+    atendimentoDomiciliar = models.BooleanField('Atendimento Domiciliar', default=False, choices=[(True, 'Sim'), (False, 'Não')])
+
+    dataInicio = models.DateField('Data da Contratação')
+    dataFim = models.DateField('Data do Cancelamento', blank=True, null=True)
+
+    formaPagamento = models.CharField('Forma de Pagamento', max_length=20,
+                                      choices=[('Boleto Bancário', 'Boleto Bancário'),
+                                               ('Desconto em folha', 'Desconto em folha'),
+                                               ('Isento', 'Isento')])
+    valor = models.DecimalField('Valor do Contrato', max_digits=8, decimal_places=2)
+
+    def get_ativo_display(self):
+        if self.ativo:
+            return 'Sim'
+        else:
+            return 'Não'
+    def dataFim_display(self):
+        if self.dataFim:
+            return self.dataFim
+        else:
+            return 'Vigente'
+    def __str__(self):
+        return '{} - {}'.format(self.contratante, self.planoSaude)
+
+    def get_absolute_url(self):
+        return reverse("contrato_cadastrar", kwargs={"pk": self.pk})
 
 class CartaoConvenioVolus(Base):
     status_choices = [
@@ -99,11 +130,13 @@ class PlanoOdontologico(Base):
 
 class ContratoPlanoOdontologico(Base):
 
-    contratante = models.OneToOneField(Associado, on_delete=models.CASCADE, related_name='contratos')
+    contratante = models.OneToOneField(Associado, on_delete=models.CASCADE, related_name='contratos_odontologicos')
 
     planoOdontologico = models.ForeignKey(PlanoOdontologico, on_delete=models.CASCADE, related_name='contratos')
 
     valor = models.DecimalField('Valor', max_digits=8, decimal_places=2)
+
+    formaPagamento = models.CharField('Forma de Pagamento', max_length=20, choices=[('Boleto Bancário', 'Boleto Bancário'), ('Desconto em folha', 'Desconto em folha')])
 
     dataInicio = models.DateField('Data de Início')
     dataFim = models.DateField('Data de Fim', null=True, blank=True)
@@ -118,7 +151,7 @@ class ContratoPlanoOdontologico(Base):
         if not self.dataFim:
             return "Vigente"
         else:
-            return str(self.valor)
+            return self.dataFim
 
     def get_absolute_url(self):
         return reverse("contrato_cadastrar", kwargs={"pk": self.pk})

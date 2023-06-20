@@ -19,10 +19,12 @@
           <li>Contratante: <strong>{{ contrato.contratante }}</strong></li>
           <li>Contratado: <strong>{{ contrato.planoOdontologico }}</strong></li>
           <li>Valor: <strong>{{ contrato.valor }}</strong></li>
+          <li>Forma de Pagemento: <strong>{{ contrato.formaPagamento }}</strong></li>
           <li>Data de Contratação: <strong>{{ contrato.dataInicio }}</strong></li>
           <li>Ativo: <strong>{{ contrato.get_ativo_display }}</strong></li>
         </ul>
         <h5>Dependentes</h5>
+        {% if contrato.dependentes.all %}
         <table class="table table-bordered">
           <thead>
             <tr>
@@ -45,6 +47,9 @@
             {% endfor %}
           </tbody>
           </table>
+        {% else %}
+        <p> Não há dependentes cadastrados </p>
+        {% endif %}
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Sair</button>

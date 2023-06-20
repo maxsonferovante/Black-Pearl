@@ -1,0 +1,47 @@
+
+{% extends "base_sidebar.html" %}
+{% load crispy_forms_tags %}
+{% load bootstrap5 %}
+{% block content %}
+<div class="container-fluid">
+          <div class="row d-flex justify-content-md-center align-items-center h-50">
+            {% bootstrap_messages %}
+              <form class="form-horizontal" action="" method="post" autocomplete="off" >
+                  {% csrf_token %}
+                 <div class="card shadow mb-3">
+                     <h6 class="card-header">Plano de Saúde - Cadastro</h6>
+                     <div class="card-body">
+                         <div class="row">
+                             <div class="from-group col-sm">
+                                {{ form.contratante|as_crispy_field }}
+                             </div>
+                             <div class="from-group col-sm">
+                                {{ form.planoSaude|as_crispy_field }}
+                             </div>
+                         </div>
+                         <div class="row">
+                             <div class="from-group col-sm">
+                                    {{ form.faixa|as_crispy_field }}
+                             </div>
+                             <div class="from-group col-sm">
+                                    {{ form.atendimentoDomiciliar|as_crispy_field }}
+                             </div>
+                             <div class="from-group col-sm">
+                                    {{ form.dataInicio|as_crispy_field }}
+                             </div>
+                         </div>
+                         <div class="row">
+                             <div class="from-group col-sm">
+                                    {{ form.formaPagamento|as_crispy_field }}
+                             </div>
+                             <div class="from-group col-sm">
+                                    {{ form.valor|as_crispy_field }}
+                             </div>
+                         </div>
+                         {% include 'button_save.html' %}
+                     </div>
+                 </div>
+              </form>
+          </div>
+</div>
+{% endblock content %}

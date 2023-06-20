@@ -3,7 +3,7 @@ from django import forms
 from django.contrib import admin
 
 from .models import ValoresPorFaixa, PlanoSaude, CartaoConvenioVolus, PlanoOdontologico, Otica, TaxasAdministrativa, \
-    FaturaCartao, ContratoPlanoOdontologico, ContratoPlanoOdontologicoDependente
+    FaturaCartao, ContratoPlanoOdontologico, ContratoPlanoOdontologicoDependente, ContratoPlanoSaude
 
 
 # Register your models here.
@@ -63,3 +63,13 @@ class ContratoPlanoOdontologicoDependenteAdmin(admin.ModelAdmin):
                     'dataFim',
                     'ativo')
 
+@admin.register(ContratoPlanoSaude)
+class ContratoPlanoSaudeAdmin(admin.ModelAdmin):
+    list_display = ('contratante',
+                    'id',
+                    'planoSaude',
+                    'faixa',
+                    'valor',
+                    'dataInicio',
+                    'dataFim',
+                    'ativo')

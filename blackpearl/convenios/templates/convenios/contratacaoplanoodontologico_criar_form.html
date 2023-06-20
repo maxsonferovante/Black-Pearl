@@ -9,7 +9,7 @@
       <div class="container">
          <div class="row d-flex justify-content-center align-items-center h-50 mt-5">
          {% bootstrap_messages %}
-         <form class="form-horizontal" action="" method="post" autocomplete="off" >
+         <form class="form-horizontal" action="" method="post" >
                   {% csrf_token %}
                  <div class="card mb-3">
                      <h6 class="card-header">Contratação do Plano Odontologico</h6>
@@ -28,6 +28,9 @@
                             </div>
                              <div class="form-group row col-sm">
                                 {{form.dataInicio|as_crispy_field}}
+                            </div>
+                             <div class="form-group row col-sm">
+                                {{form.formaPagamento|as_crispy_field}}
                             </div>
                             <div class="form-group row col-sm">
                                 {{form.valor|as_crispy_field}}

@@ -1,20 +1,21 @@
 from io import BytesIO
 import openpyxl
-from _decimal import Decimal
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse, JsonResponse
 from django.urls import reverse_lazy, reverse
-from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView, DeleteView, FormView
+from reportlab.lib.pagesizes import letter, landscape
 from reportlab.pdfgen import canvas
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.lib import colors
+
 from .forms import CartaoConvenioVolusForm, FaturaCartaoForm, ContratoPlanoOdontologicoForm, \
-    ContratoPlanoOdontologicoDependenteForm
+    ContratoPlanoOdontologicoDependenteForm, ContratoPlanoSaudeForm
 from .models import CartaoConvenioVolus, FaturaCartao, ContratoPlanoOdontologico, TaxasAdministrativa, \
-    PlanoOdontologico, ContratoPlanoOdontologicoDependente
+    PlanoOdontologico, ContratoPlanoOdontologicoDependente, ContratoPlanoSaude
 from ..associados.models import Associado
 
 
@@ -279,6 +280,49 @@ class VerificarAssociacaoDependente(View):
         titular_contratante = ContratoPlanoOdontologico.objects.get(pk=contratante_id)
         return JsonResponse({'valor': titular_contratante.valor})
 
+@method_decorator(login_required, name='dispatch')
+class ContratoPlanoSaudeCreateView(CreateView):
+    model = ContratoPlanoSaude
+    form_class = ContratoPlanoSaudeForm
+    template_name = 'convenios/planosaude/contrato_plano_saude_add.html'
+    success_url = reverse_lazy('listar_contratos_plano_saude')
+
+@method_decorator(login_required, name='dispatch')
+class ContratoPlanoSaudeListView(ListView):
+    template_name = 'convenios/planosaude/listagem_contratos_plano_saude.html'
+    model = ContratoPlanoSaude
+    context_object_name = 'list_objs'
+    paginate_by = 5
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        nome_pesquisado = self.request.GET.get('obj')
+        if nome_pesquisado:
+            queryset = queryset.filter(contratante__nomecompleto__icontains=nome_pesquisado).order_by('contratante')
+        else:
+            queryset = queryset.order_by('contratante')
+        return queryset
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+@method_decorator(login_required, name='dispatch')
+class ContratoPlanoSaudeUpdateView(UpdateView):
+    model = ContratoPlanoSaude
+    form_class = ContratoPlanoSaudeForm
+    template_name = 'convenios/planosaude/contrato_plano_saude_add.html'
+    success_url = reverse_lazy('listar_contratos_plano_saude')
+
+@method_decorator(login_required, name='dispatch')
+class ContratoPlanoSaudeDeleteView(DeleteView):
+    model = ContratoPlanoSaude
+    success_url = reverse_lazy('listar_contratos_plano_saude')
+
+@method_decorator(login_required, name='dispatch')
+class ContratoPlanoSaudeDetailView(DetailView):
+    model = ContratoPlanoSaude
+    template_name = 'convenios/planosaude/button_model_contrato_plano_saude_detail.html'
+    context_object_name = 'obj'
 
 def exportar(request):
     empresa_selecionada = request.GET.get('inputGroupSelectEmpresa')
@@ -315,7 +359,58 @@ def exporttofile(faturas, nome_arq, tipoArquivo_selecionado):
     filename = f"{nome_arq}"
 
     if tipoArquivo_selecionado == '1':
+
         quant_faturas = faturas.count()
+
+        # Configurações da tabela
+        table_data = [
+            ['Titular do Cartão', 'Empresa', 'Competência', 'Valor da Fatura', 'Valor com a taxa administrativa']
+        ]
+        for fatura in faturas:
+            table_data.append([
+                fatura.cartao.titular.nomecompleto,
+                fatura.cartao.titular.empresa.nome,
+                str(fatura.competencia),
+                str(fatura.valor),
+                str(fatura.valorComTaxa) if fatura.valorComTaxa else ''
+            ])
+
+        # Criação do PDF
+        buffer = BytesIO()
+        pdf = canvas.Canvas(buffer, pagesize=landscape(letter))
+        pdf.setTitle('Faturas')
+
+        # Cria a tabela
+        table = Table(table_data)
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.gray),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 12),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ]))
+
+        # Configurações da tabela
+        width, height = landscape(letter)
+        table.wrapOn(pdf, width, height)
+        table.drawOn(pdf, 50, height - 100)
+
+        pdf.save()
+
+        # Define o nome do arquivo PDF
+        filename = filename + ".pdf"
+
+        # Envia o PDF para o navegador como um arquivo de download
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        buffer.seek(0)
+        response.write(buffer.read())
+        buffer.close()
+
+        """quant_faturas = faturas.count()
         buffer = BytesIO()
         pdf = canvas.Canvas(buffer)
         y = 750  # Posição y inicial
@@ -347,7 +442,7 @@ def exporttofile(faturas, nome_arq, tipoArquivo_selecionado):
 
         response.write(buffer.read())
 
-        buffer.close()
+        buffer.close()"""
     elif tipoArquivo_selecionado == '2':
         wb = openpyxl.Workbook()
         ws = wb.active

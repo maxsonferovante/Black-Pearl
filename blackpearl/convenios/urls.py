@@ -7,7 +7,9 @@ from blackpearl.convenios.views import HomeTemplateView, VerificarDependentesVie
     ContratoPlanoOdontologicoCreateView, ContratoPlanoOdontologicoDetailView, ContratoPlanoOdontologicoUpdateView, \
     ContratoPlanoOdontologicoDeleteView, ContratoOdontologicaListView, VerificarAssociacaoView, \
     ContratoOdontologicaDependenteCreateView, ContratoOdontologicaDependenteListView, \
-    ContratoOdontologicaDependenteUpdateView, ContratoOdontologicaDependenteDeleteView, VerificarAssociacaoDependente
+    ContratoOdontologicaDependenteUpdateView, ContratoOdontologicaDependenteDeleteView, VerificarAssociacaoDependente, \
+    ContratoPlanoSaudeCreateView, ContratoPlanoSaudeListView, ContratoPlanoSaudeUpdateView, \
+    ContratoPlanoSaudeDeleteView, ContratoPlanoSaudeDetailView
 from blackpearl.convenios.views import CartaoListView, CartaoCreateView, CartaoUpdateView, CartaoDetailView, CartaoDeleteView
 from blackpearl.convenios.views import FaturaCreateView, FaturaListView, FaturaDeleteView, FaturaUpdateView
 
@@ -39,6 +41,13 @@ urlpatterns = [
     path('planoodontologico/<int:pk>/dependente', ContratoOdontologicaDependenteUpdateView.as_view(), name='editar_dependentes_contrato_plano_odonto'),
     path('planoodontologico/<int:pk>/dependente', ContratoOdontologicaDependenteDeleteView.as_view(), name='excluir_dependentes_contrato_plano_odonto'),
     path('contratoodontologica/verificarassociacaodependente/', VerificarAssociacaoDependente.as_view(), name='verificar_associacao_dependente'),
+
+
+    path('contratoplanosaude/add', ContratoPlanoSaudeCreateView.as_view(), name='cadastrar_contrato_plano_saude'),
+    path('contratoplanosaude/all', ContratoPlanoSaudeListView.as_view(), name='listar_contrato_plano_saude'),
+    path('contratoplanosaude/<int:pk>/editar', ContratoPlanoSaudeUpdateView.as_view(), name='editar_contrato_plano_saude'),
+    path('contratoplanosaude/<int:pk>/excluir', ContratoPlanoSaudeDeleteView.as_view(), name='excluir_contrato_plano_saude'),
+    path('contratoplanosaude/<int:pk>/detalhes', ContratoPlanoSaudeDetailView.as_view(), name='detalhes_contrato_plano_saude'),
 
     path('exportar/', views.exportar, name = 'exportar'),
 

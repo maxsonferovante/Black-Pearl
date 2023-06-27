@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.conf.urls.static import static
-from django.urls import path
+from django.template.defaulttags import url
+from django.urls import path, include
 
 from blackpearl.convenios import views
 from blackpearl.convenios.views import HomeTemplateView, VerificarDependentesView, ContratoPlanoOdontologico, \
@@ -9,7 +10,7 @@ from blackpearl.convenios.views import HomeTemplateView, VerificarDependentesVie
     ContratoOdontologicaDependenteCreateView, ContratoOdontologicaDependenteListView, \
     ContratoOdontologicaDependenteUpdateView, ContratoOdontologicaDependenteDeleteView, VerificarAssociacaoDependente, \
     ContratoPlanoSaudeCreateView, ContratoPlanoSaudeListView, ContratoPlanoSaudeUpdateView, \
-    ContratoPlanoSaudeDeleteView, ContratoPlanoSaudeDetailView
+    ContratoPlanoSaudeDeleteView, ContratoPlanoSaudeDetailView, ConsultaValorFaixaEtaria
 from blackpearl.convenios.views import CartaoListView, CartaoCreateView, CartaoUpdateView, CartaoDetailView, CartaoDeleteView
 from blackpearl.convenios.views import FaturaCreateView, FaturaListView, FaturaDeleteView, FaturaUpdateView
 
@@ -44,10 +45,13 @@ urlpatterns = [
 
 
     path('contratoplanosaude/add', ContratoPlanoSaudeCreateView.as_view(), name='cadastrar_contrato_plano_saude'),
-    path('contratoplanosaude/all', ContratoPlanoSaudeListView.as_view(), name='listar_contrato_plano_saude'),
+    path('contratoplanosaude/all', ContratoPlanoSaudeListView.as_view(), name='listar_contratos_plano_saude'),
     path('contratoplanosaude/<int:pk>/editar', ContratoPlanoSaudeUpdateView.as_view(), name='editar_contrato_plano_saude'),
     path('contratoplanosaude/<int:pk>/excluir', ContratoPlanoSaudeDeleteView.as_view(), name='excluir_contrato_plano_saude'),
     path('contratoplanosaude/<int:pk>/detalhes', ContratoPlanoSaudeDetailView.as_view(), name='detalhes_contrato_plano_saude'),
+    path('contratoplanosaude/consultafaixa/', ConsultaValorFaixaEtaria.as_view(), name='consultafaixa'),
+
+
 
     path('exportar/', views.exportar, name = 'exportar'),
 

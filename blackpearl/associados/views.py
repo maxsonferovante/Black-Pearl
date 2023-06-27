@@ -7,7 +7,7 @@ import pandas as pd
 from _decimal import Decimal
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -15,6 +15,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView, UpdateView, DeleteView, DetailView, CreateView, ListView
 from reportlab.pdfgen import canvas
 from tqdm import tqdm
@@ -22,7 +23,7 @@ from tqdm import tqdm
 from .importExcelToAssociados import import_excel_to_associado
 from .forms import AssociadoModelForm, FileUploadExcelModelForm, DependenteModelForm
 from .models import Associado, FileUploadExcelModel, Dependente, Empresa
-from ..convenios.models import CartaoConvenioVolus, FaturaCartao
+from ..convenios.models import CartaoConvenioVolus, FaturaCartao, ValoresPorFaixa
 
 
 # Create your views here.
@@ -83,6 +84,21 @@ class AssociadoDetailView(DetailView):
 class AssociadoDeleteView(DeleteView):
     model = Associado
     success_url = reverse_lazy('home_assoc')
+
+@method_decorator(login_required, name='dispatch')
+class ConsultaIdadeAssocView(View):
+    @csrf_exempt
+    def get(self, request):
+        id_associado = request.GET.get('id_contratante')
+        idade = Associado.objects.get(pk=id_associado).idade
+
+        id_faixa = ValoresPorFaixa.objects.filter(
+            idadeMin__gte=idade,
+            idadeMax__lte=idade
+        ).first().id
+
+        valor = ValoresPorFaixa.objects.get(pk=id_faixa).valor
+        return JsonResponse({'id_faixa': id_faixa, 'valor': valor})
 
 
 @method_decorator(login_required, name='dispatch')

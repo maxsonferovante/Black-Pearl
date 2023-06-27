@@ -14,7 +14,7 @@
         </div>
     </div>
     {% if list_objs %}
-    {% include 'search.html' with href='listar_contrato_plano_saude' %}
+    {% include 'search.html' with href='listar_contratos_plano_saude' %}
 
     <div class="card-body">
       <div class="table-responsive">
@@ -27,7 +27,7 @@
                 <th scope="col">Valor (R$)</th>
                 <th scope="col">Data de Início</th>
 
-                <th scope="col">Ativo</th>
+                <th scope="col">Status</th>
                 <th scope="col">Opções</th>
             </tr>
           </thead>
@@ -49,7 +49,7 @@
               {% endfor %}
           </tbody>
         </table>
-        {% include 'pagination.html' with href='listar_contrato_plano_saude'%}
+        {% include 'pagination.html' with href='listar_contratos_plano_saude'%}
       </div>
     </div>
     {% else %}

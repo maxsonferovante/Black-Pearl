@@ -97,11 +97,6 @@ class DependenteModelForm(forms.ModelForm):
 
 
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['dataNascimento'].label = _('Data de Nascimento')
-        self.fields['dataNascimento'].widget.attrs.update({'placeholder': '__/__/____'})
-
 """
 
 

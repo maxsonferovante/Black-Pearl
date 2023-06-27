@@ -135,7 +135,7 @@ class Associado(Base):
 
         super().save(*args, **kwargs)
     def __str__(self):
-        return '{}'.format(self.nomecompleto)
+        return '{}'.format(self.nomecompleto.title())
 
     def get_nomecompleto_display(self):
         return self.nomecompleto.title()

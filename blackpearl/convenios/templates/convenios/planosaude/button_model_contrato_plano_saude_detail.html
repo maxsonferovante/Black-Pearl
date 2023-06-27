@@ -2,3 +2,74 @@
 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#staticBackdrop">
       <i class="bi bi-person-vcard"></i>
 </button>
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Detalhes de {{contrato.contratante.get_nomecompleto_display}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h5>Dados do Contrato</h5>
+        <ul class="list-unstyled">
+              <li>Contratante: <strong>{{ contrato.contratante.get_nomecompleto_display }}</strong></li>
+              <li>Contratado: <strong>{{ contrato.planoSaude }}</strong></li>
+              <li>Faixa Etária: <strong>{{ contrato.faixa }} (anos)</strong></li>
+              <li>Atendimento Domiciliar: <strong>{{ contrato.atendimentoDomiciliar }}</strong></li>
+              <li>Forma de Pagemento: <strong>{{ contrato.formaPagamento }}</strong></li>
+              <li>Valor: <strong>{{ contrato.valor }}</strong></li>
+              <li>Data de Contratação: <strong>{{ contrato.dataInicio }}</strong></li>
+
+              {% if contrato.ativo %}
+                  <li>Status:
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="green" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg>
+                  </li>
+              {% else %}
+                  <li>Status:
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="red" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+                          <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                        </svg>
+                  </li>
+              {% endif %}
+
+        </ul>
+        <h5>Dependentes</h5>
+        {% if contrato.dependentes.all %}
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th scope="col">Dependente</th>
+              <th scope="col">Grau de Parentesco</th>
+              <th scope="col">Valor</th>
+              <th scope="col">Data de Início</th>
+              <th scope="col">Ativo</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for dependente in contrato.dependentes.all %}
+            <tr>
+              <td>{{ dependente.dependente }}</td>
+              <td>{{ dependente.dependente.get_grauparentesco_display }}</td>
+              <td>{{ dependente.valor }}</td>
+              <td>{{ dependente.dataInicio }}</td>
+              <td>{{ dependente.get__ativo_display }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+          </table>
+        {% else %}
+        <p> Não há dependentes cadastrados </p>
+        {% endif %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Sair</button>
+        <button type="button" class="btn btn-primary">Imprimir</button>
+      </div>
+    </div>
+  </div>
+</div>

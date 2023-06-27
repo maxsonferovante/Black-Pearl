@@ -113,8 +113,10 @@ class ContratoPlanoOdontologicoDependenteForm(forms.ModelForm):
 
 class ContratoPlanoSaudeForm(forms.ModelForm):
     contratante = forms.ModelChoiceField(
-        queryset=Associado.objects.filter(associacao__in=['ag', 'fiativo', 'fiaposent']).exclude(ativo=False))
-    ativo = forms.BooleanField(label='Ativo', required=False, initial=True)
+        queryset=Associado.objects.filter(associacao__in=['ag', 'fiativo', 'fiaposent']).exclude(ativo=False),
+        widget= forms.Select(attrs = {'class': 'idade-atend-valor'})
+    )
+
     dataInicio = forms.DateField(
         label='Data da Contratação',
         widget=forms.DateInput(
@@ -128,11 +130,15 @@ class ContratoPlanoSaudeForm(forms.ModelForm):
         ))
     planoSaude = forms.ModelChoiceField(
         label= 'Plano de Saúde',
-        queryset=PlanoSaude.objects.filter(ativo=True))
-
-    faixa = forms.ModelChoiceField(
-        queryset=ValoresPorFaixa.objects.filter(ativo=True),
-        label='Faixa Etária', widget=forms.Select(attrs={'class': 'form-control'}))
+        queryset=PlanoSaude.objects.filter(ativo=True),
+        widget = forms.Select(attrs={'class': 'idade-atend-valor'})
+    )
+    atendimentoDomiciliar = forms.BooleanField(label='Atendimento Domiciliar', initial=False, required=False,
+                                               widget=forms.Select(choices=[(True, 'Sim'), (False, 'Não')],
+                                                                   attrs={'class': 'idade-atend-valor'}))
+    ativo = forms.BooleanField(label_suffix='Status*', required=True, initial=True,
+                               widget=forms.Select(choices=[(True, 'Sim'), (False, 'Não')],
+                                                   attrs={'class': 'form-control'}))
 
     class Meta:
         model = ContratoPlanoSaude

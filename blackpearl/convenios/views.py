@@ -1,8 +1,10 @@
+import datetime
 from io import BytesIO
 import openpyxl
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.urls import reverse_lazy, reverse
+
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
@@ -15,7 +17,7 @@ from reportlab.lib import colors
 from .forms import CartaoConvenioVolusForm, FaturaCartaoForm, ContratoPlanoOdontologicoForm, \
     ContratoPlanoOdontologicoDependenteForm, ContratoPlanoSaudeForm
 from .models import CartaoConvenioVolus, FaturaCartao, ContratoPlanoOdontologico, TaxasAdministrativa, \
-    PlanoOdontologico, ContratoPlanoOdontologicoDependente, ContratoPlanoSaude
+    PlanoOdontologico, ContratoPlanoOdontologicoDependente, ContratoPlanoSaude, ValoresPorFaixa, PlanoSaude
 from ..associados.models import Associado
 
 
@@ -322,8 +324,39 @@ class ContratoPlanoSaudeDeleteView(DeleteView):
 class ContratoPlanoSaudeDetailView(DetailView):
     model = ContratoPlanoSaude
     template_name = 'convenios/planosaude/button_model_contrato_plano_saude_detail.html'
-    context_object_name = 'obj'
+    context_object_name = 'contrato'
 
+@method_decorator(login_required, name='dispatch')
+class ConsultaValorFaixaEtaria(View):
+    @csrf_exempt
+    def get(self, request):
+        planoSaude_id = self.request.GET.get('planoSaude_id')
+        contratante_id = self.request.GET.get('contratante_id')
+        atendimentoDomiciliar = self.request.GET.get('atendimentoDomiciliar')
+
+        idade = self.calcular_idade(Associado.objects.get(pk=contratante_id).dataNascimento)
+
+        faixa = ValoresPorFaixa.objects.filter(planoSaude_id=planoSaude_id, idadeMin__lte=idade, idadeMax__gte=idade).first()
+        valorAtendimentoDomiciliar = PlanoSaude.objects.get(pk=planoSaude_id).valorAtendimentoDomiciliar
+        taxa = TaxasAdministrativa.objects.get(grupos = Associado.objects.get(pk=contratante_id).associacao)
+        print (taxa.percentual)
+
+        print(atendimentoDomiciliar, type(atendimentoDomiciliar))
+        if atendimentoDomiciliar == 'True':
+            valor = round((faixa.valor / (100-taxa.percentual)) * 100,2) + round((valorAtendimentoDomiciliar/(100-taxa.percentual)*100),2)
+        else:
+            valor = round((faixa.valor / (100-taxa.percentual)) * 100,2)
+
+        print (valor)
+
+        return JsonResponse({'faixa_id': faixa.id, 'valor': valor,
+                             'idadeMin': faixa.idadeMin, 'idadeMax': faixa.idadeMax
+                             })
+
+    def calcular_idade(self, dataNascimento):
+        data_atual = datetime.date.today()
+        idade = data_atual.year - dataNascimento.year - ((data_atual.month, data_atual.day) < (dataNascimento.month, dataNascimento.day))
+        return idade
 def exportar(request):
     empresa_selecionada = request.GET.get('inputGroupSelectEmpresa')
     data_inicial = request.GET.get('start_date')
@@ -361,56 +394,6 @@ def exporttofile(faturas, nome_arq, tipoArquivo_selecionado):
     if tipoArquivo_selecionado == '1':
 
         quant_faturas = faturas.count()
-
-        # Configurações da tabela
-        table_data = [
-            ['Titular do Cartão', 'Empresa', 'Competência', 'Valor da Fatura', 'Valor com a taxa administrativa']
-        ]
-        for fatura in faturas:
-            table_data.append([
-                fatura.cartao.titular.nomecompleto,
-                fatura.cartao.titular.empresa.nome,
-                str(fatura.competencia),
-                str(fatura.valor),
-                str(fatura.valorComTaxa) if fatura.valorComTaxa else ''
-            ])
-
-        # Criação do PDF
-        buffer = BytesIO()
-        pdf = canvas.Canvas(buffer, pagesize=landscape(letter))
-        pdf.setTitle('Faturas')
-
-        # Cria a tabela
-        table = Table(table_data)
-        table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.gray),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 12),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-            ('GRID', (0, 0), (-1, -1), 1, colors.black),
-        ]))
-
-        # Configurações da tabela
-        width, height = landscape(letter)
-        table.wrapOn(pdf, width, height)
-        table.drawOn(pdf, 50, height - 100)
-
-        pdf.save()
-
-        # Define o nome do arquivo PDF
-        filename = filename + ".pdf"
-
-        # Envia o PDF para o navegador como um arquivo de download
-        response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="{filename}"'
-        buffer.seek(0)
-        response.write(buffer.read())
-        buffer.close()
-
-        """quant_faturas = faturas.count()
         buffer = BytesIO()
         pdf = canvas.Canvas(buffer)
         y = 750  # Posição y inicial
@@ -426,9 +409,7 @@ def exporttofile(faturas, nome_arq, tipoArquivo_selecionado):
             # Escreve as informações da fatura
             pdf.drawString(100, y, "Competência: {}".format(fatura.competencia))
             y -= 20
-            pdf.drawString(100, y, "Valor da fatura: {}".format(fatura.valor))
-            y -= 20
-            pdf.drawString(100, y, "Valor com a taxa administrativa: {}".format(fatura.valorComTaxa))
+            pdf.drawString(100, y, "Valor: {}".format(fatura.valorComTaxa))
             y -= 40  # Move duas linhas para baixo
 
         pdf.save()
@@ -442,7 +423,7 @@ def exporttofile(faturas, nome_arq, tipoArquivo_selecionado):
 
         response.write(buffer.read())
 
-        buffer.close()"""
+        buffer.close()
     elif tipoArquivo_selecionado == '2':
         wb = openpyxl.Workbook()
         ws = wb.active
@@ -452,13 +433,12 @@ def exporttofile(faturas, nome_arq, tipoArquivo_selecionado):
         ws['B1'] = "Empresa"
         ws['C1'] = "Competêcia"
         ws['D1'] = "Valor"
-        ws['E1'] = "Valor com taxa"
+
 
         for i, fatura in enumerate(faturas):
             ws.cell(row=i + 2, column=1, value=fatura.cartao.titular.nomecompleto)
             ws.cell(row=i + 2, column=2, value=fatura.cartao.titular.empresa.nome)
             ws.cell(row=i + 2, column=3, value=fatura.competencia)
-            ws.cell(row=i + 2, column=4, value=fatura.valor)
             ws.cell(row=i + 2, column=5, value=fatura.valorComTaxa)
 
         # Cria uma resposta HTTP com o arquivo XLSX

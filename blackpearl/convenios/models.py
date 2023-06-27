@@ -6,6 +6,7 @@ from django.db.models.signals import m2m_changed, pre_save
 from django.dispatch import receiver
 from django.urls import reverse
 
+
 from blackpearl.associados.models import Associado, Dependente
 
 
@@ -37,7 +38,7 @@ class PlanoSaude(Base):
     valorAtendimentoDomiciliar = models.DecimalField("Valor do Atendimento Domiciliar", max_digits=5, decimal_places=2)
 
     def __str__(self):
-        return '{} - {} - {}'.format(self.nome, self.contrato, self.segmentacao)
+        return '{} - {}'.format(self.nome, self.segmentacao)
 
 
 class ValoresPorFaixa(Base):
@@ -47,11 +48,12 @@ class ValoresPorFaixa(Base):
     valor = models.DecimalField('Valor da Faixa', max_digits=6, decimal_places=2)
 
     def __str__(self):
-        return '{} - {}'.format(self.idadeMin, self.idadeMax)
+        return '{} a {} (anos)'.format(self.idadeMin, self.idadeMax)
 
 class ContratoPlanoSaude(Base):
     contratante = models.OneToOneField(Associado, on_delete=models.CASCADE, related_name='contratos_saude')
     planoSaude = models.ForeignKey(PlanoSaude, on_delete=models.CASCADE, related_name='contratos')
+
     faixa = models.ForeignKey(ValoresPorFaixa, on_delete=models.CASCADE, related_name='contratos')
 
     atendimentoDomiciliar = models.BooleanField('Atendimento Domiciliar', default=False, choices=[(True, 'Sim'), (False, 'Não')])
@@ -65,6 +67,11 @@ class ContratoPlanoSaude(Base):
                                                ('Isento', 'Isento')])
     valor = models.DecimalField('Valor do Contrato', max_digits=8, decimal_places=2)
 
+    def get_atedimentoDomiciliar_display(self):
+        if self.atendimentoDomiciliar:
+            return 'Sim'
+        else:
+            return 'Não'
     def get_ativo_display(self):
         if self.ativo:
             return 'Sim'

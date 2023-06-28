@@ -1,6 +1,6 @@
 
 
-# Título do Projeto
+# Black Pearl
 
 Sistema de gestão de convênios e associados do Sindicato dos Portuários.
 
@@ -21,7 +21,6 @@ Adicione etiquetas de algum lugar, como: [shields.io](https://shields.io/)
 
 - [@maxsonferovante](https://github.com/maxsonferovante)
 
-
 ## Usado por
 
 Esse projeto é usado pela seguinte empresa:
@@ -32,9 +31,9 @@ Esse projeto é usado pela seguinte empresa:
 
 ## Funcionalidades
 
-- Cadastro de Associados e seus Dependentes
-- Contratação de Convenios (Cartãao e Plano Odontologico)
-- Inclusão e Geração de Relatorio das Faturas do Cartão
+- Gerenciamento de Associados e seus Dependentes
+- Gerenciamento de Convenios (Cartões de Convênio, Plano de Saude, e Plano Odontologico)
+- Gerenciamento de Cobranças em faturas dos convenios
 
 ## Produção
 

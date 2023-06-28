@@ -334,14 +334,17 @@ class ConsultaValorFaixaEtaria(View):
 
         faixa = ValoresPorFaixa.objects.filter(planoSaude_id=planoSaude_id, idadeMin__lte=idade, idadeMax__gte=idade).first()
         valorAtendimentoDomiciliar = PlanoSaude.objects.get(pk=planoSaude_id).valorAtendimentoDomiciliar
+        valorAtendimentoTelefonico = PlanoSaude.objects.get(pk=planoSaude_id).valorAtendimentoTelefonico
+
         taxa = TaxasAdministrativa.objects.get(grupos = Associado.objects.get(pk=contratante_id).associacao)
+
         print (taxa.percentual)
 
         print(atendimentoDomiciliar, type(atendimentoDomiciliar))
         if atendimentoDomiciliar == 'True':
-            valor = round((faixa.valor / (100-taxa.percentual)) * 100,2) + round((valorAtendimentoDomiciliar/(100-taxa.percentual)*100),2)
+            valor = round(((faixa.valor+valorAtendimentoTelefonico) / (100-taxa.percentual)) * 100,2) + round((valorAtendimentoDomiciliar/(100-taxa.percentual)*100),2)
         else:
-            valor = round((faixa.valor / (100-taxa.percentual)) * 100,2)
+            valor = round(((faixa.valor+valorAtendimentoTelefonico)  / (100-taxa.percentual)) * 100,2)
 
         print (valor)
 

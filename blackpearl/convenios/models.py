@@ -36,7 +36,7 @@ class PlanoSaude(Base):
     contrato = models.CharField('Número do Contrato', max_length=10)
     segmentacao = models.CharField('Segmentação', max_length=20, choices=segmentacao_choices)
     valorAtendimentoDomiciliar = models.DecimalField("Valor do Atendimento Domiciliar", max_digits=5, decimal_places=2)
-
+    valorAtendimentoTelefonico = models.DecimalField("Valor do Atendimento Telefonico", max_digits=5, decimal_places=2, default=3.2)
     def __str__(self):
         return '{} - {}'.format(self.nome, self.segmentacao)
 

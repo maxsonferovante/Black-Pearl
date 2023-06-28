@@ -13,6 +13,10 @@ from reportlab.lib.pagesizes import letter, landscape
 from reportlab.pdfgen import canvas
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib import colors
+from django.views.generic import ListView
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+
 
 from .forms import CartaoConvenioVolusForm, FaturaCartaoForm, ContratoPlanoOdontologicoForm, \
     ContratoPlanoOdontologicoDependenteForm, ContratoPlanoSaudeForm
@@ -28,12 +32,6 @@ class HomeTemplateView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(HomeTemplateView, self).get_context_data(**kwargs)
         return context
-
-
-from django.views.generic import ListView
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
 
 
 @method_decorator(login_required, name='dispatch')
@@ -277,8 +275,6 @@ class VerificarAssociacaoDependente(View):
     @csrf_exempt
     def get(self, request):
         contratante_id = self.request.GET.get('contrato_id')
-        dependente_id = self.request.GET.get('dependente_id')
-        print(contratante_id, dependente_id)
         titular_contratante = ContratoPlanoOdontologico.objects.get(pk=contratante_id)
         return JsonResponse({'valor': titular_contratante.valor})
 

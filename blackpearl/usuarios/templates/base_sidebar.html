@@ -162,6 +162,31 @@
                 </div>
             </li>
 
+              <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
+
+                <!-- Heading -->
+            <div class="sidebar-heading">
+                Secretaria
+            </div>
+            <!-- Nav Item - Pages Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSecretaria"
+                    aria-expanded="true" aria-controls="collapsePages">
+                    Ofícios
+                </a>
+                <div id="collapseSecretaria" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Cadastros:</h6>
+                        <a class="collapse-item" href="{% url 'novo_oficio' %}">Novo</a>
+
+                        <div class="collapse-divider"></div>
+                        <h6 class="collapse-header">Consultas:</h6>
+                        <a class="collapse-item" href="{% url 'listar_oficios' %}">Ofícios</a>
+
+                    </div>
+                </div>
+            </li>
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">

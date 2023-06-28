@@ -40,17 +40,15 @@
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $(document).ready(function() {
-  $('.select').change(function() {
+$(document).ready(function() {
+  $('#id_contrato').change(function() {
     var contratoId = $(this).val();
-    var dependenteId = $('#id_dependente').val();
-    console.log(contratoId, dependenteId);
-    if (contratoId && dependenteId) {
+    console.log(contratoId);
+    if (contratoId !=='') {
        $.ajax({
               url: '/convenios/contratoodontologica/verificarassociacaodependente/',
               type: 'GET',
-              data: { 'contrato_id': contratoId,
-                      'dependente_id': dependenteId
+              data: { 'contrato_id': contratoId
                },
               dataType: 'json',
               success: function(response) {

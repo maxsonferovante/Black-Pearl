@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
     'blackpearl.associados',
     'blackpearl.convenios',
+    'blackpearl.oficios',
     'bootstrap5',
 ]
 

@@ -101,9 +101,7 @@ class ContratoPlanoOdontologicoDependenteForm(forms.ModelForm):
             attrs={
                 'type': 'date',
                 'class': 'form-control',
-                'autocomplete': 'off',
-                'placeholder': 'dd/mm/yyyy',
-                'data-mask': '00/00/0000'
+                'autocomplete': 'off'
             }
         ))
     class Meta:

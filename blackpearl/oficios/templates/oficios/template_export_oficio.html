@@ -1,12 +1,15 @@
-<!DOCTYPE html>
 
+<!DOCTYPE html>
+{% load static %}
 <html>
 <head>
-    <!-- HTML 4 -->
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<!-- HTML5 -->
-<meta charset="utf-8"/>
-{% load static %}
+
+    {% load img_to_base64 %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Black Pearl</title>
+
 <style>
     @page {
         size: a4 portrait;
@@ -27,8 +30,16 @@
         }
         
     }
+
+#imagem{
+    text-align: center;
+
+}
 img {
-    width: 200px;
+    width: 100px;
+    height: 100px;
+    round: 50%;
+    justify-content: center-float;
     position: relative;
 }
 #header_content h1{
@@ -62,17 +73,18 @@ p{
     text-align: center;
 }
 </style>
+
 </head>
 
 <body>
     <!-- Content for Static Frame 'header_frame' -->
     <div id="imagem">
-        <img src="{% static 'usuarios/logo.svg' %}" height="100px" width="100px" class="rounded-circle float-center"/>
+            <img src="{% static 'oficios/logo.svg' %}" alt="{{ oficios.remetente }}" class="rounded-circle float-center"/>
     </div>
     <div id="header_content">
         <h1 ><b>SINDICATO DOS TRABALHADORES EM SERVIÇOS PORTUÁRIOS NOS<br>
                TERMINAIS PÚBLICOS, PRIVATIVOS E RETROPORTO NOS ESTADOS <br>
-               DO PARÁ E AMAPÁ - SINDIPORTO</b></h1>
+               DO PARÁ E AMAPÁ - SINDIPORTO - 07.917.990/0001-76</b></h1>
     </div>
 
     <!-- Content for Static Frame 'footer_frame' -->

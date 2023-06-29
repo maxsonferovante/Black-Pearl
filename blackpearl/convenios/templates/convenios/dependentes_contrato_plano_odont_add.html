@@ -8,7 +8,7 @@
 <div class="container">
     <div class="row d-flex justify-content-center align-items-center h-50 mt-5">
         {% bootstrap_messages %}
-    <form class="form-horizontal" method="post" action="">
+    <form class="form-horizontal" method="post" action="" autocomplete="off">
           {% csrf_token %}
         <div class="card shadow mb-3">
             <h6 class="card-header">Novo dependente</h6>
@@ -35,16 +35,19 @@
                 {% include 'button_save.html' %}
             </div>
         </div>
-        </form>
+    </form>
     </div>
 </div>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+
 $(document).ready(function() {
   $('#id_contrato').change(function() {
     var contratoId = $(this).val();
     console.log(contratoId);
     if (contratoId !=='') {
+
        $.ajax({
               url: '/convenios/contratoodontologica/verificarassociacaodependente/',
               type: 'GET',
@@ -55,6 +58,18 @@ $(document).ready(function() {
                 console.log(response);
                 var novoValor = response.valor;
                 $('#id_valor').val(novoValor);
+
+                if (response.lista_dependentes.length > 0) {
+                    console.log(response.lista_dependentes);
+                    $('#id_dependente').empty();
+                    $('#id_dependente').append('<option value="" selected="selected">---------</option>');
+                    $.each(response.lista_dependentes, function (key, value) {
+                        $('#id_dependente').append('<option value="' + key + '">' + value.nomecompleto + '</option>');
+                    });
+                } else {
+                    $('#id_dependente').empty();
+                    $('#id_dependente').append('<option value="" selected="selected">---------</option>');
+                }
               },
               error: function(xhr, status, error) {
                 console.log(error);

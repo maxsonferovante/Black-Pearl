@@ -1,6 +1,8 @@
+from django.contrib.sites import requests
 from django.db import models
 from django.db.models import signals
 from django.urls import reverse
+from django.utils.baseconv import base64
 from django.utils.text import slugify
 from django.utils import timezone
 from django.template.defaultfilters import slugify
@@ -29,11 +31,17 @@ class Diretor(Base):
     email = models.EmailField('E-mail', max_length=100)
 
     cargo = models.CharField('Cargo', max_length=100, choices=CARGO_CHOICES)
-    photo = models.ImageField(upload_to='oficios/diretores', verbose_name='Foto', null=True, blank=True)
-    assinatura = models.ImageField(upload_to='oficios/assinaturas', verbose_name='Assinatura', null=True, blank=True)
+    photo = models.ImageField(verbose_name='Foto', null=True, blank=True)
+    assinatura = models.ImageField(verbose_name='Assinatura', null=True, blank=True)
 
     slug = models.SlugField(max_length=100, blank=True, unique=True)
-    
+
+
+    def get_photo_tobase64(self):
+        if self.photo:
+            return "data:image/png;base64, " + str(base64.b64encode(requests.get(self.photo.url).content))
+        return None
+
     def __str__(self):
         return '{} {}'.format(self.nome, self.sobrenome)
 

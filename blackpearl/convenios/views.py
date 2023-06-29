@@ -2,7 +2,8 @@ import datetime
 from io import BytesIO
 import openpyxl
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy, reverse
 
 from django.utils.decorators import method_decorator
@@ -22,7 +23,7 @@ from .forms import CartaoConvenioVolusForm, FaturaCartaoForm, ContratoPlanoOdont
     ContratoPlanoOdontologicoDependenteForm, ContratoPlanoSaudeForm
 from .models import CartaoConvenioVolus, FaturaCartao, ContratoPlanoOdontologico, TaxasAdministrativa, \
     PlanoOdontologico, ContratoPlanoOdontologicoDependente, ContratoPlanoSaude, ValoresPorFaixa, PlanoSaude
-from ..associados.models import Associado
+from ..associados.models import Associado, Dependente
 
 
 @method_decorator(login_required, name='dispatch')
@@ -146,6 +147,7 @@ class ContratoPlanoOdontologicoCreateView(CreateView):
     success_url = reverse_lazy('listagemcontratoodontologica')
 
 
+
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoOdontologicoDetailView(DetailView):
     model = ContratoPlanoOdontologico
@@ -165,6 +167,8 @@ class ContratoPlanoOdontologicoUpdateView(UpdateView):
     form_class = ContratoPlanoOdontologicoForm
     template_name = 'convenios/contratacaoplanoodontologico_criar_form.html'
     success_url = reverse_lazy('listagemcontratoodontologica')
+
+
 
 
 @method_decorator(login_required, name='dispatch')
@@ -235,6 +239,8 @@ class ContratoOdontologicaDependenteCreateView(CreateView):
     template_name = 'convenios/dependentes_contrato_plano_odont_add.html'
     success_url = reverse_lazy('listar_dependentes_contrato_plano_odont')
 
+    
+
 
 @method_decorator(login_required, name='dispatch')
 class ContratoOdontologicaDependenteListView(ListView):
@@ -263,6 +269,14 @@ class ContratoOdontologicaDependenteUpdateView(UpdateView):
     template_name = 'convenios/dependentes_contrato_plano_odont_add.html'
     success_url = reverse_lazy('listar_dependentes_contrato_plano_odont')
 
+    def form_valid(self, form):
+        print(form.cleaned_data)
+        dependente_contrato = form.save(commit=False)
+        dependente_contrato.save()
+        titular_contrato = get_object_or_404(ContratoPlanoOdontologico, id=dependente_contrato.titular_contrato_id)
+        titular_contrato.valor = titular_contrato.valor + dependente_contrato.valor
+        titular_contrato.save()
+        return super().form_valid(form)
 
 @method_decorator(login_required, name='dispatch')
 class ContratoOdontologicaDependenteDeleteView(DeleteView):
@@ -276,7 +290,14 @@ class VerificarAssociacaoDependente(View):
     def get(self, request):
         contratante_id = self.request.GET.get('contrato_id')
         titular_contratante = ContratoPlanoOdontologico.objects.get(pk=contratante_id)
-        return JsonResponse({'valor': titular_contratante.valor})
+        lista_dependentes = Dependente.objects.filter(titular_id=titular_contratante.contratante)
+
+        if lista_dependentes.count() > 0:
+            return JsonResponse({'valor': titular_contratante.valor,
+                             'lista_dependentes': [{'id': dep.id, 'nomecompleto': dep.nomecompleto} for dep in lista_dependentes]})
+
+        return JsonResponse({'valor': titular_contratante.valor,
+                             'lista_dependentes': []})
 
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoSaudeCreateView(CreateView):

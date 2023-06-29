@@ -37,3 +37,15 @@ class OficioForm(forms.ModelForm):
             self.fields['numeracao'].initial = max_numeracao + 1
         else:
             self.fields['numeracao'].initial = 1
+
+class OficioUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = Oficio
+        fields = ['numeracao', 'dataOficio', 'assunto', 'remetente', 'destinatario', 'texto']
+        exclude = ['id']
+
+    def __init__(self, *args, **kwargs):
+        super(OficioUpdateForm, self).__init__(*args, **kwargs)
+        self.fields['numeracao'].disabled = True
+        self.fields['dataOficio'].disabled = True

@@ -1,11 +1,12 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.staticfiles import finders
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, View
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from django.template import RequestContext
+from django.template import RequestContext, Context
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 from django.conf import settings
@@ -13,7 +14,9 @@ from io import BytesIO as BytesIo
 import os
 
 from .models import Oficio, Destinatario, Diretor
-from .forms import OficioForm
+from .forms import OficioForm, OficioUpdateForm
+
+
 # Create your views here.
 
 @method_decorator(login_required, name='dispatch')
@@ -54,7 +57,7 @@ class OficiosCreateView(CreateView):
 @method_decorator(login_required, name='dispatch')
 class OficiosUpdateView(UpdateView):
     model = Oficio
-    form_class = OficioForm
+    form_class = OficioUpdateForm
     template_name = 'oficios/oficio_form.html'
     success_url = reverse_lazy('listar_oficios')
 
@@ -63,28 +66,58 @@ class OficiosDeleteView(DeleteView):
     model = Oficio
     success_url = reverse_lazy('listar_oficios')
 
+def link_callback(uri, rel):
+    """
+                Convert HTML URIs to absolute system paths so xhtml2pdf can access those
+                resources
+                """
+    result = finders.find(uri)
+    if result:
+        if not isinstance(result, (list, tuple)):
+            result = [result]
+        result = list(os.path.realpath(path) for path in result)
+        path = result[0]
+    else:
+        sUrl = settings.STATIC_URL  # Typically /static/
+        sRoot = settings.STATIC_ROOT  # Typically /home/userX/project_static/
+        mUrl = settings.MEDIA_URL  # Typically /media/
+        mRoot = settings.MEDIA_ROOT  # Typically /home/userX/project_static/media/
+
+        if uri.startswith(mUrl):
+            path = os.path.join(mRoot, uri.replace(mUrl, ""))
+        elif uri.startswith(sUrl):
+            path = os.path.join(sRoot, uri.replace(sUrl, ""))
+        else:
+            return uri
+
+    # make sure that file exists
+    if not os.path.isfile(path):
+        raise Exception(
+            'media URI must start with %s or %s' % (sUrl, mUrl)
+        )
+    return path
+
 @method_decorator(login_required, name='dispatch')
 class RenderToPdfOficioView(View):
     template_name = 'oficios/template_export_oficio.html'
 
-    
     def get(self, request, *args, **kwargs):
         oficio = Oficio.objects.get(id=self.kwargs['pk'])
 
         context = {
             'oficio': oficio
         }
-        nomeOficio = str(oficio.numeracao) +"/"+ str(oficio.dataOficio.year) +"-"+ oficio.assunto
+        nomeOficio = str(oficio.numeracao) +" \ "+ str(oficio.dataOficio.year) +" - "+ oficio.assunto
         
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="{}.pdf"'.format(nomeOficio)
 
         template = get_template(self.template_name)
         html = template.render(context)
-        result = BytesIo()
 
-        pdf = pisa.pisaDocument(BytesIo(html.encode("UTF-8")), result)
+        pdf = pisa.CreatePDF(html, dest=response, encoding='utf-8')
 
         if not pdf.err:
-            return HttpResponse(result.getvalue(), content_type='application/pdf')
-        return None
+            return HttpResponse(response, content_type='application/pdf')
+        else:
+            return HttpResponse("Erro ao gerar PDF: {}".format(pdf.err))

@@ -18,6 +18,9 @@ from django.urls import reverse_lazy
 BASE_DIR = Path(__file__).resolve().parent.parent
 STATIC_DIR = os.path.join(BASE_DIR, 'usuarios/static')
 
+MEDIA_ROOT = os.path.join(BASE_DIR,'oficios/media')
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
@@ -63,7 +66,7 @@ ROOT_URLCONF = 'blackpearl.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [STATIC_DIR],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

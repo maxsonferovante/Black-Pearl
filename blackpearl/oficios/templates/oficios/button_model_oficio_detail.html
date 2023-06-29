@@ -22,7 +22,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Sair</button>
-        <button type="button" class="btn btn-primary">Imprimir</button>
+        <a href="{% url 'exportar_oficio' oficios.pk %}" type="button" class="btn btn-success" target="_blank">Imprimir <i class="bi bi-file-pdf"></i></a>
       </div>
     </div>
   </div>

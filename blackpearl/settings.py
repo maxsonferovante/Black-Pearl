@@ -84,14 +84,11 @@ WSGI_APPLICATION = 'blackpearl.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'd971kkctpulcr6',
-        'USER': 'lezfivrkadrrwf',
-        'PASSWORD': 'a8ea24f7dd715869322e38951cd268c97444abcb2bb1c5a4aacc053bb206fd83',
-        'HOST': 'ec2-52-3-81-13.compute-1.amazonaws.com',
-        'PORT': '5432'
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators

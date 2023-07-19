@@ -17,6 +17,8 @@ from .models import Oficio, Destinatario, Diretor
 from .forms import OficioForm, OficioUpdateForm
 
 
+from weasyprint import HTML, CSS
+
 # Create your views here.
 
 @method_decorator(login_required, name='dispatch')
@@ -121,3 +123,22 @@ class RenderToPdfOficioView(View):
             return HttpResponse(response, content_type='application/pdf')
         else:
             return HttpResponse("Erro ao gerar PDF: {}".format(pdf.err))
+        
+@method_decorator(login_required, name='dispatch')
+class PdfGeneration(View):
+    template_name = 'oficios/template_export_oficio.html'
+
+    def get(self, request, *args, **kargs):
+        oficio = Oficio.objects.get(id=self.kwargs['pk'])
+
+        context = {
+            'oficio': oficio
+        }
+        nomeOficio = str(oficio.numeracao) +" \ "+ str(oficio.dataOficio.year) +" - "+ oficio.assunto
+        
+
+        html_template = get_template(self.template_name)
+        pdf_file = HTML(string=html_template).write_pdf()
+        response = HttpResponse(pdf_file, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{nomeOficio}.pdf"'
+        return response

@@ -3,10 +3,15 @@ from django import forms
 from django.contrib import admin
 
 from .models import ValoresPorFaixa, PlanoSaude, CartaoConvenioVolus, PlanoOdontologico, Otica, TaxasAdministrativa, \
-    FaturaCartao, ContratoPlanoOdontologico, ContratoPlanoOdontologicoDependente, ContratoPlanoSaude
+    FaturaCartao, ContratoPlanoOdontologico, ContratoPlanoOdontologicoDependente, ContratoPlanoSaude, \
+    ContratoPlanoSaudeDependente
 
 
-# Register your models here.
+@admin.register(TaxasAdministrativa)
+class TaxasAdministrativaAdmin(admin.ModelAdmin):
+    list_display = ('grupos', 'percentual', 'ativo', 'id')
+
+
 @admin.register(ValoresPorFaixa)
 class ValoresPorFaixaAdmin(admin.ModelAdmin):
     list_display = ('planoSaude', 'idadeMin', 'idadeMax', 'valor', 'ativo')
@@ -37,10 +42,6 @@ class oticaAdmin(admin.ModelAdmin):
     list_display = ('nome', 'cnpj', 'valorCompra', 'ativo')
 
 
-@admin.register(TaxasAdministrativa)
-class TaxasAdministrativaAdmin(admin.ModelAdmin):
-    list_display = ('grupos', 'percentual', 'ativo', 'id')
-
 
 @admin.register(ContratoPlanoOdontologico)
 class ContratacaoPlanoOdontologicoAdmin(admin.ModelAdmin):
@@ -70,6 +71,18 @@ class ContratoPlanoSaudeAdmin(admin.ModelAdmin):
                     'planoSaude',
                     'faixa',
                     'valor',
+                    'valorTotal',
+                    'dataInicio',
+                    'dataFim',
+                    'ativo')
+
+@admin.register(ContratoPlanoSaudeDependente)
+class ContratoPlanoSaudeDependenteAdmin(admin.ModelAdmin):
+    list_display = ('contrato',
+                    'dependente',
+                    'id',
+                    'valor',
+                    'valorTotal',
                     'dataInicio',
                     'dataFim',
                     'ativo')

@@ -21,7 +21,7 @@
               <li>Faixa Etária: <strong>{{ contrato.faixa }} (anos)</strong></li>
               <li>Atendimento Domiciliar: <strong>{{ contrato.atendimentoDomiciliar }}</strong></li>
               <li>Forma de Pagemento: <strong>{{ contrato.formaPagamento }}</strong></li>
-              <li>Valor: <strong>{{ contrato.valor }}</strong></li>
+              <li>Valor: <strong>{{ contrato.valorTotal }}</strong></li>
               <li>Data de Contratação: <strong>{{ contrato.dataInicio }}</strong></li>
 
               {% if contrato.ativo %}
@@ -55,9 +55,10 @@
             <tr>
               <td>{{ dependente.dependente }}</td>
               <td>{{ dependente.dependente.get_grauparentesco_display }}</td>
-              <td>{{ dependente.valor }}</td>
+              <td>{{ dependente.valorTotal }}</td>
               <td>{{ dependente.dataInicio }}</td>
               <td>{{ dependente.get__ativo_display }}</td>
+
             </tr>
             {% endfor %}
           </tbody>

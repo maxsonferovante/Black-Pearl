@@ -7,7 +7,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 
 
-from blackpearl.associados.models import Associado, Dependente
+from blackpearl.associados.models import Associado, Dependente, ASSOCIACAO_CHOICES as ASSOCIACAO_CHOICES_ASSOCIADO
 
 
 # Create your models here.
@@ -54,7 +54,7 @@ class ContratoPlanoSaude(Base):
     contratante = models.OneToOneField(Associado, on_delete=models.CASCADE, related_name='contratos_saude')
     planoSaude = models.ForeignKey(PlanoSaude, on_delete=models.CASCADE, related_name='contratos')
 
-    faixa = models.ForeignKey(ValoresPorFaixa, on_delete=models.CASCADE, related_name='contratos')
+    faixa = models.ForeignKey(ValoresPorFaixa, on_delete=models.CASCADE, related_name='contratos_contratante')
 
     atendimentoDomiciliar = models.BooleanField('Atendimento Domiciliar', default=False, choices=[(True, 'Sim'), (False, 'Não')])
 
@@ -65,7 +65,8 @@ class ContratoPlanoSaude(Base):
                                       choices=[('Boleto Bancário', 'Boleto Bancário'),
                                                ('Desconto em folha', 'Desconto em folha'),
                                                ('Isento', 'Isento')])
-    valor = models.DecimalField('Valor do Contrato', max_digits=8, decimal_places=2)
+    valor = models.DecimalField('Valor do Unitário', max_digits=8, decimal_places=2)
+    valorTotal = models.DecimalField('Valor do Contrato', max_digits=8, decimal_places=2, null=True, blank=True)
 
     def get_atedimentoDomiciliar_display(self):
         if self.atendimentoDomiciliar:
@@ -87,6 +88,26 @@ class ContratoPlanoSaude(Base):
 
     def get_absolute_url(self):
         return reverse("contrato_cadastrar", kwargs={"pk": self.pk})
+class ContratoPlanoSaudeDependente(Base):
+    contrato = models.ForeignKey(ContratoPlanoSaude, on_delete=models.CASCADE, related_name='dependentes')
+    dependente = models.OneToOneField(Dependente, on_delete=models.CASCADE, related_name='contrato_saude')
+    valor = models.DecimalField('Valor Unitário', max_digits=8, decimal_places=2)
+    dataInicio = models.DateField('Data de Início')
+    dataFim = models.DateField('Data de Fim', null=True, blank=True)
+    atendimentoDomiciliar = models.BooleanField('Atendimento Domiciliar', default=False,
+                                                choices=[(True, 'Sim'), (False, 'Não')])
+
+    faixa = models.ForeignKey(ValoresPorFaixa, on_delete=models.CASCADE, related_name='contratos_dependente')
+    valorTotal = models.DecimalField('Valor do Contrato', max_digits=8, decimal_places=2, null=True, blank=True)
+    def get__ativo_display(self):
+        return 'Sim' if self.ativo else 'Não'
+
+    def get__dataFim_display(self):
+        if not self.dataFim:
+            return "Vigente"
+        else:
+            return str(self.valor)
+
 
 class CartaoConvenioVolus(Base):
     status_choices = [
@@ -143,7 +164,9 @@ class ContratoPlanoOdontologico(Base):
 
     valor = models.DecimalField('Valor', max_digits=8, decimal_places=2)
 
-    formaPagamento = models.CharField('Forma de Pagamento', max_length=20, choices=[('Boleto Bancário', 'Boleto Bancário'), ('Desconto em folha', 'Desconto em folha')])
+    formaPagamento = models.CharField('Forma de Pagamento', max_length=20, choices=[('Boleto Bancário', 'Boleto Bancário'),
+                                                                                    ('Desconto em folha', 'Desconto em folha'),
+                                                                                    ('Isento', 'Isento')])
 
     dataInicio = models.DateField('Data de Início')
     dataFim = models.DateField('Data de Fim', null=True, blank=True)
@@ -175,7 +198,7 @@ class ContratoPlanoOdontologicoDependente(Base):
 
     contrato = models.ForeignKey(ContratoPlanoOdontologico, on_delete=models.CASCADE, related_name='dependentes')
 
-    dependente = models.ForeignKey(Dependente, on_delete=models.CASCADE, related_name='contratos')
+    dependente = models.ForeignKey(Dependente, on_delete=models.CASCADE, related_name='contrato_odontologico')
 
     valor = models.DecimalField('Valor', max_digits=8, decimal_places=2)
 
@@ -203,13 +226,7 @@ class Otica(Base):
 
 
 class TaxasAdministrativa(Base):
-    ASSOCIACAO_CHOICES = [
-        ('ag', 'Agredado(a)'),
-        ('fiativo', 'Filiado(a) da Ativa'),
-        ('fiaposent', 'Filiado(a) Aposentado(a)'),
-        ('desfi', 'Desfiliado(a)'),
-        ('outros', 'Cartão')
-    ]
+    ASSOCIACAO_CHOICES = ASSOCIACAO_CHOICES_ASSOCIADO
 
     grupos = models.CharField('Grupo', max_length=20, choices=ASSOCIACAO_CHOICES)
     percentual = models.DecimalField('Percetual da Taxa Administrativa (%)', max_digits=8, decimal_places=2)

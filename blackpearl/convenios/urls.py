@@ -10,7 +10,8 @@ from blackpearl.convenios.views import HomeTemplateView, VerificarDependentesVie
     ContratoOdontologicaDependenteCreateView, ContratoOdontologicaDependenteListView, \
     ContratoOdontologicaDependenteUpdateView, ContratoOdontologicaDependenteDeleteView, VerificarAssociacaoDependente, \
     ContratoPlanoSaudeCreateView, ContratoPlanoSaudeListView, ContratoPlanoSaudeUpdateView, \
-    ContratoPlanoSaudeDeleteView, ContratoPlanoSaudeDetailView, ConsultaValorFaixaEtaria
+    ContratoPlanoSaudeDeleteView, ContratoPlanoSaudeDetailView, ConsultaValorFaixaEtaria, \
+    ContratoPlanoSaudeDependenteCreateView, ConsultaValorFaixaEtariaDependente
 from blackpearl.convenios.views import CartaoListView, CartaoCreateView, CartaoUpdateView, CartaoDetailView, CartaoDeleteView
 from blackpearl.convenios.views import FaturaCreateView, FaturaListView, FaturaDeleteView, FaturaUpdateView
 
@@ -50,7 +51,9 @@ urlpatterns = [
     path('contratoplanosaude/<int:pk>/excluir', ContratoPlanoSaudeDeleteView.as_view(), name='excluir_contrato_plano_saude'),
     path('contratoplanosaude/<int:pk>/detalhes', ContratoPlanoSaudeDetailView.as_view(), name='detalhes_contrato_plano_saude'),
     path('contratoplanosaude/consultafaixa/', ConsultaValorFaixaEtaria.as_view(), name='consultafaixa'),
+    path('contratoplanosaude/consultafaixa_dependente/', ConsultaValorFaixaEtariaDependente.as_view(), name='consulta_faixa_dependente'),
 
+    path('contratoplanosaude/add/dependente', ContratoPlanoSaudeDependenteCreateView.as_view(), name='cadastrar_dependentes_contrato_plano_saude'),
 
 
     path('exportar/', views.exportar, name = 'exportar'),

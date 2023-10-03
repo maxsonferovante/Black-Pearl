@@ -64,7 +64,7 @@ $(document).ready(function() {
                     $('#id_dependente').empty();
                     $('#id_dependente').append('<option value="" selected="selected">---------</option>');
                     $.each(response.lista_dependentes, function (key, value) {
-                        $('#id_dependente').append('<option value="' + key + '">' + value.nomecompleto + '</option>');
+                        $('#id_dependente').append('<option value="' + value.id + '">' + value.nomecompleto + '</option>');
                     });
                 } else {
                     $('#id_dependente').empty();

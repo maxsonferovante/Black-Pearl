@@ -1,6 +1,7 @@
 import datetime
 from io import BytesIO
 import openpyxl
+from _decimal import Decimal
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -20,9 +21,10 @@ from django.utils.decorators import method_decorator
 
 
 from .forms import CartaoConvenioVolusForm, FaturaCartaoForm, ContratoPlanoOdontologicoForm, \
-    ContratoPlanoOdontologicoDependenteForm, ContratoPlanoSaudeForm
+    ContratoPlanoOdontologicoDependenteForm, ContratoPlanoSaudeForm, ContratoPlanoSaudeDependenteForm
 from .models import CartaoConvenioVolus, FaturaCartao, ContratoPlanoOdontologico, TaxasAdministrativa, \
-    PlanoOdontologico, ContratoPlanoOdontologicoDependente, ContratoPlanoSaude, ValoresPorFaixa, PlanoSaude
+    PlanoOdontologico, ContratoPlanoOdontologicoDependente, ContratoPlanoSaude, ValoresPorFaixa, PlanoSaude, \
+    ContratoPlanoSaudeDependente
 from ..associados.models import Associado, Dependente
 
 
@@ -161,14 +163,13 @@ class ContratoPlanoOdontologicoDetailView(DetailView):
         return context
 
 
+
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoOdontologicoUpdateView(UpdateView):
     model = ContratoPlanoOdontologico
     form_class = ContratoPlanoOdontologicoForm
     template_name = 'convenios/contratacaoplanoodontologico_criar_form.html'
     success_url = reverse_lazy('listagemcontratoodontologica')
-
-
 
 
 @method_decorator(login_required, name='dispatch')
@@ -239,8 +240,14 @@ class ContratoOdontologicaDependenteCreateView(CreateView):
     template_name = 'convenios/dependentes_contrato_plano_odont_add.html'
     success_url = reverse_lazy('listar_dependentes_contrato_plano_odont')
 
-    
-
+    def form_valid(self, form):
+        print(form.cleaned_data)
+        dependente_contrato = form.save(commit=False)
+        dependente_contrato.save()
+        titular_contrato = get_object_or_404(ContratoPlanoOdontologico, id=dependente_contrato.titular_contrato_id)
+        titular_contrato.valor = titular_contrato.valor + dependente_contrato.valor
+        titular_contrato.save()
+        return super().form_valid(form)
 
 @method_decorator(login_required, name='dispatch')
 class ContratoOdontologicaDependenteListView(ListView):
@@ -299,12 +306,23 @@ class VerificarAssociacaoDependente(View):
         return JsonResponse({'valor': titular_contratante.valor,
                              'lista_dependentes': []})
 
+
+
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoSaudeCreateView(CreateView):
     model = ContratoPlanoSaude
     form_class = ContratoPlanoSaudeForm
     template_name = 'convenios/planosaude/contrato_plano_saude_add.html'
     success_url = reverse_lazy('listar_contratos_plano_saude')
+
+    def form_valid(self, form):
+        contrato = form.save(commit=False)
+        taxa_administrativa = TaxasAdministrativa.objects.get(grupos=contrato.contratante.associacao)
+        valor_faixa = ValoresPorFaixa.objects.get(pk=contrato.faixaEtaria.id)
+        percentual_taxa = taxa_administrativa.percentual
+        contrato.valorTotal = round((valor_faixa / (100 - percentual_taxa)) * 100, 2)
+        contrato.save()
+        return super().form_valid(form)
 
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoSaudeListView(ListView):
@@ -359,15 +377,10 @@ class ConsultaValorFaixaEtaria(View):
 
         taxa = TaxasAdministrativa.objects.get(grupos = Associado.objects.get(pk=contratante_id).associacao)
 
-        print (taxa.percentual)
-
-        print(atendimentoDomiciliar, type(atendimentoDomiciliar))
         if atendimentoDomiciliar == 'True':
             valor = round(((faixa.valor+valorAtendimentoTelefonico) / (100-taxa.percentual)) * 100,2) + round((valorAtendimentoDomiciliar/(100-taxa.percentual)*100),2)
         else:
             valor = round(((faixa.valor+valorAtendimentoTelefonico)  / (100-taxa.percentual)) * 100,2)
-
-        print (valor)
 
         return JsonResponse({'faixa_id': faixa.id, 'valor': valor,
                              'idadeMin': faixa.idadeMin, 'idadeMax': faixa.idadeMax
@@ -377,6 +390,66 @@ class ConsultaValorFaixaEtaria(View):
         data_atual = datetime.date.today()
         idade = data_atual.year - dataNascimento.year - ((data_atual.month, data_atual.day) < (dataNascimento.month, dataNascimento.day))
         return idade
+@method_decorator(login_required, name='dispatch')
+class ContratoPlanoSaudeDependenteCreateView(CreateView):
+    model = ContratoPlanoSaudeDependente
+    form_class = ContratoPlanoSaudeDependenteForm
+    template_name = 'convenios/planosaude/contrato_plano_dependente_saude_add.html'
+    success_url = reverse_lazy('listar_contratos_plano_saude')
+
+    def form_valid(self, form):
+
+        dependente_contrato = form.save(commit=False)
+
+        taxa_administrativa = TaxasAdministrativa.objects.get(grupos=dependente_contrato.contrato.contratante.associacao)
+
+        valor_faixa = ValoresPorFaixa.objects.get(pk=dependente_contrato.faixa.id)
+
+        print(valor_faixa.valor         , type(valor_faixa.valor))
+
+        percentual_taxa = taxa_administrativa.percentual
+
+        dependente_contrato.valorTotal = round((valor_faixa.valor / (Decimal(100) - percentual_taxa)) * 100, 2)
+
+        dependente_contrato.save()
+
+        titular_contrato = get_object_or_404(ContratoPlanoSaude, )
+        titular_contrato.valorTotal = titular_contrato.valorTotal + dependente_contrato.valorTotal
+        titular_contrato.save()
+
+        return super().form_valid(form)
+
+@method_decorator(login_required, name='dispatch')
+class ConsultaValorFaixaEtariaDependente(View):
+    @csrf_exempt
+    def get(self, request):
+        planoSaude_id = self.request.GET.get('planoSaude_id')
+        dependente_id = self.request.GET.get('dependente_id')
+        atendimentoDomiciliar = self.request.GET.get('atendimentoDomiciliar')
+
+        print (planoSaude_id, dependente_id, atendimentoDomiciliar)
+        idade = self.calcular_idade(Dependente.objects.get(pk=dependente_id).dataNascimento)
+
+        faixa = ValoresPorFaixa.objects.filter(planoSaude_id=planoSaude_id, idadeMin__lte=idade, idadeMax__gte=idade).first()
+        valorAtendimentoDomiciliar = PlanoSaude.objects.get(pk=planoSaude_id).valorAtendimentoDomiciliar
+        valorAtendimentoTelefonico = PlanoSaude.objects.get(pk=planoSaude_id).valorAtendimentoTelefonico
+
+        taxa = TaxasAdministrativa.objects.get(grupos = Dependente.objects.get(pk=dependente_id).titular.associacao)
+
+        if atendimentoDomiciliar == 'True':
+            valor = round(((faixa.valor+valorAtendimentoTelefonico) / (100-taxa.percentual)) * 100,2) + round((valorAtendimentoDomiciliar/(100-taxa.percentual)*100),2)
+        else:
+            valor = round(((faixa.valor+valorAtendimentoTelefonico)  / (100-taxa.percentual)) * 100,2)
+
+        return JsonResponse({'faixa_id': faixa.id, 'valor': valor,
+                             'idadeMin': faixa.idadeMin, 'idadeMax': faixa.idadeMax
+                             })
+
+    def calcular_idade(self, dataNascimento):
+        data_atual = datetime.date.today()
+        idade = data_atual.year - dataNascimento.year - ((data_atual.month, data_atual.day) < (dataNascimento.month, dataNascimento.day))
+        return idade
+
 def exportar(request):
     empresa_selecionada = request.GET.get('inputGroupSelectEmpresa')
     data_inicial = request.GET.get('start_date')

@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     'blackpearl.usuarios',
     'blackpearl.associados',
     'blackpearl.convenios',
-    'blackpearl.oficios',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

@@ -2,7 +2,7 @@ from django import forms
 from django.forms import DateInput
 from blackpearl.associados.models import Associado, Dependente
 from blackpearl.convenios.models import CartaoConvenioVolus, FaturaCartao, ContratoPlanoOdontologico, \
-    ContratoPlanoOdontologicoDependente, ContratoPlanoSaude, PlanoSaude, ValoresPorFaixa, ContratoPlanoSaudeDependente
+    ContratoPlanoSaude, PlanoSaude, ValoresPorFaixa, ContratoPlanoSaudeDependente, PlanoOdontologico
 from widget_tweaks.templatetags.widget_tweaks import register
 
 
@@ -68,9 +68,9 @@ class FaturaCartaoForm(forms.ModelForm):
 
 class ContratoPlanoOdontologicoForm(forms.ModelForm):
     contratante = forms.ModelChoiceField(
-        queryset=Associado.objects.filter(associacao__in=['ag', 'fiativo', 'fiaposent']).exclude(ativo=False)
-    )
-    ativo = forms.BooleanField(label='Ativo', required=False, initial=True)
+        queryset=Associado.objects.filter(associacao__in=['ag', 'fiativo', 'fiaposent', 'func']).exclude(ativo=False),
+        widget=forms.Select(attrs={'class': 'plano-quant-valor'}))
+
     dataInicio = forms.DateField(
         label='Data da Contratação',
         widget=forms.DateInput(
@@ -81,38 +81,33 @@ class ContratoPlanoOdontologicoForm(forms.ModelForm):
                 'placeholder': 'dd/mm/yyyy',
                 'data-mask': '00/00/0000'
             }
-    ))
+        ))
+    quantidadeDependententes = forms.IntegerField(
+        label='Quantidade de Dependentes',
+        initial= 0,
+        required= False,
+        widget=forms.NumberInput(
+            attrs={
+
+                'class': 'plano-quant-valor',
+
+                'placeholder': 'Quantidade de Dependentes'}))
+
+    planoOdontologico = forms.ModelChoiceField(
+        label='Plano Odontológico',
+        queryset=PlanoOdontologico.objects.filter(ativo=True),
+        widget=forms.Select(attrs={'class': 'plano-quant-valor'}))
+
     class Meta:
         model = ContratoPlanoOdontologico
-        fields = ['contratante', 'planoOdontologico','formaPagamento', 'dataInicio', 'valor', 'ativo']
+        fields = ['contratante', 'planoOdontologico', 'formaPagamento', 'dataInicio', 'valor', 'ativo', 'quantidadeDependententes']
         exclude = ['dataFim']
 
-class ContratoPlanoOdontologicoDependenteForm(forms.ModelForm):
-    titular = forms.ModelChoiceField(
-        queryset=ContratoPlanoOdontologico.objects.filter(ativo=True)
-    )
-    dependente = forms.ModelChoiceField(
-        queryset=Dependente.objects.filter(ativo=True)
-    )
-    ativo = forms.BooleanField(label='Ativo', required=False, initial=True)
-    dataInicio = forms.DateField(
-        label='Data da Contratação',
-        widget=forms.DateInput(
-            attrs={
-                'type': 'date',
-                'class': 'form-control',
-                'autocomplete': 'on'
-            }
-        ))
-    class Meta:
-        model = ContratoPlanoOdontologicoDependente
-        fields = ['contrato','dependente', 'dataInicio', 'valor', 'ativo']
-        exclude = ['dataFim']
 
 class ContratoPlanoSaudeForm(forms.ModelForm):
     contratante = forms.ModelChoiceField(
         queryset=Associado.objects.filter(associacao__in=['ag', 'fiativo', 'fiaposent', 'func']).exclude(ativo=False),
-        widget= forms.Select(attrs = {'class': 'idade-atend-valor'})
+        widget=forms.Select(attrs={'class': 'idade-atend-valor'})
     )
 
     dataInicio = forms.DateField(
@@ -127,9 +122,9 @@ class ContratoPlanoSaudeForm(forms.ModelForm):
             }
         ))
     planoSaude = forms.ModelChoiceField(
-        label= 'Plano de Saúde',
+        label='Plano de Saúde',
         queryset=PlanoSaude.objects.filter(ativo=True),
-        widget = forms.Select(attrs={'class': 'idade-atend-valor'})
+        widget=forms.Select(attrs={'class': 'idade-atend-valor'})
     )
     atendimentoDomiciliar = forms.BooleanField(label='Atendimento Domiciliar', initial=False, required=False,
                                                widget=forms.Select(choices=[(True, 'Sim'), (False, 'Não')],
@@ -140,8 +135,10 @@ class ContratoPlanoSaudeForm(forms.ModelForm):
 
     class Meta:
         model = ContratoPlanoSaude
-        fields = ['contratante', 'planoSaude','faixa', 'formaPagamento','atendimentoDomiciliar', 'dataInicio', 'valor', 'ativo', 'faixa']
+        fields = ['contratante', 'planoSaude', 'faixa', 'formaPagamento', 'atendimentoDomiciliar', 'dataInicio',
+                  'valor', 'ativo', 'faixa']
         exclude = ['dataFim']
+
 
 class ContratoPlanoSaudeDependenteForm(forms.ModelForm):
     contrato = forms.ModelChoiceField(queryset=ContratoPlanoSaude.objects.filter(ativo=True))
@@ -160,12 +157,11 @@ class ContratoPlanoSaudeDependenteForm(forms.ModelForm):
                 'data-mask': '00/00/0000'
             }
         ))
+
     class Meta:
         model = ContratoPlanoSaudeDependente
-        fields = ['contrato', 'dependente','atendimentoDomiciliar','dataInicio', 'valor', 'ativo', 'faixa']
+        fields = ['contrato', 'dependente', 'atendimentoDomiciliar', 'dataInicio', 'valor', 'ativo', 'faixa']
         exclude = ['dataFim']
-
-
 
 
 @register.filter(name='add_class')

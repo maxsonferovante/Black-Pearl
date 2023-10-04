@@ -2,10 +2,7 @@ from django.contrib import admin
 from django import forms
 from django.contrib import admin
 
-from .models import ValoresPorFaixa, PlanoSaude, CartaoConvenioVolus, PlanoOdontologico, Otica, TaxasAdministrativa, \
-    FaturaCartao, ContratoPlanoOdontologico, ContratoPlanoOdontologicoDependente, ContratoPlanoSaude, \
-    ContratoPlanoSaudeDependente
-
+from .models import ValoresPorFaixa, PlanoSaude, CartaoConvenioVolus, PlanoOdontologico, Otica, TaxasAdministrativa, FaturaCartao, ContratoPlanoOdontologico,  ContratoPlanoSaude, ContratoPlanoSaudeDependente
 
 @admin.register(TaxasAdministrativa)
 class TaxasAdministrativaAdmin(admin.ModelAdmin):
@@ -54,15 +51,6 @@ class ContratacaoPlanoOdontologicoAdmin(admin.ModelAdmin):
                     'ativo')
 
 
-@admin.register(ContratoPlanoOdontologicoDependente)
-class ContratoPlanoOdontologicoDependenteAdmin(admin.ModelAdmin):
-    list_display = ('contrato',
-                    'dependente',
-                    'id',
-                    'valor',
-                    'dataInicio',
-                    'dataFim',
-                    'ativo')
 
 @admin.register(ContratoPlanoSaude)
 class ContratoPlanoSaudeAdmin(admin.ModelAdmin):

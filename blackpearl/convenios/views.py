@@ -20,11 +20,8 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
 
-from .forms import CartaoConvenioVolusForm, FaturaCartaoForm, ContratoPlanoOdontologicoForm, \
-    ContratoPlanoOdontologicoDependenteForm, ContratoPlanoSaudeForm, ContratoPlanoSaudeDependenteForm
-from .models import CartaoConvenioVolus, FaturaCartao, ContratoPlanoOdontologico, TaxasAdministrativa, \
-    PlanoOdontologico, ContratoPlanoOdontologicoDependente, ContratoPlanoSaude, ValoresPorFaixa, PlanoSaude, \
-    ContratoPlanoSaudeDependente
+from .forms import CartaoConvenioVolusForm, FaturaCartaoForm, ContratoPlanoOdontologicoForm, ContratoPlanoSaudeForm, ContratoPlanoSaudeDependenteForm
+from .models import CartaoConvenioVolus, FaturaCartao, ContratoPlanoOdontologico, TaxasAdministrativa,PlanoOdontologico, ContratoPlanoSaude, ValoresPorFaixa, PlanoSaude, ContratoPlanoSaudeDependente
 from ..associados.models import Associado, Dependente
 
 
@@ -202,8 +199,9 @@ class VerificarAssociacaoView(View):
     def get(self, request):
         contratante_id = self.request.GET.get('contratante_id')
         plano_odontologico_id = self.request.GET.get('plano_odontologico_id')
+        quantidade_dependentes = self.request.GET.get('quantidade_dependentes')
 
-        print(contratante_id, plano_odontologico_id)
+        print(contratante_id, plano_odontologico_id, quantidade_dependentes)
 
         contratante = Associado.objects.get(pk=contratante_id)
         taxa_administrativa = TaxasAdministrativa.objects.get(grupos=contratante.associacao)
@@ -211,8 +209,9 @@ class VerificarAssociacaoView(View):
 
         valor_unitario = PlanoOdontologico.objects.get(id=plano_odontologico_id).valorUnitario
 
+
         # instance.valor = (valorPlano / (Decimal(100.0) - taxa.percentual)) * Decimal(100.0)
-        valor_total = round((valor_unitario / (100 - percentual_taxa)) * 100, 2)
+        valor_total = round(((valor_unitario + quantidade_dependentes + 1) / (100 - percentual_taxa)) * 100, 2)
 
         print(valor_unitario, percentual_taxa, valor_total)
 
@@ -231,81 +230,6 @@ class VerificarDependentesView(View):
             return JsonResponse({'has_dependents': dependentes.exists(), 'dependentes': dependentes_data})
         except Associado.DoesNotExist:
             return JsonResponse({'has_dependents': False, 'dependentes': []})
-
-
-@method_decorator(login_required, name='dispatch')
-class ContratoOdontologicaDependenteCreateView(CreateView):
-    model = ContratoPlanoOdontologicoDependente
-    form_class = ContratoPlanoOdontologicoDependenteForm
-    template_name = 'convenios/dependentes_contrato_plano_odont_add.html'
-    success_url = reverse_lazy('listar_dependentes_contrato_plano_odont')
-
-    def form_valid(self, form):
-        print(form.cleaned_data)
-        dependente_contrato = form.save(commit=False)
-        dependente_contrato.save()
-        titular_contrato = get_object_or_404(ContratoPlanoOdontologico, id=dependente_contrato.titular_contrato_id)
-        titular_contrato.valor = titular_contrato.valor + dependente_contrato.valor
-        titular_contrato.save()
-        return super().form_valid(form)
-
-@method_decorator(login_required, name='dispatch')
-class ContratoOdontologicaDependenteListView(ListView):
-    template_name = 'convenios/listagem_dependentes_contrato_odont.html'
-    model = ContratoPlanoOdontologicoDependente
-    context_object_name = 'list_objs'
-    paginate_by = 5
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        nome_pesquisado = self.request.GET.get('obj')
-        if nome_pesquisado:
-            queryset = queryset.filter(dependente__nomecompleto__icontains=nome_pesquisado).order_by('dependente')
-        else:
-            queryset = queryset.order_by('dependente')
-        return queryset
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
-
-
-@method_decorator(login_required, name='dispatch')
-class ContratoOdontologicaDependenteUpdateView(UpdateView):
-    model = ContratoPlanoOdontologicoDependente
-    form_class = ContratoPlanoOdontologicoDependenteForm
-    template_name = 'convenios/dependentes_contrato_plano_odont_add.html'
-    success_url = reverse_lazy('listar_dependentes_contrato_plano_odont')
-
-    def form_valid(self, form):
-        print(form.cleaned_data)
-        dependente_contrato = form.save(commit=False)
-        dependente_contrato.save()
-        titular_contrato = get_object_or_404(ContratoPlanoOdontologico, id=dependente_contrato.titular_contrato_id)
-        titular_contrato.valor = titular_contrato.valor + dependente_contrato.valor
-        titular_contrato.save()
-        return super().form_valid(form)
-
-@method_decorator(login_required, name='dispatch')
-class ContratoOdontologicaDependenteDeleteView(DeleteView):
-    model = ContratoPlanoOdontologicoDependente
-    success_url = reverse_lazy('listar_dependentes_contrato_plano_odont')
-
-
-@method_decorator(login_required, name='dispatch')
-class VerificarAssociacaoDependente(View):
-    @csrf_exempt
-    def get(self, request):
-        contratante_id = self.request.GET.get('contrato_id')
-        titular_contratante = ContratoPlanoOdontologico.objects.get(pk=contratante_id)
-        lista_dependentes = Dependente.objects.filter(titular_id=titular_contratante.contratante)
-
-        if lista_dependentes.count() > 0:
-            return JsonResponse({'valor': titular_contratante.valor,
-                             'lista_dependentes': [{'id': dep.id, 'nomecompleto': dep.nomecompleto} for dep in lista_dependentes]})
-
-        return JsonResponse({'valor': titular_contratante.valor,
-                             'lista_dependentes': []})
-
 
 
 @method_decorator(login_required, name='dispatch')

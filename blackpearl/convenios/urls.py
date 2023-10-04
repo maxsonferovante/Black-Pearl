@@ -1,17 +1,16 @@
 from django.conf import settings
 from django.conf.urls.static import static
-from django.template.defaulttags import url
+
 from django.urls import path, include
 
-from blackpearl.convenios import views
-from blackpearl.convenios.views import HomeTemplateView, VerificarDependentesView, ContratoPlanoOdontologico, \
-    ContratoPlanoOdontologicoCreateView, ContratoPlanoOdontologicoDetailView, ContratoPlanoOdontologicoUpdateView, \
-    ContratoPlanoOdontologicoDeleteView, ContratoOdontologicaListView, VerificarAssociacaoView, \
-    ContratoOdontologicaDependenteCreateView, ContratoOdontologicaDependenteListView, \
-    ContratoOdontologicaDependenteUpdateView, ContratoOdontologicaDependenteDeleteView, VerificarAssociacaoDependente, \
+
+from blackpearl.convenios.views import ContratoPlanoOdontologicoCreateView, ContratoPlanoOdontologicoDetailView, \
+    ContratoPlanoOdontologicoUpdateView, ContratoPlanoOdontologicoDeleteView, ContratoOdontologicaListView, \
     ContratoPlanoSaudeCreateView, ContratoPlanoSaudeListView, ContratoPlanoSaudeUpdateView, \
     ContratoPlanoSaudeDeleteView, ContratoPlanoSaudeDetailView, ConsultaValorFaixaEtaria, \
-    ContratoPlanoSaudeDependenteCreateView, ConsultaValorFaixaEtariaDependente
+    ConsultaValorFaixaEtariaDependente, ContratoPlanoSaudeDependenteCreateView
+from blackpearl.convenios.views import VerificarDependentesView, VerificarAssociacaoView
+from blackpearl.convenios.views import HomeTemplateView
 from blackpearl.convenios.views import CartaoListView, CartaoCreateView, CartaoUpdateView, CartaoDetailView, CartaoDeleteView
 from blackpearl.convenios.views import FaturaCreateView, FaturaListView, FaturaDeleteView, FaturaUpdateView
 
@@ -38,12 +37,6 @@ urlpatterns = [
     path('verificardependentes/', VerificarDependentesView.as_view(), name='verificar_dependentes'),
     path('contratoodontologica/verificarassociacao/', VerificarAssociacaoView.as_view(), name='verificar_associacao'),
 
-    path('planoodontologico/add/dependente', ContratoOdontologicaDependenteCreateView.as_view(), name='cadastrar_dependentes_contrato_plano_odont'),
-    path('planoodontologico/all/dependentes', ContratoOdontologicaDependenteListView.as_view(), name='listar_dependentes_contrato_plano_odont'),
-    path('planoodontologico/<int:pk>/dependente', ContratoOdontologicaDependenteUpdateView.as_view(), name='editar_dependentes_contrato_plano_odonto'),
-    path('planoodontologico/<int:pk>/dependente', ContratoOdontologicaDependenteDeleteView.as_view(), name='excluir_dependentes_contrato_plano_odonto'),
-    path('contratoodontologica/verificarassociacaodependente/', VerificarAssociacaoDependente.as_view(), name='verificar_associacao_dependente'),
-
 
     path('contratoplanosaude/add', ContratoPlanoSaudeCreateView.as_view(), name='cadastrar_contrato_plano_saude'),
     path('contratoplanosaude/all', ContratoPlanoSaudeListView.as_view(), name='listar_contratos_plano_saude'),
@@ -51,12 +44,12 @@ urlpatterns = [
     path('contratoplanosaude/<int:pk>/excluir', ContratoPlanoSaudeDeleteView.as_view(), name='excluir_contrato_plano_saude'),
     path('contratoplanosaude/<int:pk>/detalhes', ContratoPlanoSaudeDetailView.as_view(), name='detalhes_contrato_plano_saude'),
     path('contratoplanosaude/consultafaixa/', ConsultaValorFaixaEtaria.as_view(), name='consultafaixa'),
+
+    path('contratoplanosaude/add_dependente', ContratoPlanoSaudeDependenteCreateView.as_view(), name='cadastrar_dependentes_contrato_plano_saude'),
+
     path('contratoplanosaude/consultafaixa_dependente/', ConsultaValorFaixaEtariaDependente.as_view(), name='consulta_faixa_dependente'),
 
-    path('contratoplanosaude/add/dependente', ContratoPlanoSaudeDependenteCreateView.as_view(), name='cadastrar_dependentes_contrato_plano_saude'),
 
-
-    path('exportar/', views.exportar, name = 'exportar'),
 
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

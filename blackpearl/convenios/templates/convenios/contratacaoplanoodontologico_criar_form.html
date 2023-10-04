@@ -18,17 +18,24 @@
                             <div class="form-group row col-sm">
                                 {{form.contratante|as_crispy_field}}
                             </div>
+
+                             <div class="form-group row col-sm">
+                                {{form.dataInicio|as_crispy_field}}
+                            </div>
                             <div class="form-group row col-sm">
                                 {{form.ativo|as_crispy_field}}
                             </div>
                         </div>
                          <div class="row">
-                            <div class="form-group row col-sm">
+
+                             <div class="form-group row col-sm">
                                 {{form.planoOdontologico|as_crispy_field}}
                             </div>
+
                              <div class="form-group row col-sm">
-                                {{form.dataInicio|as_crispy_field}}
+                                {{form.quantidadeDependententes|as_crispy_field}}
                             </div>
+
                              <div class="form-group row col-sm">
                                 {{form.formaPagamento|as_crispy_field}}
                             </div>
@@ -36,8 +43,8 @@
                                 {{form.valor|as_crispy_field}}
                             </div>
 
-                            {% include 'button_save.html' %}
                         </div>
+                                {% include 'button_save.html' %}
                      </div>
                  </div>
 
@@ -48,16 +55,23 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function() {
-  $('.select').change(function() {
-    var contratanteId = $(this).val();
+  $('.plano-quant-valor').change(function (event) {
+
+    var contratanteId = $('id_contratante').val();
+
     var planoOdontologicoId = $('#id_planoOdontologico').val();
-    console.log(contratanteId, planoOdontologicoId);
-    if (contratanteId && planoOdontologicoId) {
+
+    var quantidadeDependententes = $('#id_quantidadeDependententes').val();
+
+    console.log(contratanteId, planoOdontologicoId, quantidadeDependententes);
+
+    if (contratanteId !=='' && planoOdontologicoId !=='' && quantidadeDependententes !=='') {
        $.ajax({
               url: '/convenios/contratoodontologica/verificarassociacao/',  // URL da sua view VerificarAssociacaoView
               type: 'GET',
               data: { 'contratante_id': contratanteId,
-                      'plano_odontologico_id': planoOdontologicoId
+                      'plano_odontologico_id': planoOdontologicoId,
+                        'quantidade_dependentes': quantidadeDependententes
                },
               dataType: 'json',
               success: function(response) {

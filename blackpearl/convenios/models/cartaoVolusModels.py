@@ -25,12 +25,19 @@ class CartaoConvenioVolus(Base):
 
 
 class FaturaCartao(Base):
+    SITUACAOFATURA_CHOICES = [
+        ('ABERTA', 'ABERTA'),
+        ('PAGA', 'PAGA'),
+        ('CANCELADA', 'CANCELADA')
+    ]
     cartao = models.ForeignKey(CartaoConvenioVolus, on_delete=models.CASCADE, related_name='faturas')
     valor = models.DecimalField('Valor da Fatura', max_digits=8, decimal_places=2)
     valorComTaxa = models.DecimalField('Valor da Fatura com a Taxa Adm', max_digits=8, decimal_places=2, null=True,
                                        blank=True)
     competencia = models.DateField('Competência')
 
+    situacaoFatura = models.CharField('Situação da Fatura', max_length=20, choices=SITUACAOFATURA_CHOICES,
+                                      default=SITUACAOFATURA_CHOICES[0][0])
     def __str__(self):
         return 'Valor da fatura e competência: {}  / {}'.format(self.valor, self.competencia)
 

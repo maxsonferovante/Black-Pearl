@@ -21,6 +21,7 @@
                               <th scope="col">Valor (R$)</th>
                               <th scope="col">Valor com Taxa (R$)</th>
                               <th scope="col">Data da inclusão</th>
+                                <th scope="col">Situação</th>
                               <th scope="col">Opções</th>
                           </tr>
                         </thead>
@@ -34,6 +35,7 @@
                                   <td>{{ fatura.valor }}</td>
                                   <td>{{ fatura.valorComTaxa }}</td>
                                   <td>{{ fatura.criado }}</td>
+                                  <td>{{ fatura.situacaoFatura }}</td>
                                   <td>
                                       {% include 'buttons_crud_update.html' with href_update='fatura_editar' obj=fatura.pk %}
                                       {% include 'buttons_crud_delete.html' with href_delete='fatura_excluir' obj=fatura.pk obj_titulo=fatura.cartao.titular%}

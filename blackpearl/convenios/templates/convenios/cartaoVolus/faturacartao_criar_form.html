@@ -9,7 +9,7 @@
 
 
 {% block content %}
-<div class="container-fluid">
+<div class="container">
           <div class="row d-flex justify-content-md-center align-items-center h-50">
             {% bootstrap_messages %}
               <form class="form-horizontal" action="" method="post" autocomplete="off" >
@@ -31,8 +31,12 @@
                               {{ form.valor|as_crispy_field }}
                             </div>
 
-                            <div class="from-group  col-sm">
+                             <div class="from-group  col-sm">
                               {{ form.valorComTaxa|as_crispy_field }}
+                            </div>
+
+                             <div class="input-group col-sm">
+                              {{ form.situacaoFatura|as_crispy_field}}
                             </div>
                          </div>
 

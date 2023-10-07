@@ -26,7 +26,7 @@ class FaturaCartaoForm(forms.ModelForm):
     class Meta:
         model = FaturaCartao
         exclude = ['ativo']
-        fields = ['cartao', 'valor', 'valorComTaxa', 'competencia']
+        fields = ['cartao', 'valor', 'valorComTaxa', 'competencia', 'situacaoFatura']
         widgets = {
             'competencia': forms.DateInput(
                 attrs={

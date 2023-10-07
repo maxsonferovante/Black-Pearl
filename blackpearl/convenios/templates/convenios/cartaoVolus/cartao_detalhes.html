@@ -21,6 +21,7 @@
                                       <th scope="col">Valor (R$)</th>
                                       <th scope="col">Valor com Taxa (R$)</th>
                                       <th scope="col">Data da inclusão</th>
+                                      <th scope="col">Situação</th>
                                   </tr>
                                 </thead>
                                 <tbody class="table-group-divider">
@@ -30,6 +31,7 @@
                                       <td>{{ fatura.valor }}</td>
                                       <td>{{ fatura.valorComTaxa }}</td>
                                       <td>{{ fatura.criado }}</td>
+                                      <td>{{ fatura.situacaoFatura }}</td>
                                   </tr>
                                   {% endfor %}
                                 </tbody>

@@ -25,6 +25,9 @@ class Otica(Base):
 
 class TaxasAdministrativa(Base):
     ASSOCIACAO_CHOICES = ASSOCIACAO_CHOICES_ASSOCIADO
+    ASSOCIACAO_CHOICES.append(
+        ('outros', 'Outros')
+    )
 
     grupos = models.CharField('Grupo', max_length=20, choices=ASSOCIACAO_CHOICES)
     percentual = models.DecimalField('Percetual da Taxa Administrativa (%)', max_digits=8, decimal_places=2)

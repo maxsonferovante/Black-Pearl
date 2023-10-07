@@ -34,11 +34,12 @@
                                   {% endfor %}
                                 </tbody>
                             </table>
-
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <a href="{% url 'fatura_cadastrar' %}?origin=cartaodetalhes" class="btn btn-primary me-md-2" type="button">Nova fatura</a>
+                            </div>
                             {% else %}
-                                <h5>Sem faturas lançadas</h5>
-                                <a href ="{% url 'fatura_cadastrar' %}" type="button" > cadastrar </a>
-
+                                <h5>Sem faturas lançadas ... </h5>
+                                <a href="{% url 'fatura_cadastrar' %}?origin=cartaodetalhes" class="btn btn-primary me-md-2" type="button">Cadastrar</a>
                             {% endif %}
                 </div>
                 <div class="card-footer">

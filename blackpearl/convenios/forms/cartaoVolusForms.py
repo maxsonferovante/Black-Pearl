@@ -1,8 +1,10 @@
 from django import forms
-from django.forms import DateInput
+
 from django.template.defaultfilters import register
+
 from blackpearl.convenios.models.cartaoVolusModels import CartaoConvenioVolus, FaturaCartao
 from blackpearl.associados.models import Associado
+
 class CartaoConvenioVolusForm(forms.ModelForm):
     class Meta:
         model = CartaoConvenioVolus
@@ -26,22 +28,18 @@ class FaturaCartaoForm(forms.ModelForm):
         exclude = ['ativo']
         fields = ['cartao', 'valor', 'valorComTaxa', 'competencia']
         widgets = {
-            'competencia': DateInput(
+            'competencia': forms.DateInput(
                 attrs={
-                    'type': 'date',
                     'class': 'form-control',
-                    'autocomplete': 'off',
-                    'placeholder': 'dd/mm/yyyy',
-                    'data-mask': '00/00/0000',
-                    'pattern': '[0-9]{2}/[0-9]{2}/[0-9]{4}'
-                },
-                format='%d/%m/%Y'
+                    'type': 'date',
+                }
+
+
             ),
             'valor': forms.NumberInput(
                 attrs={
                     'class': 'form-control',
-                    'step': '0.01',
-                    'oninput': 'calcular_valor_com_taxa()',
+                    'step': '0.01'
                 }
             ),
             'valorComTaxa': forms.NumberInput(
@@ -52,16 +50,6 @@ class FaturaCartaoForm(forms.ModelForm):
                 }
             ),
         }
-
-    def clean(self):
-        cleaned_data = super().clean()
-        valor = cleaned_data.get('valor')
-        cartao = cleaned_data.get('cartao')
-        if valor and cartao:
-            if float(valor) > float(cartao.valorLimite):
-                raise forms.ValidationError('Valor da fatura não pode ser maior que o limite do cartão.')
-        return cleaned_data
-
 @register.filter(name='add_class')
 def add_class(field, css):
     return field.as_widget(attrs={"class": css})

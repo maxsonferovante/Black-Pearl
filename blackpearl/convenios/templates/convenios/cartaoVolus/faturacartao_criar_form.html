@@ -3,6 +3,10 @@
 {% load crispy_forms_tags %}
 {% load bootstrap5 %}
 
+{% block content_script %}
+    <script src="/static/convenios/cartaoVolusCalculoValorTaxa.js"></script>
+{% endblock content_script %}
+
 
 {% block content %}
 <div class="container-fluid">
@@ -15,12 +19,10 @@
                      <div class="card-body">
                         <div class="row">
                             <div class="form-group  col-sm">
-
                               {{ form.cartao|as_crispy_field }}
-
                             </div>
                             <div class="input-group col-sm">
-                              {{ form.competencia|as_crispy_field }}
+                              {{ form.competencia|as_crispy_field}}
                             </div>
                         </div>
                          <div class="row">
@@ -38,24 +40,6 @@
                      </div>
                  </div>
               </form>
-              <script>
-            $(document).ready(function() {
-                // Define as variáveis necessárias
-                var valorField = $('#id_valor');
-                var valorComTaxaField = $('#id_valorComTaxa');
-                var valor = parseFloat(valorField.val());
-
-                // Atualiza o valor do campo "valorComTaxa" ao mudar o valor do campo "valor"
-                valorField.on('input', function() {
-                    valor = parseFloat(valorField.val());
-                    if (!isNaN(valor)) {
-                        valorComTaxaField.val((valor * 1.05).toFixed(2));
-                    } else {
-                        valorComTaxaField.val('');
-                    }
-                });
-            });
-            </script>
           </div>
 </div>
 

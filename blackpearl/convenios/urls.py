@@ -2,7 +2,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
 
-from blackpearl.convenios.views.homeViews import HomeTemplateView
+from blackpearl.convenios.views.homeViews import HomeTemplateView, exportar
 
 from blackpearl.convenios.views.planoSaudeViews import ContratoPlanoSaudeCreateView, ContratoPlanoSaudeListView, \
     ContratoPlanoSaudeUpdateView, ContratoPlanoSaudeDeleteView, ContratoPlanoSaudeDetailView, ConsultaValorFaixaEtaria, \
@@ -11,7 +11,7 @@ from blackpearl.convenios.views.planoSaudeViews import ContratoPlanoSaudeCreateV
 from blackpearl.convenios.views.planoOdontologicoViews import ContratoPlanoOdontologicoCreateView, ContratoPlanoOdontologicoDetailView, \
     ContratoPlanoOdontologicoUpdateView, ContratoPlanoOdontologicoDeleteView, ContratoOdontologicaListView, VerificarDependentesView, VerificarAssociacaoView
 
-from blackpearl.convenios.views.cartaoVolusViews import CartaoListView, CartaoCreateView, CartaoUpdateView, CartaoDetailView, CartaoDeleteView, FaturaCreateView, FaturaListView, FaturaDeleteView, FaturaUpdateView
+from blackpearl.convenios.views.cartaoVolusViews import CartaoListView, CartaoCreateView, CartaoUpdateView, CartaoDetailView, CartaoDeleteView, FaturaCreateView, FaturaListView, FaturaDeleteView, FaturaUpdateView, ConsultaTaxaView
 
 
 urlpatterns = [
@@ -22,10 +22,13 @@ urlpatterns = [
     path('excluircartao/<int:pk>/', CartaoDeleteView.as_view(), name ='cartao_excluir'),
     path('listagemcartoes/', CartaoListView.as_view(), name ='listagemcartoes'),
 
+    path('exportar/',exportar, name ='exportar'),
+
     path('editarfatura/<int:pk>/', FaturaUpdateView.as_view(), name ='fatura_editar'),
     path('excluirfatura/<int:pk>/', FaturaDeleteView.as_view(), name ='fatura_excluir'),
     path('cadastrarfatura/', FaturaCreateView.as_view(), name ='fatura_cadastrar'),
     path('listagemfaturas/', FaturaListView.as_view(), name ='listagemfaturas'),
+    path('cartaovolus/consultataxa', ConsultaTaxaView.as_view(), name='consultataxa'),
 
     path('contratoodontologica/', ContratoPlanoOdontologicoCreateView.as_view(), name='contratoodontologica_cadastrar'),
     path('contratoodontologica/<int:pk>/detalhes/', ContratoPlanoOdontologicoDetailView.as_view(),name='contratoodontologico_visualizar'),

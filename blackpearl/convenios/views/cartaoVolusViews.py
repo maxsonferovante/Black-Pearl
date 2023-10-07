@@ -3,8 +3,8 @@ from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, UpdateView, DetailView, DeleteView
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView
-from blackpearl.convenios.forms import CartaoConvenioVolusForm, FaturaCartaoForm
-from blackpearl.convenios.models import CartaoConvenioVolus, FaturaCartao
+from blackpearl.convenios.forms.cartaoVolusForms import CartaoConvenioVolusForm, FaturaCartaoForm
+from blackpearl.convenios.models.cartaoVolusModels import CartaoConvenioVolus, FaturaCartao
 
 @method_decorator(login_required, name='dispatch')
 class CartaoListView(ListView):

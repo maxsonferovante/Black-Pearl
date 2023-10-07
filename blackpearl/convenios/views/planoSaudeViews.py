@@ -5,13 +5,12 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-
 from decimal import Decimal
 import datetime
 
-from blackpearl.convenios.models import PlanoSaude, ContratoPlanoSaude, ContratoPlanoSaudeDependente, ValoresPorFaixa, TaxasAdministrativa
-
-from blackpearl.convenios.forms import ContratoPlanoSaudeForm, ContratoPlanoSaudeDependenteForm
+from blackpearl.convenios.models.planoSaudeModels import PlanoSaude, ContratoPlanoSaude, ContratoPlanoSaudeDependente, ValoresPorFaixa
+from blackpearl.convenios.models.models import  TaxasAdministrativa
+from blackpearl.convenios.forms.planoSaudeForms import ContratoPlanoSaudeForm, ContratoPlanoSaudeDependenteForm
 from blackpearl.associados.models import Associado, Dependente
 
 

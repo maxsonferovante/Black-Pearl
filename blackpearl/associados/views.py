@@ -23,7 +23,8 @@ from tqdm import tqdm
 from .importExcelToAssociados import import_excel_to_associado
 from .forms import AssociadoModelForm, FileUploadExcelModelForm, DependenteModelForm
 from .models import Associado, FileUploadExcelModel, Dependente, Empresa
-from ..convenios.models import CartaoConvenioVolus, FaturaCartao, ValoresPorFaixa
+from ..convenios.models.cartaoVolusModels import CartaoConvenioVolus, FaturaCartao
+from ..convenios.models.planoSaudeModels import ValoresPorFaixa
 
 
 # Create your views here.

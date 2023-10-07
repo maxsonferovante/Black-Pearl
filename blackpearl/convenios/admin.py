@@ -2,7 +2,10 @@ from django.contrib import admin
 from django import forms
 from django.contrib import admin
 
-from .models import ValoresPorFaixa, PlanoSaude, CartaoConvenioVolus, PlanoOdontologico, Otica, TaxasAdministrativa, FaturaCartao, ContratoPlanoOdontologico,  ContratoPlanoSaude, ContratoPlanoSaudeDependente
+from blackpearl.convenios.models.planoSaudeModels import PlanoSaude, ContratoPlanoSaude, ContratoPlanoSaudeDependente, ValoresPorFaixa
+from blackpearl.convenios.models.planoOdontologicoModels import ContratoPlanoOdontologico, PlanoOdontologico
+from blackpearl.convenios.models.models import TaxasAdministrativa, Otica
+from blackpearl.convenios.models.cartaoVolusModels import CartaoConvenioVolus, FaturaCartao
 
 @admin.register(TaxasAdministrativa)
 class TaxasAdministrativaAdmin(admin.ModelAdmin):

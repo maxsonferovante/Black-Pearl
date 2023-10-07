@@ -1,15 +1,18 @@
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView, DeleteView, FormView
-from blackpearl.convenios.forms import CartaoConvenioVolusForm, FaturaCartaoForm, ContratoPlanoOdontologicoForm, ContratoPlanoSaudeForm, ContratoPlanoSaudeDependenteForm
-from blackpearl.convenios.models import CartaoConvenioVolus, FaturaCartao, ContratoPlanoOdontologico, TaxasAdministrativa,PlanoOdontologico, ContratoPlanoSaude, ValoresPorFaixa, PlanoSaude, ContratoPlanoSaudeDependente
-from blackpearl.associados.models import Associado, Dependente
+from django.views.generic import CreateView, UpdateView, DetailView, DeleteView, FormView
 from django.views.generic import ListView
+
+
+from blackpearl.convenios.models.planoOdontologicoModels import ContratoPlanoOdontologico, PlanoOdontologico
+from blackpearl.convenios.models.models import TaxasAdministrativa
+from blackpearl.convenios.forms.planoOdontologicoForms import ContratoPlanoOdontologicoForm
+from blackpearl.associados.models import Associado
+
 
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoOdontologicoCreateView(CreateView):

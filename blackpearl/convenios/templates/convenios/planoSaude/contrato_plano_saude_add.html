@@ -2,6 +2,11 @@
 {% extends "base_sidebar.html" %}
 {% load crispy_forms_tags %}
 {% load bootstrap5 %}
+
+{% block content_script %}
+    <script src="/static/convenios/contratoPlanoSaudeTitularAdd.js"></script>
+{% endblock content_script %}
+
 {% block content %}
 <div class="container">
           <div class="row d-flex justify-content-md-center align-items-center h-50">
@@ -48,38 +53,4 @@
               </form>
           </div>
 </div>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-$(document).ready(function() {
-  $('.idade-atend-valor').change(function(event) {
-    const planoSaude_id = $('#id_planoSaude').val();
-    const contratante_id = $('#id_contratante').val();
-    const atendDomiciliar = $('#id_atendimentoDomiciliar').val();
-    console.log(atendDomiciliar);
-
-      if (planoSaude_id !== '' && contratante_id !== '' && atendDomiciliar !== '') {
-          $.ajax({
-          url: '/convenios/contratoplanosaude/consultafaixa/',
-          data: {
-            'planoSaude_id': planoSaude_id,
-            'atendimentoDomiciliar': atendDomiciliar,
-            'contratante_id': contratante_id
-          },
-          dataType: 'json',
-          success: function(response) {
-            const faixa_id = response.faixa_id;
-            const valor = response.valor;
-            idadeMin = response.idadeMin;
-            idadeMax = response.idadeMax;
-            $('#id_valor').empty();
-            $('#id_valor').val(valor);
-            $('#id_faixa').empty();
-            $('#id_faixa').append('<option value="' + faixa_id + '">' + idadeMin + ' a ' +  idadeMax + ' (anos)</option>');
-          }
-        });
-      }
-  });
-  });
-</script>
 {% endblock content %}

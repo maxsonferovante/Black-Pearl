@@ -160,7 +160,7 @@ class ContratoPlanoSaudeDependenteForm(forms.ModelForm):
 
     class Meta:
         model = ContratoPlanoSaudeDependente
-        fields = ['contrato', 'dependente', 'atendimentoDomiciliar', 'dataInicio', 'valor', 'ativo', 'faixa']
+        fields = ['contrato', 'dependente', 'atendimentoDomiciliar', 'dataInicio', 'valor', 'ativo', 'faixa' ,'valorTotal']
         exclude = ['dataFim']
 
 

@@ -1,18 +1,17 @@
 from django.conf import settings
 from django.conf.urls.static import static
+from django.urls import path
 
-from django.urls import path, include
+from blackpearl.convenios.views.homeViews import HomeTemplateView
 
+from blackpearl.convenios.views.planoSaudeViews import ContratoPlanoSaudeCreateView, ContratoPlanoSaudeListView, \
+    ContratoPlanoSaudeUpdateView, ContratoPlanoSaudeDeleteView, ContratoPlanoSaudeDetailView, ConsultaValorFaixaEtaria, \
+    ContratoPlanoSaudeDependenteCreateView, ConsultaDependenteView, ConsultaValorFaixaEtariaDependente
 
-from blackpearl.convenios.views import ContratoPlanoOdontologicoCreateView, ContratoPlanoOdontologicoDetailView, \
-    ContratoPlanoOdontologicoUpdateView, ContratoPlanoOdontologicoDeleteView, ContratoOdontologicaListView, \
-    ContratoPlanoSaudeCreateView, ContratoPlanoSaudeListView, ContratoPlanoSaudeUpdateView, \
-    ContratoPlanoSaudeDeleteView, ContratoPlanoSaudeDetailView, ConsultaValorFaixaEtaria, \
-    ConsultaValorFaixaEtariaDependente, ContratoPlanoSaudeDependenteCreateView
-from blackpearl.convenios.views import VerificarDependentesView, VerificarAssociacaoView
-from blackpearl.convenios.views import HomeTemplateView
-from blackpearl.convenios.views import CartaoListView, CartaoCreateView, CartaoUpdateView, CartaoDetailView, CartaoDeleteView
-from blackpearl.convenios.views import FaturaCreateView, FaturaListView, FaturaDeleteView, FaturaUpdateView
+from blackpearl.convenios.views.planoOdontologicoViews import ContratoPlanoOdontologicoCreateView, ContratoPlanoOdontologicoDetailView, \
+    ContratoPlanoOdontologicoUpdateView, ContratoPlanoOdontologicoDeleteView, ContratoOdontologicaListView, VerificarDependentesView, VerificarAssociacaoView
+
+from blackpearl.convenios.views.cartaoVolusViews import CartaoListView, CartaoCreateView, CartaoUpdateView, CartaoDetailView, CartaoDeleteView, FaturaCreateView, FaturaListView, FaturaDeleteView, FaturaUpdateView
 
 
 urlpatterns = [
@@ -46,6 +45,8 @@ urlpatterns = [
     path('contratoplanosaude/consultafaixa/', ConsultaValorFaixaEtaria.as_view(), name='consultafaixa'),
 
     path('contratoplanosaude/add_dependente', ContratoPlanoSaudeDependenteCreateView.as_view(), name='cadastrar_dependentes_contrato_plano_saude'),
+
+    path('contratoplanosaude/consultadependente/', ConsultaDependenteView.as_view(), name='consulta_dependente'),
 
     path('contratoplanosaude/consultafaixa_dependente/', ConsultaValorFaixaEtariaDependente.as_view(), name='consulta_faixa_dependente'),
 

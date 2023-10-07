@@ -2,13 +2,17 @@
 {% extends "base_sidebar.html" %}
 {% load crispy_forms_tags %}
 {% load bootstrap5 %}
+
+{% block content_script %}
+    <script src="/static/convenios/contratoPlanoSaudeDependenteAdd.js"></script>
+{% endblock content_script %}
+
 {% block content %}
 <div class="container">
           <div class="row d-flex justify-content-md-center align-items-center h-50">
             {% bootstrap_messages %}
               <form class="form-horizontal" action="" method="post" autocomplete="off" >
                   {% csrf_token %}
-
                  <div class="card shadow mb-3">
                      <h6 class="card-header">Plano de Saúde - Cadastro do Dependente</h6>
                      <div class="card-body">
@@ -36,6 +40,9 @@
                              <div class="from-group col-sm">
                                     {{ form.valor|as_crispy_field }}
                              </div>
+                             <div class="from-group col-sm">
+                                    {{ form.valorTotal|as_crispy_field }}
+                             </div>
                          </div>
                          {% include 'button_save.html' %}
                      </div>
@@ -43,38 +50,4 @@
               </form>
           </div>
 </div>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-$(document).ready(function() {
-  $('.idade-atend-valor').change(function(event) {
-    const planoSaude_id = $('#id_planoSaude').val();
-    const id_dependente = $('#id_dependente').val();
-    const atendDomiciliar = $('#id_atendimentoDomiciliar').val();
-    console.log(atendDomiciliar);
-
-      if (planoSaude_id !== '' && id_dependente !== '' && atendDomiciliar !== '') {
-          $.ajax({
-          url: '/contratoplanosaude/consultafaixa_dependente/',
-          data: {
-            'planoSaude_id': planoSaude_id,
-            'atendimentoDomiciliar': atendDomiciliar,
-            'id_dependente': id_dependente
-          },
-          dataType: 'json',
-          success: function(response) {
-            const faixa_id = response.faixa_id;
-            const valor = response.valor;
-            idadeMin = response.idadeMin;
-            idadeMax = response.idadeMax;
-            $('#id_valor').empty();
-            $('#id_valor').val(valor);
-            $('#id_faixa').empty();
-            $('#id_faixa').append('<option value="' + faixa_id + '">' + idadeMin + ' a ' +  idadeMax + ' (anos)</option>');
-          }
-        });
-      }
-  });
-  });
-</script>
 {% endblock content %}

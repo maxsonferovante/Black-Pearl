@@ -138,7 +138,7 @@ class Migration(migrations.Migration):
                 ('idadeMin', models.IntegerField(verbose_name='Idade Minima')),
                 ('idadeMax', models.IntegerField(verbose_name='Idade Max')),
                 ('valor', models.DecimalField(decimal_places=2, max_digits=6, verbose_name='Valor da Faixa')),
-                ('planoSaude', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='faixas', to='convenios.planosaude')),
+                ('planoSaude', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='faixas', to='convenios.planoSaude')),
             ],
             options={
                 'abstract': False,
@@ -188,7 +188,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='contratoplanosaude',
             name='planoSaude',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='contratos', to='convenios.planosaude'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='contratos', to='convenios.planoSaude'),
         ),
         migrations.CreateModel(
             name='ContratoPlanoOdontologicoDependente',

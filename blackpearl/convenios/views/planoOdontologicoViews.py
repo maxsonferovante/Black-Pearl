@@ -8,18 +8,25 @@ from django.views.generic import CreateView, UpdateView, DetailView, DeleteView,
 from django.views.generic import ListView
 
 
-from blackpearl.convenios.models.planoOdontologicoModels import ContratoPlanoOdontologico, PlanoOdontologico
+from blackpearl.convenios.models.planoOdontologicoModels import ContratoPlanoOdontologico, PlanoOdontologico, \
+    DependentePlanoOdontologico
 from blackpearl.convenios.models.models import TaxasAdministrativa
-from blackpearl.convenios.forms.planoOdontologicoForms import ContratoPlanoOdontologicoForm
+from blackpearl.convenios.forms.planoOdontologicoForms import ContratoPlanoOdontologicoForm, DependentePlanoOdontologicoForms
 from blackpearl.associados.models import Associado
 
+@method_decorator(login_required, name='dispatch')
+class DependentePlanoOdontologicoCreateView(CreateView):
+    model = DependentePlanoOdontologico
+    form_class = DependentePlanoOdontologicoForms
+    template_name = 'convenios/planoOdontologico/dependentes_contrato_plano_odont_add.html'
+    success_url = reverse_lazy('listagemcontratoodontologica')
 
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoOdontologicoCreateView(CreateView):
+    model = ContratoPlanoOdontologico
     form_class = ContratoPlanoOdontologicoForm
     template_name = 'convenios/planoOdontologico/contratacaoplanoodontologico_criar_form.html'
     success_url = reverse_lazy('listagemcontratoodontologica')
-
 
 
 @method_decorator(login_required, name='dispatch')
@@ -34,8 +41,6 @@ class ContratoPlanoOdontologicoDetailView(DetailView):
         context['contrato'] = contrato
         return context
 
-
-
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoOdontologicoUpdateView(UpdateView):
     model = ContratoPlanoOdontologico
@@ -43,12 +48,10 @@ class ContratoPlanoOdontologicoUpdateView(UpdateView):
     template_name = 'convenios/planoOdontologico/contratacaoplanoodontologico_criar_form.html'
     success_url = reverse_lazy('listagemcontratoodontologica')
 
-
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoOdontologicoDeleteView(DeleteView):
     model = ContratoPlanoOdontologico
     success_url = reverse_lazy('listagemcontratoodontologica')
-
 
 @method_decorator(login_required, name='dispatch')
 class ContratoOdontologicaListView(ListView):
@@ -74,24 +77,19 @@ class VerificarAssociacaoView(View):
     def get(self, request):
         contratante_id = self.request.GET.get('contratante_id')
         plano_odontologico_id = self.request.GET.get('plano_odontologico_id')
-        quantidade_dependentes = self.request.GET.get('quantidade_dependentes')
 
-        print(contratante_id, plano_odontologico_id, quantidade_dependentes)
+        print(contratante_id, plano_odontologico_id)
 
         contratante = Associado.objects.get(pk=contratante_id)
         taxa_administrativa = TaxasAdministrativa.objects.get(grupos=contratante.associacao)
         percentual_taxa = taxa_administrativa.percentual
-
         valor_unitario = PlanoOdontologico.objects.get(id=plano_odontologico_id).valorUnitario
 
-
-        # instance.valor = (valorPlano / (Decimal(100.0) - taxa.percentual)) * Decimal(100.0)
-        valor_total = round(((valor_unitario + quantidade_dependentes + 1) / (100 - percentual_taxa)) * 100, 2)
+        valor_total = round(((valor_unitario) / (100 - percentual_taxa)) * 100, 2)
 
         print(valor_unitario, percentual_taxa, valor_total)
 
         return JsonResponse({'valor_total': valor_total})
-
 
 class VerificarDependentesView(View):
     @csrf_exempt

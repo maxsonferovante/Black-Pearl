@@ -1,7 +1,7 @@
 from django import forms
 
 from django.template.defaultfilters import register
-from blackpearl.convenios.models.planoOdontologicoModels import ContratoPlanoOdontologico
+from blackpearl.convenios.models.planoOdontologicoModels import ContratoPlanoOdontologico, DependentePlanoOdontologico
 from blackpearl.associados.models import Associado
 from blackpearl.convenios.models.planoOdontologicoModels import PlanoOdontologico
 
@@ -22,16 +22,7 @@ class ContratoPlanoOdontologicoForm(forms.ModelForm):
                 'data-mask': '00/00/0000'
             }
         ))
-    quantidadeDependententes = forms.IntegerField(
-        label='Quantidade de Dependentes',
-        initial= 0,
-        required= False,
-        widget=forms.NumberInput(
-            attrs={
 
-                'class': 'plano-quant-valor',
-
-                'placeholder': 'Quantidade de Dependentes'}))
 
     planoOdontologico = forms.ModelChoiceField(
         label='Plano Odontológico',
@@ -40,9 +31,30 @@ class ContratoPlanoOdontologicoForm(forms.ModelForm):
 
     class Meta:
         model = ContratoPlanoOdontologico
-        fields = ['contratante', 'planoOdontologico', 'formaPagamento', 'dataInicio', 'valor', 'ativo', 'quantidadeDependententes']
+        fields = ['contratante', 'planoOdontologico', 'formaPagamento', 'dataInicio', 'valor', 'ativo']
         exclude = ['dataFim']
 
+
+class DependentePlanoOdontologicoForms(forms.ModelForm):
+    dataInicio = forms.DateField(
+        label='Data da Contratação',
+        widget=forms.DateInput(
+            attrs={
+                'type': 'date',
+                'class': 'form-control',
+                'autocomplete': 'off',
+                'placeholder': 'dd/mm/yyyy',
+                'data-mask': '00/00/0000'
+            }
+        ))
+
+    class Meta:
+        model = DependentePlanoOdontologico
+        fields = ['contratoTitular','dependente',
+                  'dataInicio', 'valor',
+                  'valorComTaxa', 'ativo']
+
+        exclude = ['dataFim']
 
 @register.filter(name='add_class')
 def add_class(field, css):

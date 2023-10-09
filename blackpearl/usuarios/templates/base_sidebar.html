@@ -25,7 +25,6 @@
 
     {% endblock content_script %}
 
-
 </head>
 <body id="page-top">
     <div id="wrapper">
@@ -91,7 +90,8 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Cadastros:</h6>
                         <a class="collapse-item" href="{% url 'cartao_cadastrar' %}">Adesão</a>
-                        <a class="collapse-item" href="{% url 'fatura_cadastrar' %}">Lançar consumo</a>
+                        <a class="collapse-item" href="{% url 'fatura_cadastrar' %}">Cadastrar Fatura</a>
+                        <a class="collapse-item" href="{% url 'fatura_cadastrar_exportacao' %}">Arquivos (.xlxs)</a>
                         <div class="collapse-divider"></div>
                         <h6 class="collapse-header">Consultas:</h6>
                         <a class="collapse-item" href="{% url 'listagemcartoes' %}">Cartões</a>

@@ -11,7 +11,7 @@ from blackpearl.convenios.views.planoSaudeViews import ContratoPlanoSaudeCreateV
 from blackpearl.convenios.views.planoOdontologicoViews import ContratoPlanoOdontologicoCreateView, ContratoPlanoOdontologicoDetailView, \
     ContratoPlanoOdontologicoUpdateView, ContratoPlanoOdontologicoDeleteView, ContratoOdontologicaListView, VerificarDependentesView, VerificarAssociacaoView
 
-from blackpearl.convenios.views.cartaoVolusViews import CartaoListView, CartaoCreateView, CartaoUpdateView, CartaoDetailView, CartaoDeleteView, FaturaCreateView, FaturaListView, FaturaDeleteView, FaturaUpdateView, ConsultaTaxaView
+from blackpearl.convenios.views.cartaoVolusViews import CartaoListView, CartaoCreateView, CartaoUpdateView, CartaoDetailView, CartaoDeleteView, FaturaCreateView, FaturaListView, FaturaDeleteView, FaturaUpdateView, ConsultaTaxaView, ImportarFaturasView
 
 
 urlpatterns = [
@@ -29,6 +29,7 @@ urlpatterns = [
     path('cadastrarfatura/', FaturaCreateView.as_view(), name ='fatura_cadastrar'),
     path('listagemfaturas/', FaturaListView.as_view(), name ='listagemfaturas'),
     path('cartaovolus/consultataxa', ConsultaTaxaView.as_view(), name='consultataxa'),
+    path('fatura/exportar', ImportarFaturasView.as_view(), name='fatura_cadastrar_exportacao'),
 
     path('contratoodontologica/', ContratoPlanoOdontologicoCreateView.as_view(), name='contratoodontologica_cadastrar'),
     path('contratoodontologica/<int:pk>/detalhes/', ContratoPlanoOdontologicoDetailView.as_view(),name='contratoodontologico_visualizar'),

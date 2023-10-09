@@ -2,13 +2,15 @@ from decimal import Decimal
 
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView, UpdateView, DetailView, DeleteView
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView
-from blackpearl.convenios.forms.cartaoVolusForms import CartaoConvenioVolusForm, FaturaCartaoForm
+from blackpearl.convenios.forms.cartaoVolusForms import CartaoConvenioVolusForm, FaturaCartaoForm, \
+    FileUploadExcelFaturasForm
 from blackpearl.convenios.models.cartaoVolusModels import CartaoConvenioVolus, FaturaCartao
 from blackpearl.convenios.models.models import TaxasAdministrativa
 
@@ -161,3 +163,13 @@ class ConsultaTaxaView(View):
             return JsonResponse({'valorTaxa': 0})
 
 
+@method_decorator(login_required, name='dispatch')
+class ImportarFaturasView(View):
+    template_name = "convenios/cartaoVolus/formsdimport_excel.html"
+    form_class = FileUploadExcelFaturasForm()
+    success_url = reverse_lazy('listagemfaturas')
+    def get(self, request, *args, **kwargs):
+        context = {
+            'formUploadFileFaturas': self.form_class,
+        }
+        return render(request, self.template_name, context)

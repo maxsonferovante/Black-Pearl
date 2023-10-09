@@ -6,6 +6,7 @@ from _decimal import Decimal
 from blackpearl.associados.models import Associado
 from blackpearl.convenios.models.models import TaxasAdministrativa, Base
 
+
 class CartaoConvenioVolus(Base):
     status_choices = [
         ('ATIVO', 'ATIVO'),

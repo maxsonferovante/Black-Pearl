@@ -77,18 +77,11 @@ class VerificarAssociacaoView(View):
     def get(self, request):
         contratante_id = self.request.GET.get('contratante_id')
         plano_odontologico_id = self.request.GET.get('plano_odontologico_id')
-
-        print(contratante_id, plano_odontologico_id)
-
         contratante = Associado.objects.get(pk=contratante_id)
         taxa_administrativa = TaxasAdministrativa.objects.get(grupos=contratante.associacao)
         percentual_taxa = taxa_administrativa.percentual
         valor_unitario = PlanoOdontologico.objects.get(id=plano_odontologico_id).valorUnitario
-
         valor_total = round(((valor_unitario) / (100 - percentual_taxa)) * 100, 2)
-
-        print(valor_unitario, percentual_taxa, valor_total)
-
         return JsonResponse({'valor_total': valor_total})
 
 class VerificarDependentesView(View):

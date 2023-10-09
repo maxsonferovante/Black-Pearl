@@ -26,6 +26,7 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('associados/', include('blackpearl.associados.urls')),
     path('convenios/', include('blackpearl.convenios.urls')),
+    path('cobrancas/', include('blackpearl.cobrancas.urls')),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

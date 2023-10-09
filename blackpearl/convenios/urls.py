@@ -11,7 +11,7 @@ from blackpearl.convenios.views.planoSaudeViews import ContratoPlanoSaudeCreateV
 from blackpearl.convenios.views.planoOdontologicoViews import ContratoPlanoOdontologicoCreateView, \
     ContratoPlanoOdontologicoDetailView, \
     ContratoPlanoOdontologicoUpdateView, ContratoPlanoOdontologicoDeleteView, ContratoOdontologicaListView, \
-    VerificarDependentesView, VerificarAssociacaoView, DependentePlanoOdontologicoCreateView
+    ConsultaDosDependentesContratoPlanoOdontologicoView, VerificarAssociacaoView, DependentePlanoOdontologicoCreateView, ConsultaValoresPlanoOdontologicoDependente
 
 from blackpearl.convenios.views.cartaoVolusViews import CartaoListView, CartaoCreateView, CartaoUpdateView, CartaoDetailView, CartaoDeleteView, FaturaCreateView, FaturaListView, FaturaDeleteView, FaturaUpdateView, ConsultaTaxaView, ImportarFaturasView
 
@@ -39,10 +39,14 @@ urlpatterns = [
     path('contratoodontologica/<int:pk>/excluir', ContratoPlanoOdontologicoDeleteView.as_view(),name='contratoodontologico_excluir'),
     path('listagemcontratoodontologica/', ContratoOdontologicaListView.as_view(), name='listagemcontratoodontologica'),
 
-    path('verificardependentes/', VerificarDependentesView.as_view(), name='verificar_dependentes'),
+
     path('contratoodontologica/verificarassociacao/', VerificarAssociacaoView.as_view(), name='verificar_associacao'),
-    path('contratoondontologico/add/dependente', DependentePlanoOdontologicoCreateView.as_view(), name='cadastrar_dependente_plano_odontologico')
-,
+
+    path('contratoondontologico/add/dependente', DependentePlanoOdontologicoCreateView.as_view(), name='cadastrar_dependente_plano_odontologico'),
+    path('contratoondontologico/consultadosvalores/dependente/', ConsultaValoresPlanoOdontologicoDependente.as_view(), name='consultadosvalores'),
+
+    path('contratoondontologico/consultadosdependentes/', ConsultaDosDependentesContratoPlanoOdontologicoView.as_view(), name='consultadosdependentes'),
+
 
 
     path('contratoplanosaude/add', ContratoPlanoSaudeCreateView.as_view(), name='cadastrar_contrato_plano_saude'),

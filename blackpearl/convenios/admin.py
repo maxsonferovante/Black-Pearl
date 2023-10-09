@@ -3,7 +3,8 @@ from django import forms
 from django.contrib import admin
 
 from blackpearl.convenios.models.planoSaudeModels import PlanoSaude, ContratoPlanoSaude, ContratoPlanoSaudeDependente, ValoresPorFaixa
-from blackpearl.convenios.models.planoOdontologicoModels import ContratoPlanoOdontologico, PlanoOdontologico
+from blackpearl.convenios.models.planoOdontologicoModels import ContratoPlanoOdontologico, PlanoOdontologico, \
+    DependentePlanoOdontologico
 from blackpearl.convenios.models.models import TaxasAdministrativa, Otica
 from blackpearl.convenios.models.cartaoVolusModels import CartaoConvenioVolus, FaturaCartao
 
@@ -37,6 +38,7 @@ class PlanoOdontologicoUniodontoAdmin(admin.ModelAdmin):
     list_display = ('nome', 'cnpj', 'numContrato', 'valorUnitario', 'ativo')
 
 
+
 @admin.register(Otica)
 class oticaAdmin(admin.ModelAdmin):
     list_display = ('nome', 'cnpj', 'valorCompra', 'ativo')
@@ -54,6 +56,15 @@ class ContratacaoPlanoOdontologicoAdmin(admin.ModelAdmin):
                     'ativo')
 
 
+@admin.register(DependentePlanoOdontologico)
+class DependentePlanoOdontologicoAdmin(admin.ModelAdmin):
+    list_display = ('contratoTitular',
+                    'dependente',
+                    'id',
+                    'valor',
+                    'dataInicio',
+                    'dataFim',
+                    'ativo')
 
 @admin.register(ContratoPlanoSaude)
 class ContratoPlanoSaudeAdmin(admin.ModelAdmin):

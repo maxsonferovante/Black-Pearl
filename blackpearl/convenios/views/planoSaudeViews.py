@@ -119,19 +119,16 @@ class ContratoPlanoSaudeDependenteCreateView(CreateView):
     def form_valid(self, form):
 
         dependente_contrato = form.save(commit=False)
+        if dependente_contrato.dataInicio < dependente_contrato.contrato.dataInicio:
+            form.add_error('dataInicio', 'Data de Contratação do dependente não pode ser maior que a data de início do titular (' + str(dependente_contrato.contrato.dataInicio) + ')')
+            return super().form_invalid(form)
 
         taxa_administrativa = TaxasAdministrativa.objects.get(grupos=dependente_contrato.contrato.contratante.associacao)
-
         valor_faixa = ValoresPorFaixa.objects.get(pk=dependente_contrato.faixa.id)
 
-        print(valor_faixa.valor         , type(valor_faixa.valor))
-
         percentual_taxa = taxa_administrativa.percentual
-
         dependente_contrato.valorTotal = round((valor_faixa.valor / (Decimal(100) - percentual_taxa)) * 100, 2)
-
         dependente_contrato.save()
-
         titular_contrato = get_object_or_404(ContratoPlanoSaude, )
         titular_contrato.valorTotal = titular_contrato.valorTotal + dependente_contrato.valorTotal
         titular_contrato.save()

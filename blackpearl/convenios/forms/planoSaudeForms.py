@@ -18,7 +18,7 @@ class ContratoPlanoSaudeForm(forms.ModelForm):
                 'class': 'form-control',
                 'autocomplete': 'off',
                 'placeholder': 'dd/mm/yyyy',
-                'data-mask': '00/00/0000'
+                'data-mask': '0000/00/00'
             }
         ))
     planoSaude = forms.ModelChoiceField(
@@ -38,6 +38,9 @@ class ContratoPlanoSaudeForm(forms.ModelForm):
         fields = ['contratante', 'planoSaude', 'faixa', 'formaPagamento', 'atendimentoDomiciliar', 'dataInicio',
                   'valor', 'ativo', 'faixa']
         exclude = ['dataFim']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
 class ContratoPlanoSaudeDependenteForm(forms.ModelForm):

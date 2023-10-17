@@ -56,6 +56,7 @@ class ContratoPlanoSaudeUpdateView(UpdateView):
     template_name = 'convenios/planoSaude/contrato_plano_saude_add.html'
     success_url = reverse_lazy('listar_contratos_plano_saude')
 
+
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoSaudeDeleteView(DeleteView):
     model = ContratoPlanoSaude

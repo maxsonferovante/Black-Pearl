@@ -4,6 +4,3 @@ services:
     runtime: python
     buildCommand: pip install -r requirements.txt
     startCommand: "gunicorn blackpearl.wsgi:application"
-    envVars:
-      - key: SECRET_KEY
-        generatedValue: true

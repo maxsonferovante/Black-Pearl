@@ -2,5 +2,6 @@ services:
   - type: web
     name: blackpearl
     runtime: python
+    version: 3.8.2
     buildCommand: pip install -r requirements.txt
     startCommand: "gunicorn blackpearl.wsgi:application"

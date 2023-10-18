@@ -1,7 +1,0 @@
-services:
-  - type: web
-    name: blackpearl
-    runtime: python
-    version: 3.11
-    buildCommand: python -m pip install --upgrade pip && pip install -r requirements.txt
-    startCommand: "gunicorn blackpearl.wsgi:application"

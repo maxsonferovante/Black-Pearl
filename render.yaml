@@ -1,0 +1,11 @@
+databases:
+  - name: blackpearl
+    databaseName: blackpearl
+    user: blackpearl_user
+
+services:
+  - type: web
+    name: blackpearl
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn blackpearl.wsgi:application"

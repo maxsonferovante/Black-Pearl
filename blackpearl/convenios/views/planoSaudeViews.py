@@ -26,7 +26,7 @@ class ContratoPlanoSaudeCreateView(CreateView):
         taxa_administrativa = TaxasAdministrativa.objects.get(grupos=contrato.contratante.associacao)
         valor_faixa = ValoresPorFaixa.objects.get(pk=contrato.faixa.id)
         percentual_taxa = taxa_administrativa.percentual
-        contrato.valorTotal = round((valor_faixa.valor / (100 - percentual_taxa)) * 100, 2)
+        contrato.valorTotal = round((valor_faixa.valor / (100 - percentual_taxa)) * 100, 2) + contrato.planoSaude.valorAtendimentoTelefonico
         contrato.save()
         return super().form_valid(form)
 
@@ -128,7 +128,8 @@ class ContratoPlanoSaudeDependenteCreateView(CreateView):
         valor_faixa = ValoresPorFaixa.objects.get(pk=dependente_contrato.faixa.id)
 
         percentual_taxa = taxa_administrativa.percentual
-        dependente_contrato.valorTotal = round((valor_faixa.valor / (Decimal(100) - percentual_taxa)) * 100, 2)
+        dependente_contrato.valor = round((valor_faixa.valor / (100 - percentual_taxa)) * 100, 2) + dependente_contrato.contrato.planoSaude.valorAtendimentoTelefonico
+        dependente_contrato.valorTotal = round((valor_faixa.valor / (Decimal(100) - percentual_taxa)) * 100, 2) + dependente_contrato.contrato.planoSaude.valorAtendimentoTelefonico
         dependente_contrato.save()
         titular_contrato = get_object_or_404(ContratoPlanoSaude, )
         titular_contrato.valorTotal = titular_contrato.valorTotal + dependente_contrato.valorTotal
@@ -161,14 +162,14 @@ class ConsultaValorFaixaEtariaDependente(View):
         taxa = TaxasAdministrativa.objects.get(grupos = Dependente.objects.get(pk=dependente_id).titular.associacao)
 
         if atendimentoDomiciliar == 'True':
-            valor = round(((faixa.valor+valorAtendimentoTelefonico) / (100-taxa.percentual)) * 100,2) + round((valorAtendimentoDomiciliar/(100-taxa.percentual)*100),2)
+            valor = round(((faixa.valor+valorAtendimentoTelefonico) / (100-taxa.percentual)) * 100,2) + round((valorAtendimentoDomiciliar/(100-taxa.percentual)*100),2) + round((valorAtendimentoDomiciliar/(100-taxa.percentual)*100),2)
         else:
             valor = round(((faixa.valor+valorAtendimentoTelefonico)  / (100-taxa.percentual)) * 100,2)
 
         return JsonResponse({
                                 'faixa': {
                                     'id': faixa.id,
-                                    'valor': faixa.valor,
+                                    'valor': faixa.valor + valorAtendimentoTelefonico,
                                     'idadeMin': faixa.idadeMin,
                                     'idadeMax': faixa.idadeMax
                                 },

@@ -6,6 +6,6 @@ databases:
 services:
   - type: web
     name: blackpearl
-    runtime: python
+    runtime: python3.11
     buildCommand: "./build.sh"
     startCommand: "gunicorn blackpearl.wsgi:application"

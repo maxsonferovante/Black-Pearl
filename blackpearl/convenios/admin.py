@@ -15,12 +15,12 @@ class TaxasAdministrativaAdmin(admin.ModelAdmin):
 
 @admin.register(ValoresPorFaixa)
 class ValoresPorFaixaAdmin(admin.ModelAdmin):
-    list_display = ('planoSaude', 'idadeMin', 'idadeMax', 'valor', 'ativo')
+    list_display = ('planoSaude', 'idadeMin', 'idadeMax', 'valor', 'id','ativo')
 
 
 @admin.register(PlanoSaude)
 class PlanoSaudeAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'cnpj', 'segmentacao', 'contrato', 'ativo')
+    list_display = ('nome', 'cnpj', 'segmentacao', 'contrato','id', 'ativo')
 
 
 @admin.register(CartaoConvenioVolus)

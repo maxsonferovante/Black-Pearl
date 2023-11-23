@@ -2,19 +2,25 @@ from django.contrib import admin
 from django import forms
 from django.contrib import admin
 
-from .models import ValoresPorFaixa, PlanoSaude, CartaoConvenioVolus, PlanoOdontologico, Otica, TaxasAdministrativa, \
-    FaturaCartao, ContratoPlanoOdontologico, ContratoPlanoOdontologicoDependente, ContratoPlanoSaude
+from blackpearl.convenios.models.planoSaudeModels import PlanoSaude, ContratoPlanoSaude, ContratoPlanoSaudeDependente, ValoresPorFaixa
+from blackpearl.convenios.models.planoOdontologicoModels import ContratoPlanoOdontologico, PlanoOdontologico, \
+    DependentePlanoOdontologico
+from blackpearl.convenios.models.models import TaxasAdministrativa, Otica
+from blackpearl.convenios.models.cartaoVolusModels import CartaoConvenioVolus, FaturaCartao
+
+@admin.register(TaxasAdministrativa)
+class TaxasAdministrativaAdmin(admin.ModelAdmin):
+    list_display = ('grupos', 'percentual', 'ativo', 'id')
 
 
-# Register your models here.
 @admin.register(ValoresPorFaixa)
 class ValoresPorFaixaAdmin(admin.ModelAdmin):
-    list_display = ('planoSaude', 'idadeMin', 'idadeMax', 'valor', 'ativo')
+    list_display = ('planoSaude', 'idadeMin', 'idadeMax', 'valor', 'id','ativo')
 
 
 @admin.register(PlanoSaude)
 class PlanoSaudeAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'cnpj', 'segmentacao', 'contrato', 'ativo')
+    list_display = ('nome', 'cnpj', 'segmentacao', 'contrato','id', 'ativo')
 
 
 @admin.register(CartaoConvenioVolus)
@@ -32,14 +38,11 @@ class PlanoOdontologicoUniodontoAdmin(admin.ModelAdmin):
     list_display = ('nome', 'cnpj', 'numContrato', 'valorUnitario', 'ativo')
 
 
+
 @admin.register(Otica)
 class oticaAdmin(admin.ModelAdmin):
     list_display = ('nome', 'cnpj', 'valorCompra', 'ativo')
 
-
-@admin.register(TaxasAdministrativa)
-class TaxasAdministrativaAdmin(admin.ModelAdmin):
-    list_display = ('grupos', 'percentual', 'ativo', 'id')
 
 
 @admin.register(ContratoPlanoOdontologico)
@@ -53,12 +56,13 @@ class ContratacaoPlanoOdontologicoAdmin(admin.ModelAdmin):
                     'ativo')
 
 
-@admin.register(ContratoPlanoOdontologicoDependente)
-class ContratoPlanoOdontologicoDependenteAdmin(admin.ModelAdmin):
-    list_display = ('contrato',
+@admin.register(DependentePlanoOdontologico)
+class DependentePlanoOdontologicoAdmin(admin.ModelAdmin):
+    list_display = ('contratoTitular',
                     'dependente',
                     'id',
                     'valor',
+                    'valorComTaxa',
                     'dataInicio',
                     'dataFim',
                     'ativo')
@@ -70,6 +74,18 @@ class ContratoPlanoSaudeAdmin(admin.ModelAdmin):
                     'planoSaude',
                     'faixa',
                     'valor',
+                    'valorTotal',
+                    'dataInicio',
+                    'dataFim',
+                    'ativo')
+
+@admin.register(ContratoPlanoSaudeDependente)
+class ContratoPlanoSaudeDependenteAdmin(admin.ModelAdmin):
+    list_display = ('contrato',
+                    'dependente',
+                    'id',
+                    'valor',
+                    'valorTotal',
                     'dataInicio',
                     'dataFim',
                     'ativo')

@@ -3,7 +3,7 @@ from datetime import datetime
 from .models import Associado, FileUploadExcelModel, Empresa
 import pandas as pd
 from blackpearl.settings import BASE_DIR
-from ..convenios.models import CartaoConvenioVolus, FaturaCartao
+from ..convenios.models.cartaoVolusModels import CartaoConvenioVolus, FaturaCartao
 
 
 def import_excel_to_associado(objUploadFile):

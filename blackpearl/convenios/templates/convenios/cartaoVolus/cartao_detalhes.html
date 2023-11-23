@@ -1,0 +1,57 @@
+{% extends "base_sidebar.html" %}
+{% block content %}
+{% load bootstrap5 %}
+        <div class="container-fluid ">
+            <div class="card shadow md-4">
+                 <div class="card-header py-3">
+                        <h4> Cartão de {{cartao.titular}}</h4>
+                 </div>
+                <div class="card-body">
+                             <h5>Dados do Cartão Volus</h5>
+                             <ul class="list-unstyled">
+                                 <li>Titular: <strong>{{ cartao.titular }}</strong></li>
+                                 <li>Limite de crédito: <strong>{{ cartao.valorLimite }}</strong></li>
+                                 <li>Status: <strong>{{ cartao.status }}</strong></li>
+                             </ul>
+                            {% if cartao.faturas.all %}
+                            <table class="table table-bordered" >
+                                <thead>
+                                  <tr>
+                                      <th scope="col">Competência</th>
+                                      <th scope="col">Valor (R$)</th>
+                                      <th scope="col">Valor com Taxa (R$)</th>
+                                      <th scope="col">Data da inclusão</th>
+                                      <th scope="col">Situação</th>
+                                  </tr>
+                                </thead>
+                                <tbody class="table-group-divider">
+                                  {% for fatura in cartao.faturas.all  %}
+                                  <tr>
+                                      <td>{{ fatura.competencia }}</td>
+                                      <td>{{ fatura.valor }}</td>
+                                      <td>{{ fatura.valorComTaxa }}</td>
+                                      <td>{{ fatura.criado }}</td>
+                                      <td>{{ fatura.situacaoFatura }}</td>
+                                  </tr>
+                                  {% endfor %}
+                                </tbody>
+                            </table>
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <a href="{% url 'fatura_cadastrar' %}?origin=cartaodetalhes" class="btn btn-primary me-md-2" type="button">Nova fatura</a>
+                            </div>
+                            {% else %}
+                                <h5>Sem faturas lançadas ... </h5>
+                                <a href="{% url 'fatura_cadastrar' %}?origin=cartaodetalhes" class="btn btn-primary me-md-2" type="button">Cadastrar</a>
+                            {% endif %}
+                </div>
+                <div class="card-footer">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'listagemcartoes' %}" class="btn btn-secondary me-md-2" type="button">Voltar</a>
+                            <button class="btn btn-primary" type="button">Imprimir</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{% bootstrap_javascript %}
+{% endblock content %}

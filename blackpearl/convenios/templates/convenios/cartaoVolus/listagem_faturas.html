@@ -1,0 +1,101 @@
+{% extends "base_sidebar.html" %}
+{% load bootstrap5 %}
+{% block content %}
+
+<div class="container-fluid">
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h4 class="m-0 font-weight-bold text-primary">Relação de Faturas</h4>
+    </div>
+    {% if list_objs %}
+
+        {% include 'search.html' with href='listagemfaturas' %}
+        <div class="card-body">
+        <div class="table-responsive">
+        <table class="table table-bordered" >
+                        <thead>
+                          <tr>
+                              <th scope="col">Titular</th>
+                              <th scope="col">Empresa</th>
+                              <th scope="col">Competência</th>
+                              <th scope="col">Valor (R$)</th>
+                              <th scope="col">Valor com Taxa (R$)</th>
+                              <th scope="col">Data da inclusão</th>
+                                <th scope="col">Situação</th>
+                              <th scope="col">Opções</th>
+                          </tr>
+                        </thead>
+                            <tbody class="table-group-divider">
+
+                              {% for fatura in list_objs %}
+                              <tr>
+                                  <td>{{ fatura.cartao }}</td>
+                                  <td>{{ fatura.cartao.titular.empresa }}</td>
+                                  <td>{{ fatura.competencia }}</td>
+                                  <td>{{ fatura.valor }}</td>
+                                  <td>{{ fatura.valorComTaxa }}</td>
+                                  <td>{{ fatura.criado }}</td>
+                                  <td>{{ fatura.situacaoFatura }}</td>
+                                  <td>
+                                      {% include 'buttons_crud_update.html' with href_update='fatura_editar' obj=fatura.pk %}
+                                      {% include 'buttons_crud_delete.html' with href_delete='fatura_excluir' obj=fatura.pk obj_titulo=fatura.cartao.titular%}
+                                  </td>
+                              </tr>
+                              {% endfor %}
+
+                          </tbody>
+        </table>
+        {% include 'pagination.html' with href='listagemfaturas'%}
+
+        <div class="filtros d-grid gap-2 d-md-flex justify-content-md-end">
+            <form class="form" action="{% url 'exportar' %}" method="GET">
+
+                <span class="fw-bold"> Filtro de Exportação</span>
+
+                <div class="form-group col-sm">
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="inputGroupSelectEmpresa">Empresa</label>
+                        <select class="form-select" id="inputGroupSelectEmpresa" name="inputGroupSelectEmpresa">
+                        <option selected>opções...</option>
+                        <option value="1">SINDIPORTO</option>
+                        <option value="3">Companhia Docas do Pará</option>
+                        <option value="2">Companhia Docas de Santana</option>
+                        <option value="4">Hidrovias do Brasil</option>
+                        <option value="5">Todas</option>
+                        </select>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="date" name="start_date" class="form-control" placeholder="Data inicial" aria-label="Data inicial">
+                        <span class="input-group-text">Intervalo</span>
+                        <input type="date" name="end_date" class="form-control" placeholder="Data final" aria-label="Data final">
+                    </div>
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="inputGroupSelectTipoArquivo">Tipo de arquivo</label>
+                        <select class="form-select" id="inputGroupSelectTipoArquivo" name="inputGroupSelectTipoArquivo">
+                            <option selected>opções...</option>
+                            <option value="1">PDF (.pdf)</option>
+                            <option value="2">Planilhas (.xlsx)</option>
+                            <option value="3">Formato de Text (.txt)</option>
+                        </select>
+                    </div>
+                    {% buttons %}
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-download"></i> Exportar</button>
+                    {% endbuttons %}
+                </div>
+            </form>
+        </div>
+        </div>
+    </div>
+    {% else %}
+        <div class="card-body">
+              <div class="d-flex gap-2 d-md-flex">
+                <h4 class="m-0 font-weight-bold text-primary">Não há faturas cadastradas</h4>
+                  <a href="{% url 'fatura_cadastrar' %}" class="btn btn-primary btn-sm"><span class="text">Deseja cadastrar ?</span></a>
+              </div>
+        </div>
+    {% endif %}
+
+
+</div>
+</div>
+{% endblock content %}

@@ -75,6 +75,7 @@ ASSOCIACAO_CHOICES = [
     ('ag', 'Agredado(a)'),
     ('fiativo', 'Filiado(a) da Ativa'),
     ('fiaposent', 'Filiado(a) Aposentado(a)'),
+    ('func', 'Funcionário(a) da Associação'),
     ('desfi', 'Desfiliado(a)')
 ]
 
@@ -118,12 +119,12 @@ class Associado(Base):
     slug = models.SlugField('Slug', max_length=100, blank=True, editable=False)
 
     # Endereço
-    cep = models.CharField('CEP', max_length=9)
-    logradouro = models.CharField('Logradouro', max_length=200)
-    num = models.IntegerField('Número')
-    bairro = models.CharField('Bairro', max_length=100)
-    cidade = models.CharField('Cidade', max_length=100)
-    estado = models.CharField('Estado (UF)', max_length=2, choices=ESTADOS_CHOICES, default='')
+    cep = models.CharField('CEP', max_length=9,  default='',  blank=True)
+    logradouro = models.CharField('Logradouro', max_length=200, default='',  blank=True)
+    num = models.IntegerField('Número', default='',  blank=True)
+    bairro = models.CharField('Bairro', max_length=100, default='',  blank=True)
+    cidade = models.CharField('Cidade', max_length=100, default='',  blank=True)
+    estado = models.CharField('Estado (UF)', max_length=2, choices=ESTADOS_CHOICES, default='', blank=True)
 
     def save(self, *args, **kwargs):
         self.nomecompleto = self.nomecompleto.upper()
@@ -147,6 +148,9 @@ class Associado(Base):
         return dict(ESTADOCIVIL_CHOICES)[self.estadocivil]
     def get_absolute_url(self):
         return reverse("editar", kwargs={"pk": self.pk})
+
+    def get_quantidade_dependentes(self):
+        return self.dependentes.count()
 
 class Dependente(Base):
     titular = models.ForeignKey(Associado, on_delete=models.CASCADE, related_name='dependentes')

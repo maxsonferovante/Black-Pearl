@@ -20,6 +20,11 @@
     <!-- Custom styles for this template-->
     <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {% block content_script %}
+
+    {% endblock content_script %}
+
 </head>
 <body id="page-top">
     <div id="wrapper">
@@ -85,7 +90,8 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Cadastros:</h6>
                         <a class="collapse-item" href="{% url 'cartao_cadastrar' %}">Adesão</a>
-                        <a class="collapse-item" href="{% url 'fatura_cadastrar' %}">Lançar consumo</a>
+                        <a class="collapse-item" href="{% url 'fatura_cadastrar' %}">Cadastrar Fatura</a>
+                        <a class="collapse-item" href="{% url 'fatura_cadastrar_exportacao' %}">Arquivos (.xlxs)</a>
                         <div class="collapse-divider"></div>
                         <h6 class="collapse-header">Consultas:</h6>
                         <a class="collapse-item" href="{% url 'listagemcartoes' %}">Cartões</a>
@@ -102,8 +108,8 @@
                 <div id="collapsePlanoSaude" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Cadastros:</h6>
-                        <a class="collapse-item" href="{% url 'cadastrar_contrato_plano_saude' %}">Adesão</a>
-                        <a class="collapse-item" href="#">Inclusão de dependentes</a>
+                        <a class="collapse-item" href="{% url 'cadastrar_contrato_plano_saude' %}">Adesão de titular</a>
+                        <a class="collapse-item" href="{% url 'cadastrar_dependentes_contrato_plano_saude' %}">Inclusão de dependentes</a>
                         <div class="collapse-divider"></div>
                         <h6 class="collapse-header">Consultas:</h6>
                         <a class="collapse-item" href="{% url 'listar_contratos_plano_saude' %}">Contratos</a>
@@ -121,22 +127,15 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Cadastros:</h6>
                         <a class="collapse-item" href="{% url 'contratoodontologica_cadastrar' %}">Adesão</a>
-                        <a class="collapse-item" href="{% url 'cadastrar_dependentes_contrato_plano_odont' %}">Inclusão de dependente</a>
+                        <a class="collapse-item" href="{% url 'cadastrar_dependente_plano_odontologico' %}">Inclusão de dependentes</a>
                         <div class="collapse-divider"></div>
                         <h6 class="collapse-header">Consultas:</h6>
                         <a class="collapse-item" href="{%url 'listagemcontratoodontologica' %}">Contratos</a>
-                        <a class="collapse-item" href="{% url 'listar_dependentes_contrato_plano_odont' %}">Contratos - Dependentes</a>
                     </div>
                 </div>
             </li>
 
-            <!-- Nav Item - Charts -->
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                 Relatórios</a>
-            </li>
-
-            <!-- Divider -->
+                        <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
 
                 <!-- Heading -->
@@ -152,6 +151,7 @@
                 <div id="collapseFinanceiro" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Cadastros:</h6>
+                        <a class="collapse-item" href="{% url 'home_cob' %}">Relatórios</a>
                         <a class="collapse-item" href="#">Adesão</a>
                         <a class="collapse-item" href="#">Inclsão</a>
                         <div class="collapse-divider"></div>
@@ -162,31 +162,6 @@
                 </div>
             </li>
 
-              <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
-
-                <!-- Heading -->
-            <div class="sidebar-heading">
-                Secretaria
-            </div>
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSecretaria"
-                    aria-expanded="true" aria-controls="collapsePages">
-                    Ofícios
-                </a>
-                <div id="collapseSecretaria" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Cadastros:</h6>
-                        <a class="collapse-item" href="{% url 'novo_oficio' %}">Novo</a>
-
-                        <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">Consultas:</h6>
-                        <a class="collapse-item" href="{% url 'listar_oficios' %}">Ofícios</a>
-
-                    </div>
-                </div>
-            </li>
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
@@ -217,21 +192,6 @@
                         <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                             <i class="bi bi-list"></i>
                         </button>
-
-                        <!-- Topbar Search -->
-                        <form
-                            class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-                            <div class="input-group">
-                                <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
-                                    aria-label="Search" aria-describedby="basic-addon2">
-                                <div class="input-group-append">
-                                    <button class="btn btn-primary" type="button">
-                                        <i class="bi bi-search"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-
                         <!-- Topbar Navbar -->
                         <ul class="navbar-nav ml-auto">
 
@@ -288,9 +248,7 @@
                                     </a>
                                 </div>
                             </li>
-
                         </ul>
-
                     </nav>
                 <!-- End of Topbar -->
 

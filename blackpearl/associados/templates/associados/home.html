@@ -15,7 +15,10 @@
                                 <tr>
                                   <th scope="col">Nome completo</th>
                                   <th scope="col">CPF</th>
-                                  <th scope="col">Data de Nascimento</th>
+
+                                    <th scope="col">Data de Nascimento</th>
+                                    <th scope="col">Quant. Dependentes</th>
+
                                   <th scope="col">Empresa</th>
 
                                   <th scope="col">Matricula</th>
@@ -29,6 +32,7 @@
                                     <td>{{ assoc.nomecompleto }}</td>
                                     <td>{{ assoc.cpf }}</td>
                                     <td>{{ assoc.dataNascimento }}</td>
+                                    <td>{{ assoc.get_quantidade_dependentes }}</td>
                                     <td>{{ assoc.empresa }}</td>
 
                                     <td>{{ assoc.matricula }}</td>

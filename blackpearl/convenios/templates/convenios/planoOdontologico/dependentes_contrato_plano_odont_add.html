@@ -1,0 +1,52 @@
+{% extends "base_sidebar.html" %}
+{% load bootstrap5 %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content_script %}
+    <script src="/static/convenios/contratoPlanoOdontologicoDependenteAdd.js"></script>
+{% endblock content_script %}
+
+{% block content %}
+
+
+<div class="container">
+    <div class="row d-flex justify-content-center align-items-center h-50 mt-5">
+        {% bootstrap_messages %}
+    <form class="form-horizontal" method="post" action="" autocomplete="off">
+          {% csrf_token %}
+        <div class="card shadow mb-3">
+            <h6 class="card-header">Novo dependente</h6>
+            <div class="card-body">
+                <div class="row">
+                    <div class="form-group  col-sm">
+                        {{ form.contratoTitular|as_crispy_field }}
+                    </div>
+                    <div class="form-group col-sm">
+                        {{ form.dependente|as_crispy_field}}
+                    </div>
+                    <div class="form-group  col-sm">
+                        {{ form.ativo|as_crispy_field}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group  col-sm">
+                        {{ form.valor|as_crispy_field}}
+                    </div>
+                    <div class="form-group  col-sm">
+                        {{ form.valorComTaxa|as_crispy_field}}
+                    </div>
+                    <div class="form-group  col-sm">
+                        {{ form.dataInicio|as_crispy_field}}
+                    </div>
+                </div>
+                {% include 'button_save.html' %}
+            </div>
+        </div>
+    </form>
+    </div>
+</div>
+
+
+{% bootstrap_javascript %}
+{% endblock content %}

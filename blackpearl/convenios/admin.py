@@ -62,6 +62,7 @@ class DependentePlanoOdontologicoAdmin(admin.ModelAdmin):
                     'dependente',
                     'id',
                     'valor',
+                    'valorComTaxa',
                     'dataInicio',
                     'dataFim',
                     'ativo')

@@ -18,7 +18,8 @@
         <ul class="list-unstyled">
           <li>Contratante: <strong>{{ contrato.contratante }}</strong></li>
           <li>Contratado: <strong>{{ contrato.planoOdontologico }}</strong></li>
-          <li>Valor: <strong>{{ contrato.valor }}</strong></li>
+          <li>Valor Unitário: <strong>{{ contrato.planoOdontologico.valorUnitario }}</strong></li>
+          <li>Valor com Taxa: <strong>{{ contrato.valor }}</strong></li>
           <li>Forma de Pagemento: <strong>{{ contrato.formaPagamento }}</strong></li>
           <li>Data de Contratação: <strong>{{ contrato.dataInicio }}</strong></li>
           <li>Ativo: <strong>{{ contrato.get_ativo_display }}</strong></li>
@@ -30,7 +31,8 @@
             <tr>
               <th scope="col">Dependente</th>
               <th scope="col">Grau de Parentesco</th>
-              <th scope="col">Valor</th>
+              <th scope="col">Valor Unitário</th>
+              <th scope="col">Valor com Taxa</th>
               <th scope="col">Data de Início</th>
               <th scope="col">Ativo</th>
             </tr>
@@ -41,6 +43,7 @@
               <td>{{ dependente.dependente }}</td>
               <td>{{ dependente.dependente.get_grauparentesco_display }}</td>
               <td>{{ dependente.valor }}</td>
+              <td>{{ dependente.valorComTaxa }}</td>
               <td>{{ dependente.dataInicio }}</td>
               <td>{{ dependente.get__ativo_display }}</td>
             </tr>

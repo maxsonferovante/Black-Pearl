@@ -28,7 +28,7 @@ class ContratoPlanoOdontologicoCreateView(CreateView):
         if contrato.dataInicio < contrato.contratante.dataAssociacao:
             form.add_error('dataInicio', 'Data de contratação não pode ser anterior a data de associação ( '+ str(contrato.contratante.dataAssociacao) +')')
             return super().form_invalid(form)
-        
+
         taxa_administrativa = TaxasAdministrativa.objects.get(grupos=contrato.contratante.associacao)
         percentual_taxa = taxa_administrativa.percentual
         valor_unitario = PlanoOdontologico.objects.get(id=contrato.planoOdontologico.id).valorUnitario
@@ -118,7 +118,7 @@ class DependentePlanoOdontologicoCreateView(CreateView):
             return super().form_invalid(form)
 
         contratoTitular = ContratoPlanoOdontologico.objects.get(pk=contratoDependente.contratoTitular.id)
-        contratoTitular.valor = contratoTitular.valor + contratoDependente.valor
+        contratoTitular.valor = contratoTitular.valor + contratoDependente.valorComTaxa
         contratoTitular.save()
         return super().form_valid(form)
 

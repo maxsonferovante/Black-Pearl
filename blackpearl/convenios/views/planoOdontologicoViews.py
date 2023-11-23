@@ -22,6 +22,21 @@ class ContratoPlanoOdontologicoCreateView(CreateView):
     template_name = 'convenios/planoOdontologico/contratacaoplanoodontologico_criar_form.html'
     success_url = reverse_lazy('listagemcontratoodontologica')
 
+    def form_valid(self, form):
+        contrato = form.save(commit=False)
+
+        if contrato.dataInicio < contrato.contratante.dataAssociacao:
+            form.add_error('dataInicio', 'Data de contratação não pode ser anterior a data de associação ( '+ str(contrato.contratante.dataAssociacao) +')')
+            return super().form_invalid(form)
+        
+        taxa_administrativa = TaxasAdministrativa.objects.get(grupos=contrato.contratante.associacao)
+        percentual_taxa = taxa_administrativa.percentual
+        valor_unitario = PlanoOdontologico.objects.get(id=contrato.planoOdontologico.id).valorUnitario
+        valor_total = round(((valor_unitario) / (100 - percentual_taxa)) * 100, 2)
+        contrato.valor = valor_total
+        contrato.save()
+
+        return super().form_valid(form)
 
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoOdontologicoDetailView(DetailView):

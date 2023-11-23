@@ -11,7 +11,7 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
 :root {
-  --blue: #4e73df;
+  --blue: #1c4bd8;
   --indigo: #6610f2;
   --purple: #6f42c1;
   --pink: #e83e8c;
@@ -24,7 +24,7 @@
   --white: #fff;
   --gray: #858796;
   --gray-dark: #5a5c69;
-  --primary: #4e73df;
+  --primary: #476ee2;
   --secondary: #858796;
   --success: #1cc88a;
   --info: #36b9cc;
@@ -42,10 +42,6 @@
 }
 
 *,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
 
 html {
   font-family: sans-serif;

@@ -2,7 +2,13 @@
 
 # Black Pearl
 
-Sistema de gestão de convênios e associados do Sindicato dos Portuários.
+O Sistema de Gestão de Convênios do Sindicato dos Portuários do Pará e Amapá é uma solução robusta criada utilizando o Framework Django em conjunto com o banco de dados PostgreSQL.
+
+Ele oferece funcionalidades abrangentes, incluindo o cadastro detalhado de associados e seus respectivos dependentes. Além disso, permite o gerenciamento completo de planos de saúde, odontológicos e cartões de convênios, abrangendo desde a inclusão até a atualização dos dados.
+
+A plataforma também oferece um controle eficaz de faturas e pagamentos, facilitando o acompanhamento e a organização financeira. Além disso, gera relatórios detalhados que fornecem uma visão ampla e completa do sistema, auxiliando na tomada de decisões estratégicas.
+
+É uma solução integrada e eficiente, centralizando todas as operações relacionadas aos convênios, proporcionando ao Sindicato dos Portuários uma gestão ágil, precisa e transparente de suas atividades.
 
 
 ## Demonstração

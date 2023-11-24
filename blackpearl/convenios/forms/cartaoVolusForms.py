@@ -53,12 +53,16 @@ class FaturaCartaoForm(forms.ModelForm):
 
 class FileUploadExcelFaturasForm(forms.Form):
     arquivo = forms.FileField()
+    arquivo.widget.attrs.update({'class': 'form-control-file'})
+    arquivo.widget.attrs.update({'id': 'inputGroupFile'})
+    arquivo.widget.attrs.update({'nome': 'arquivo'})
     class meta:
 
         fields = '__all__'
         widgets = {
             'arquivo': forms.FileField()
         }
+
 
 @register.filter(name='add_class')
 def add_class(field, css):

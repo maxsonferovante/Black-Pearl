@@ -89,7 +89,7 @@ def exporttofile(faturas, nome_arq, tipoArquivo_selecionado):
         ws = wb.active
         ws.title = nome_arq
         # Escreve os dados da lista de faturas na planilha
-        ws['A1'] = "Titular"
+        ws['A1'] = "Titular - Associado(a)"
         ws['B1'] = "Empresa"
         ws['C1'] = "Competêcia"
         ws['D1'] = "Valor"
@@ -99,7 +99,7 @@ def exporttofile(faturas, nome_arq, tipoArquivo_selecionado):
             ws.cell(row=i + 2, column=1, value=fatura.cartao.titular.nomecompleto)
             ws.cell(row=i + 2, column=2, value=fatura.cartao.titular.empresa.nome)
             ws.cell(row=i + 2, column=3, value=fatura.competencia)
-            ws.cell(row=i + 2, column=5, value=fatura.valorComTaxa)
+            ws.cell(row=i + 2, column=4, value=fatura.valorComTaxa)
 
         # Cria uma resposta HTTP com o arquivo XLSX
         response = HttpResponse(content_type='application/xlsx')

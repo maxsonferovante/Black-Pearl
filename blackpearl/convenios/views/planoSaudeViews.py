@@ -26,6 +26,7 @@ class ContratoPlanoSaudeCreateView(CreateView):
         taxa_administrativa = TaxasAdministrativa.objects.get(grupos=contrato.contratante.associacao)
         valor_faixa = ValoresPorFaixa.objects.get(pk=contrato.faixa.id)
         percentual_taxa = taxa_administrativa.percentual
+        contrato.valor = valor_faixa.valor + contrato.planoSaude.valorAtendimentoTelefonico
         contrato.valorTotal = round((valor_faixa.valor / (100 - percentual_taxa)) * 100, 2) + contrato.planoSaude.valorAtendimentoTelefonico
         contrato.save()
         return super().form_valid(form)
@@ -69,6 +70,108 @@ class ContratoPlanoSaudeDetailView(DetailView):
     context_object_name = 'contrato'
 
 @method_decorator(login_required, name='dispatch')
+class ContratoPlanoSaudeDependenteCreateView(CreateView):
+    model = ContratoPlanoSaudeDependente
+    form_class = ContratoPlanoSaudeDependenteForm
+    template_name = 'convenios/planoSaude/contrato_plano_dependente_saude_add.html'
+    success_url = reverse_lazy('listar_dependentes_contrato_plano_saude')
+
+    def form_valid(self, form):
+
+        dependente_contrato = form.save(commit=False)
+        if dependente_contrato.dataInicio < dependente_contrato.contrato.dataInicio:
+            form.add_error('dataInicio', 'Data de Contratação do dependente não pode ser maior que a data de início do titular (' + str(dependente_contrato.contrato.dataInicio) + ')')
+            return super().form_invalid(form)
+
+        taxa_administrativa = TaxasAdministrativa.objects.get(grupos=dependente_contrato.contrato.contratante.associacao)
+        valor_faixa = ValoresPorFaixa.objects.get(pk=dependente_contrato.faixa.id)
+
+        percentual_taxa = taxa_administrativa.percentual
+        dependente_contrato.valor = valor_faixa.valor + dependente_contrato.contrato.planoSaude.valorAtendimentoTelefonico
+
+        dependente_contrato.valorTotal = round((valor_faixa.valor / (Decimal(100) - percentual_taxa)) * 100, 2) + dependente_contrato.contrato.planoSaude.valorAtendimentoTelefonico
+        dependente_contrato.save()
+        titular_contrato = get_object_or_404(ContratoPlanoSaude, )
+        titular_contrato.valorTotal = titular_contrato.valorTotal + dependente_contrato.valorTotal
+        titular_contrato.save()
+
+        return super().form_valid(form)
+
+@method_decorator(login_required, name='dispatch')
+class ContratoPlanoSaudeDependenteUpdateView(UpdateView):
+    model = ContratoPlanoSaudeDependente
+    form_class = ContratoPlanoSaudeDependenteForm
+    template_name = 'convenios/planoSaude/contrato_plano_dependente_saude_add.html'
+    success_url = reverse_lazy('listar_contratos_plano_saude')
+
+
+    def form_valid(self, form):
+        dependente_contrato = form.save(commit=False)
+        if dependente_contrato.dataInicio < dependente_contrato.contrato.dataInicio:
+            form.add_error('dataInicio', 'Data de Contratação do dependente não pode ser maior que a data de início do titular (' + str(dependente_contrato.contrato.dataInicio) + ')')
+            return super().form_invalid(form)
+
+        if dependente_contrato.ativo == False:
+            titular_contrato = get_object_or_404(ContratoPlanoSaude, )
+            titular_contrato.valorTotal = titular_contrato.valorTotal - dependente_contrato.valorTotal
+            titular_contrato.save()
+
+            dependente_contrato.dataFim = datetime.date.today()
+            dependente_contrato.save()
+
+            return super().form_valid(form)
+
+        taxa_administrativa = TaxasAdministrativa.objects.get(grupos=dependente_contrato.contrato.contratante.associacao)
+        valor_faixa = ValoresPorFaixa.objects.get(pk=dependente_contrato.faixa.id)
+
+        percentual_taxa = taxa_administrativa.percentual
+        dependente_contrato.valor = round((valor_faixa.valor / (100 - percentual_taxa)) * 100, 2) + dependente_contrato.contrato.planoSaude.valorAtendimentoTelefonico
+        dependente_contrato.valorTotal = round((valor_faixa.valor / (Decimal(100) - percentual_taxa)) * 100, 2) + dependente_contrato.contrato.planoSaude.valorAtendimentoTelefonico
+        dependente_contrato.save()
+
+        titular_contrato = get_object_or_404(ContratoPlanoSaude, )
+        titular_contrato.valorTotal = titular_contrato.valorTotal + dependente_contrato.valorTotal
+
+        titular_contrato.save()
+
+        return super().form_valid(form)
+
+@method_decorator(login_required, name='dispatch')
+class ContratoPlanoSaudeDependenteDeleteView(DeleteView):
+    model = ContratoPlanoSaudeDependente
+    success_url = reverse_lazy('listar_dependentes_contrato_plano_saude')
+    def get_success_url(self):
+        titular_contrato = get_object_or_404(ContratoPlanoSaude, )
+        titular_contrato.valorTotal = titular_contrato.valorTotal - self.object.valorTotal
+        titular_contrato.save()
+        return super().get_success_url()
+
+@method_decorator(login_required, name='dispatch')
+class ContratoPlanoSaudeDependenteDetailView(DetailView):
+    model = ContratoPlanoSaudeDependente
+    template_name = 'convenios/planoSaude/button_model_contrato_plano_dependente_saude_detail.html'
+    context_object_name = 'contrato'
+
+@method_decorator(login_required, name='dispatch')
+class ContratoPlanoSaudeDependenteListView(ListView):
+    template_name = 'convenios/planoSaude/listagem_dependentes_contrato_plano_saude.html'
+    model = ContratoPlanoSaudeDependente
+    context_object_name = 'list_objs'
+    paginate_by = 5
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        nome_pesquisado = self.request.GET.get('obj')
+        if nome_pesquisado:
+            queryset = queryset.filter(dependente__nomecompleto__icontains=nome_pesquisado).order_by('dependente')
+        else:
+            queryset = queryset.order_by('dependente')
+        return queryset
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+@method_decorator(login_required, name='dispatch')
 class ConsultaDependenteView(View):
     @csrf_exempt
     def get(self, request):
@@ -110,32 +213,6 @@ class ConsultaValorFaixaEtaria(View):
         data_atual = datetime.date.today()
         idade = data_atual.year - dataNascimento.year - ((data_atual.month, data_atual.day) < (dataNascimento.month, dataNascimento.day))
         return idade
-@method_decorator(login_required, name='dispatch')
-class ContratoPlanoSaudeDependenteCreateView(CreateView):
-    model = ContratoPlanoSaudeDependente
-    form_class = ContratoPlanoSaudeDependenteForm
-    template_name = 'convenios/planoSaude/contrato_plano_dependente_saude_add.html'
-    success_url = reverse_lazy('listar_contratos_plano_saude')
-
-    def form_valid(self, form):
-
-        dependente_contrato = form.save(commit=False)
-        if dependente_contrato.dataInicio < dependente_contrato.contrato.dataInicio:
-            form.add_error('dataInicio', 'Data de Contratação do dependente não pode ser maior que a data de início do titular (' + str(dependente_contrato.contrato.dataInicio) + ')')
-            return super().form_invalid(form)
-
-        taxa_administrativa = TaxasAdministrativa.objects.get(grupos=dependente_contrato.contrato.contratante.associacao)
-        valor_faixa = ValoresPorFaixa.objects.get(pk=dependente_contrato.faixa.id)
-
-        percentual_taxa = taxa_administrativa.percentual
-        dependente_contrato.valor = round((valor_faixa.valor / (100 - percentual_taxa)) * 100, 2) + dependente_contrato.contrato.planoSaude.valorAtendimentoTelefonico
-        dependente_contrato.valorTotal = round((valor_faixa.valor / (Decimal(100) - percentual_taxa)) * 100, 2) + dependente_contrato.contrato.planoSaude.valorAtendimentoTelefonico
-        dependente_contrato.save()
-        titular_contrato = get_object_or_404(ContratoPlanoSaude, )
-        titular_contrato.valorTotal = titular_contrato.valorTotal + dependente_contrato.valorTotal
-        titular_contrato.save()
-
-        return super().form_valid(form)
 
 @method_decorator(login_required, name='dispatch')
 class ConsultaValorFaixaEtariaDependente(View):

@@ -4,9 +4,10 @@ $(document).ready(function() {
     const planoSaude_id = $('#id_planoSaude').val();
     const contratante_id = $('#id_contratante').val();
     const atendDomiciliar = $('#id_atendimentoDomiciliar').val();
-    console.log(atendDomiciliar);
+    var snapLoading = $('#snap-loading');
 
       if (planoSaude_id !== '' && contratante_id !== '' && atendDomiciliar !== '') {
+        snapLoading.show();
           $.ajax({
           url: '/convenios/contratoplanosaude/consultafaixa/',
           data: {
@@ -16,6 +17,7 @@ $(document).ready(function() {
           },
           dataType: 'json',
           success: function(response) {
+            snapLoading.hide();
             const faixa_id = response.faixa_id;
             const valor = response.valor;
             idadeMin = response.idadeMin;

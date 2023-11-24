@@ -19,27 +19,30 @@
                      <div class="card-body">
                          <div class="row">
                              <div class="from-group col-sm">
-                                {{ form.contratante|as_crispy_field }}
-                             </div>
-                              <div class="from-group col-sm">
                                 {{ form.planoSaude|as_crispy_field }}
                              </div>
                              <div class="from-group col-sm">
-                                    {{ form.faixa|as_crispy_field }}
+                                    {{ form.dataInicio|as_crispy_field }}
+                             </div>
+
+                         </div>
+                         <div class="row">
+                             <div class="from-group col-sm">
+                                {{ form.contratante|as_crispy_field }}
                              </div>
                              <div class="from-group col-sm">
-                                {{ form.ativo|as_crispy_field }}
+                                    {{ form.faixa|as_crispy_field }}
                              </div>
                          </div>
                          <div class="row">
                              <div class="from-group col-sm">
                                     {{ form.atendimentoDomiciliar|as_crispy_field }}
                              </div>
-                             <div class="from-group col-sm">
-                                    {{ form.dataInicio|as_crispy_field }}
-                             </div>
                          </div>
                          <div class="row">
+                             <div class="from-group col-sm">
+                                {{ form.ativo|as_crispy_field }}
+                             </div>
                              <div class="from-group col-sm">
                                     {{ form.formaPagamento|as_crispy_field }}
                              </div>
@@ -47,7 +50,7 @@
                                     {{ form.valor|as_crispy_field }}
                              </div>
                          </div>
-                         {% include 'button_save.html' %}
+                          {% include 'button_save_loading.html' %}
                      </div>
                  </div>
               </form>

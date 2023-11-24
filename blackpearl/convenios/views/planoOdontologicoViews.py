@@ -6,7 +6,7 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView, UpdateView, DetailView, DeleteView, FormView
 from django.views.generic import ListView
-
+from django.db.models import F
 
 from blackpearl.convenios.models.planoOdontologicoModels import ContratoPlanoOdontologico, PlanoOdontologico, \
     DependentePlanoOdontologico
@@ -101,7 +101,7 @@ class DependentePlanoOdontologicoCreateView(CreateView):
     model = DependentePlanoOdontologico
     form_class = DependentePlanoOdontologicoForms
     template_name = 'convenios/planoOdontologico/dependentes_contrato_plano_odont_add.html'
-    success_url = reverse_lazy('listagemcontratoodontologica')
+    success_url = reverse_lazy('listar_dependente_plano_odontologico')
 
     def form_valid(self, form):
         ## verificação se a data de contratação do dependente não é anterior a data do contrato do titular
@@ -121,6 +121,77 @@ class DependentePlanoOdontologicoCreateView(CreateView):
         contratoTitular.valor = contratoTitular.valor + contratoDependente.valorComTaxa
         contratoTitular.save()
         return super().form_valid(form)
+
+
+@method_decorator(login_required, name='dispatch')
+class DependentePlanoOdontologicoListView(ListView):
+    template_name = 'convenios/planoOdontologico/listagem_dependentes_contrato_odont.html'
+    model = DependentePlanoOdontologico
+    context_object_name = 'list_objs'
+    paginate_by = 5
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        nome_pesquisado = self.request.GET.get('obj')
+        if nome_pesquisado:
+            queryset = queryset.filter(dependente__nomecompleto__icontains=nome_pesquisado).order_by('dependente')
+        else:
+            queryset = queryset.order_by('dependente')
+        return queryset
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+@method_decorator(login_required, name='dispatch')
+class DependentePlanoOdontologicoUpdateView(UpdateView):
+    model = DependentePlanoOdontologico
+    form_class = DependentePlanoOdontologicoForms
+    template_name = 'convenios/planoOdontologico/dependentes_contrato_plano_odont_add.html'
+    success_url = reverse_lazy('listagemcontratoodontologica')
+
+    def form_valid(self, form):
+        contratoDependente = form.save(commit=False)
+
+        if contratoDependente.dataInicio < contratoDependente.contratoTitular.dataInicio:
+            form.add_error('dataInicio', 'Data de contratação não pode ser anterior a data do contrato do titular ( '+ str(contratoDependente.contratoTitular.dataInicio) +')')
+            return super().form_invalid(form)
+
+        contratoTitular = ContratoPlanoOdontologico.objects.get(pk=contratoDependente.contratoTitular.id)
+        
+        if (contratoDependente.ativo == False):
+            contratoTitular.valor = contratoTitular.valor - contratoDependente.valorComTaxa
+        else:
+            contratoTitular.valor = contratoTitular.valor + contratoDependente.valorComTaxa
+        
+        contratoTitular.save()
+
+        return super().form_valid(form)
+
+@method_decorator(login_required, name='dispatch')
+class DependentePlanoOdontologicoDeleteView(DeleteView):
+    model = DependentePlanoOdontologico
+    success_url = reverse_lazy('listar_dependente_plano_odontologico')
+
+    def get_success_url(self):
+        contratoDependente = self.get_object()
+        contratoTitular = ContratoPlanoOdontologico.objects.get(pk=contratoDependente.contratoTitular.id)
+        contratoTitular.valor = contratoTitular.valor - contratoDependente.valorComTaxa
+        contratoTitular.save()
+        return super().get_success_url()
+
+
+@method_decorator(login_required, name='dispatch')
+class DependentePlanoOdontologicoDetailView(DetailView):
+    model = DependentePlanoOdontologico
+    template_name = 'convenios/planoOdontologico/dependentes_contrato_plano_odont_detalhes.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        contrato_pk = self.kwargs['pk']
+        contrato = DependentePlanoOdontologico.objects.get(pk=contrato_pk)
+        context['contrato'] = contrato
+        return context
+
 
 @method_decorator(login_required, name='dispatch')
 class ConsultaValoresPlanoOdontologicoDependente(View):

@@ -14,10 +14,10 @@
         </button>
       </div>
       <div class="modal-body">
-        <h5>Dados do Contrato do Dependente {{contrato.dependente.get_nomecompleto_display}}</h5>
+        <h5>Dados do contrato do dependente {{contrato.dependente.get_nomecompleto_display}}</h5>
 
         <ul class="list-unstyled">
-            <li>Contrato: {{contrato.contrato}}</li>
+            <li>Titular: {{contrato.contratoTitular.contratante}}</li>
             <li>Dependente: {{contrato.dependente.get_nomecompleto_display}}</li>
             <li>Grau de Parêntesco: {{contrato.dependente.get_grauparentesco_display}}</li>
             <li>Ativo: {{contrato.get__ativo_display}}</li>

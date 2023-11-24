@@ -3,12 +3,15 @@ $('#div_id_dependentes').html('');
 $(document).ready(function() {
   $('#id_contratante').change(function() {
     var contratanteId = $(this).val();
+    var snapLoading = $('#snap-loading');
     if (contratanteId) {
+        snapLoading.show();
       $.ajax({
         url: '/convenios/verificardependentes/',
         type: 'GET',
         data: {'contratante_id': contratanteId},
         success: function(response) {
+            snapLoading.hide();
           if (response.has_dependents) {
             var dependentes = response.dependentes;
             var checkboxes = '';

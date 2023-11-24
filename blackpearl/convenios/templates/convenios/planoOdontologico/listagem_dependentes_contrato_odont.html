@@ -14,7 +14,7 @@
         </div>
     </div>
     {% if list_objs %}
-    {% include 'search.html' with href='listar_dependentes_contrato_plano_odont' %}
+    {% include 'search.html' with href='listar_dependente_plano_odontologico' %}
             <div class="card-body">
                 <div class="table-responsive">
                   <table class="table table-bordered" >
@@ -22,7 +22,7 @@
                           <tr>
                             <th scope="col">Dependente</th>
                             <th scope="col">Valor (R$)</th>
-                            <th scope="col">Titular - Contratante</th>
+                            <th scope="col">Titular</th>
                             <th scope="col">Plano Contratado</th>
                             <th scope="col">Data de Início</th>
                             <th scope="col">Data de Término</th>
@@ -35,16 +35,16 @@
                               {% for contratos in list_objs %}
                               <tr>
                                 <td>{{ contratos.dependente }}</td>
-                                <td>{{ contratos.valor }}</td>
-                                <td>{{ contratos.contrato }}</td>
-                                <td>{{ contratos.contrato.planoOdontologico}}</td>
+                                <td>{{ contratos.valorComTaxa }}</td>
+                                <td>{{ contratos.contratoTitular.contratante }}</td>
+                                <td>{{ contratos.contratoTitular.planoOdontologico}}</td>
                                 <td>{{ contratos.dataInicio }}</td>
                                 <td>{{ contratos.get__dataFim_display }}</td>
                                 <td>{{ contratos.get__ativo_display }}</td>
                                 <td>
-                                  {% include 'convenios/button_view_model_dependente_contratos_plano_odont.html' with  contrato=contratos%}
-                                  {% include 'buttons_crud_update.html' with href_update='editar_dependentes_contrato_plano_odonto' obj=contratos.pk %}
-                                  {% include 'buttons_crud_delete.html' with href_delete='excluir_dependentes_contrato_plano_odonto' obj=contratos.pk obj_titulo=contratos.dependente%}
+                                  {% include 'convenios/planoOdontologico/button_view_model_dependente_contratos_plano_odont.html' with  contrato=contratos%}
+                                  {% include 'buttons_crud_update.html' with href_update='editar_dependente_plano_odontologico' obj=contratos.pk %}
+                                  {% include 'buttons_crud_delete.html' with href_delete='deletar_dependente_plano_odontologico' obj=contratos.pk obj_titulo=contratos.dependente%}
                                 </td>
                               </tr>
                               {% endfor %}

@@ -1,12 +1,13 @@
 {% load bootstrap5 %}
-<span id="snap-loading" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"
-                                style="display: none;"
-                        ></span>
-                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                             {% buttons %}
-                             <button id="button-spinner-save" class="btn btn-primary" type="submit">
-                                <i id="save-icon" class="bi bi-save"></i>
-                                Salvar
-                            </button>
-                             {% endbuttons %}
- </div>
+
+
+<span id="snap-loading" class="spinner-grow  text-primary" role="status" aria-hidden="true" style="display: none;"></span>
+
+<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+    {% buttons %}
+    <button id="button-spinner-save" class="btn btn-primary" type="submit">
+    <i id="save-icon" class="bi bi-save"></i>
+         Salvar
+    </button>
+    {% endbuttons %}
+</div>

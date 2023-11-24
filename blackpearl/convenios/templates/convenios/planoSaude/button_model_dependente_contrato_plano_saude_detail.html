@@ -8,7 +8,7 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="staticBackdropLabel">Detalhes de {{contrato.contratante.get_nomecompleto_display}}</h5>
+        <h5 class="modal-title" id="staticBackdropLabel">Detalhes de {{contrato.dependente.get_nomecompleto_display}}</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -16,12 +16,14 @@
       <div class="modal-body">
         <h5>Dados do Contrato</h5>
         <ul class="list-unstyled">
-              <li>Contratante: <strong>{{ contrato.contratante.get_nomecompleto_display }}</strong></li>
-              <li>Contratado: <strong>{{ contrato.planoSaude }}</strong></li>
+            <li>Dependente: <strong>{{ contrato.dependente.get_nomecompleto_display }}</strong></li>
+            <li>Titular: <strong>{{ contrato.contrato.contratante.get_nomecompleto_display }}</strong></li>
+              <li>Contratado: <strong>{{ contrato.contrato.planoSaude }}</strong></li>
               <li>Faixa Etária: <strong>{{ contrato.faixa }} (anos)</strong></li>
-              <li>Atendimento Domiciliar: <strong>{{ contrato.get_atedimentoDomiciliar_display }}</strong></li>
-              <li>Forma de Pagemento: <strong>{{ contrato.formaPagamento }}</strong></li>
-              <li>Valor: <strong>{{ contrato.valorTotal }}</strong></li>
+              <li>Atendimento Domiciliar: <strong>{{ contrato.contrato.get_atedimentoDomiciliar_display }}</strong></li>
+              <li>Forma de Pagemento: <strong>{{ contrato.contrato.formaPagamento }}</strong></li>
+              <li>Valor unitário: <strong>{{ contrato.valor }}</strong></li>
+              <li>Valor com taxa: <strong>{{ contrato.valorTotal }}</strong></li>
               <li>Data de Contratação: <strong>{{ contrato.dataInicio }}</strong></li>
 
               {% if contrato.ativo %}
@@ -38,37 +40,6 @@
               {% endif %}
 
         </ul>
-        <h5>Dependentes</h5>
-        {% if contrato.dependentes.all %}
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th scope="col">Dependente</th>
-              <th scope="col">Grau de Parentesco</th>
-              <th scope="col">Valor</th>
-              <th scope="col">Data de Início</th>
-              <th scope="col">Ativo</th>
-              <th scope="col">Opção</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for dependente in contrato.dependentes.all %}
-            <tr>
-              <td>{{ dependente.dependente }}</td>
-              <td>{{ dependente.dependente.get_grauparentesco_display }}</td>
-              <td>{{ dependente.valorTotal }}</td>
-              <td>{{ dependente.dataInicio }}</td>
-              <td>{{ dependente.get__ativo_display }}</td>
-              <td>
-                    {% include 'buttons_crud_update.html' with href_update='editar_dependentes_contrato_plano_saude' obj=dependente.pk %}
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-          </table>
-        {% else %}
-        <p> Não há dependentes cadastrados </p>
-        {% endif %}
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Sair</button>

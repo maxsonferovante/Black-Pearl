@@ -1,10 +1,8 @@
 from django.db import models
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
 from django.urls import reverse
 from blackpearl.associados.models import Associado, Dependente
-from blackpearl.convenios.models.models import Base, TaxasAdministrativa
-from _decimal import Decimal
+from blackpearl.convenios.models.models import Base
+
 
 class PlanoOdontologico(Base):
     nome = models.CharField('Nome', default='Uniodonto Belém', max_length=20)
@@ -51,4 +49,16 @@ class DependentePlanoOdontologico(Base):
 
     def __str__(self):
         return '{}'.format(self.dependente)
+
+    def get_dataFim_display(self):
+        if not self.dataFim:
+            return "Vigente"
+        else:
+            return self.dataFim
+
+    def get_absolute_url(self):
+        return reverse("dependente_cadastrar", kwargs={"pk": self.pk})
+
+    def get_ativo_display(self):
+        return 'Sim' if self.ativo else 'Não'
 

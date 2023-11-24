@@ -6,7 +6,7 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView, UpdateView, DetailView, DeleteView, FormView
 from django.views.generic import ListView
-
+from django.db.models import F
 
 from blackpearl.convenios.models.planoOdontologicoModels import ContratoPlanoOdontologico, PlanoOdontologico, \
     DependentePlanoOdontologico
@@ -171,7 +171,14 @@ class DependentePlanoOdontologicoUpdateView(UpdateView):
 class DependentePlanoOdontologicoDeleteView(DeleteView):
     model = DependentePlanoOdontologico
     success_url = reverse_lazy('listar_dependente_plano_odontologico')
-    
+
+    def get_success_url(self):
+        contratoDependente = self.get_object()
+        contratoTitular = ContratoPlanoOdontologico.objects.get(pk=contratoDependente.contratoTitular.id)
+        contratoTitular.valor = contratoTitular.valor - contratoDependente.valorComTaxa
+        contratoTitular.save()
+        return super().get_success_url()
+
 
 @method_decorator(login_required, name='dispatch')
 class DependentePlanoOdontologicoDetailView(DetailView):
@@ -184,7 +191,6 @@ class DependentePlanoOdontologicoDetailView(DetailView):
         contrato = DependentePlanoOdontologico.objects.get(pk=contrato_pk)
         context['contrato'] = contrato
         return context
-
 
 
 @method_decorator(login_required, name='dispatch')

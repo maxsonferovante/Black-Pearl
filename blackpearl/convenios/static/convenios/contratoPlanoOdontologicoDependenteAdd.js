@@ -8,8 +8,10 @@ $(document).ready(function() {
         var dependenteValue = $('#id_dependente').val();
         var valor = $('#id_valor').val();
         var valorComTaxa = $('#id_valorComTaxa').val();
+        var snapLoading = $('#snap-loading');
 
         if(dependenteValue){
+        snapLoading.show();
         $.ajax({
             url: '/convenios/contratoondontologico/consultadosvalores/dependente/',
             method: 'GET',
@@ -17,6 +19,7 @@ $(document).ready(function() {
                 contratoValue: contratoValue,
             },
             success: function (response) {
+                snapLoading.hide();
                 // Atualiza os campos id_faixa e id_valor com os dados obtidos
                 $('#id_valor').val(response.valor);
                 $('#id_valorComTaxa').val(response.valorComTaxa);
@@ -39,7 +42,9 @@ $(document).ready(function() {
         });
     $('#id_contratoTitular').change(function () {
         var contratoValue = $(this).val();
+        var snapLoading = $('#snap-loading');
         if(contratoValue){
+            snapLoading.show();
             $.ajax({
                 url: '/convenios/contratoondontologico/consultadosdependentes/',
                 data:{
@@ -47,7 +52,7 @@ $(document).ready(function() {
                 },
                 dataType: 'json',
                 success: function (data) {
-
+                            snapLoading.hide();
                             if(data.has_dependents){
                                 $('#id_dependente').empty();
                                 $('#id_dependente').append('<option value=""> ---------------- </option>');

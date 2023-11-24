@@ -1,14 +1,11 @@
 
 $(document).ready(function() {
   $('.plano-quant-valor').change(function (event) {
-
     var contratanteId = $('#id_contratante').val();
-
     var planoOdontologicoId = $('#id_planoOdontologico').val();
-
-    console.log(contratanteId, planoOdontologicoId);
-
+    var snapLoading = $('#snap-loading');
     if (contratanteId !=='' && planoOdontologicoId !=='') {
+        snapLoading.show();
        $.ajax({
               url: '/convenios/contratoodontologica/verificarassociacao/',  // URL da sua view VerificarAssociacaoView
               type: 'GET',
@@ -17,8 +14,9 @@ $(document).ready(function() {
                },
               dataType: 'json',
               success: function(response) {
+                snapLoading.hide();
                 var novoValor = response.valor_total;
-                console.log(novoValor);
+
                 $('#id_valor').val(novoValor);
               },
               error: function(xhr, status, error) {

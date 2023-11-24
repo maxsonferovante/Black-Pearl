@@ -7,12 +7,14 @@ $(document).ready(function() {
       $('#id_atendimentoDomiciliar').prop('disabled', true);
 
     $('#id_dependente').change(function () {
+    var snapLoading = $('#snap-loading');
 	var dependenteValue = $(this).val();
 	var contratoValue = $('#id_contrato').val();
 	var atendimentoDomiciliarValue = $('#id_atendimentoDomiciliar').val();
 
 
     if(dependenteValue){
+    snapLoading.show();
     $.ajax({
 		url: '/convenios/contratoplanosaude/consultafaixa_dependente/',
 		method: 'GET',
@@ -21,6 +23,7 @@ $(document).ready(function() {
             atendimentoDomiciliar: atendimentoDomiciliarValue
 		 },
 		success: function (response) {
+		    snapLoading.hide();
 			// Atualiza os campos id_faixa e id_valor com os dados obtidos
 
             $('#id_faixa').empty();
@@ -48,11 +51,13 @@ $(document).ready(function() {
     }
     });
     $('#id_atendimentoDomiciliar').change(function () {
+    var snapLoading = $('#snap-loading');
 	var dependenteValue = $('#id_dependente').val();
 	var contratoValue = $('#id_contrato').val();
 	var atendimentoDomiciliarValue = $(this).val();
 
 	if(dependenteValue){
+	    snapLoading.show();
     $.ajax({
 		url: '/convenios/contratoplanosaude/consultafaixa_dependente/',
 		method: 'GET',
@@ -61,6 +66,7 @@ $(document).ready(function() {
             atendimentoDomiciliar: atendimentoDomiciliarValue
 		 },
 		success: function (response) {
+		    snapLoading.hide();
 			// Atualiza os campos id_faixa e id_valor com os dados obtidos
 
             $('#id_faixa').empty();
@@ -87,8 +93,10 @@ $(document).ready(function() {
     });
 
     $('#id_contrato').change(function() {
+        var snapLoading = $('#snap-loading');
         var contratoValue = $(this).val();
         if (contratoValue) {
+            snapLoading.show();
           $.ajax({
 
             url: '/convenios/contratoplanosaude/consultadependente/',
@@ -97,7 +105,7 @@ $(document).ready(function() {
             },
             dataType: 'json',
             success: function(response) {
-
+                snapLoading.hide();
               if(response.has_dependents){
                   $('#id_dependente').empty();
                   $('#id_dependente').append('<option value="">Selecione o dependente</option>');

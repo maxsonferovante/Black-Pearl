@@ -222,16 +222,13 @@ class ConsultaValorFaixaEtariaDependente(View):
         dependente_id = self.request.GET.get('dependente')
         atendimentoDomiciliar = self.request.GET.get('atendimentoDomiciliar')
 
-        print (planoSaude_id, dependente_id, atendimentoDomiciliar)
-
         idade = self.calcular_idade(Dependente.objects.get(pk=dependente_id).dataNascimento)
 
         contrato = ContratoPlanoSaude.objects.get(pk=planoSaude_id)
-        print (contrato.planoSaude_id)
 
         faixa = ValoresPorFaixa.objects.filter(planoSaude_id=contrato.planoSaude_id, idadeMin__lte=idade, idadeMax__gte=idade).first()
 
-        print(idade, faixa)
+
         valorAtendimentoDomiciliar = PlanoSaude.objects.get(pk=contrato.planoSaude_id).valorAtendimentoDomiciliar
 
         valorAtendimentoTelefonico = PlanoSaude.objects.get(pk=contrato.planoSaude_id).valorAtendimentoTelefonico

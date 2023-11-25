@@ -21,7 +21,8 @@
               <li>Faixa Etária: <strong>{{ contrato.faixa }} (anos)</strong></li>
               <li>Atendimento Domiciliar: <strong>{{ contrato.get_atedimentoDomiciliar_display }}</strong></li>
               <li>Forma de Pagemento: <strong>{{ contrato.formaPagamento }}</strong></li>
-              <li>Valor: <strong>{{ contrato.valorTotal }}</strong></li>
+              <li>Valor Unitário: <strong>{{ contrato.valor }}</strong></li>
+              <li>Valor total (Taxa Administrativa): <strong>{{ contrato.valorTotal }}</strong></li>
               <li>Data de Contratação: <strong>{{ contrato.dataInicio }}</strong></li>
 
               {% if contrato.ativo %}

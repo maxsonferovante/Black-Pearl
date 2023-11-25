@@ -10,7 +10,7 @@ from blackpearl.convenios.models.cartaoVolusModels import FaturaCartao
 
 @method_decorator(login_required, name='dispatch')
 class HomeTemplateView(TemplateView):
-    template_name = 'convenios/home.html'
+    template_name = 'convenios/home_cob.html'
 
     def get_context_data(self, **kwargs):
         context = super(HomeTemplateView, self).get_context_data(**kwargs)

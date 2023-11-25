@@ -11,7 +11,7 @@ from django.views.generic import TemplateView
 
 class LoginCustomView(View):
     template_name = 'registration/login.html'
-    success_url = 'usuarios/home.html'
+    success_url = 'usuarios/home_cob.html'
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, {'form': AuthenticationForm})
@@ -33,7 +33,7 @@ class LoginCustomView(View):
 
 @method_decorator(login_required, name='dispatch')
 class HomeView(TemplateView):
-    template_name = 'usuarios/home.html'
+    template_name = 'usuarios/home_cob.html'
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name)

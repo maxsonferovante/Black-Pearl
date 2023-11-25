@@ -8,5 +8,4 @@ urlpatterns = [
     path('relatorios/', HomeTemplateView.as_view(), name='home_cob'),
 ]
 
-
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

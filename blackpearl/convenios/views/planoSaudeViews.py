@@ -205,8 +205,11 @@ class ConsultaValorFaixaEtaria(View):
         else:
             valor = round(((faixa.valor+valorAtendimentoTelefonico)  / (100-taxa.percentual)) * 100,2)
 
-        return JsonResponse({'faixa_id': faixa.id, 'valor': valor,
-                             'idadeMin': faixa.idadeMin, 'idadeMax': faixa.idadeMax
+        return JsonResponse({'faixa_id': faixa.id,
+                             'valorUnitario': faixa.valor + valorAtendimentoTelefonico,
+                             'valorComTaxa': valor,
+                             'idadeMin': faixa.idadeMin,
+                             'idadeMax': faixa.idadeMax
                              })
 
     def calcular_idade(self, dataNascimento):

@@ -33,7 +33,7 @@ class LoginCustomView(View):
 
 @method_decorator(login_required, name='dispatch')
 class HomeView(TemplateView):
-    template_name = 'usuarios/home_cob.html'
+    template_name = 'usuarios/home.html'
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name)

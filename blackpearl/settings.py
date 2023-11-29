@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'blackpearl.associados',
     'blackpearl.convenios',
     'blackpearl.cobrancas',
+    'django_crontab',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -102,6 +103,10 @@ DATABASES = {
     }
 }
 
+CRONJOBS = [
+    ('20 10 29 * *', 'blackpearl.cobrancas.services.ProcessoFaturamentoService.processar_faturamento_plano_saude'),  # Gera faturas todo dia 10 às 00:00
+
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators

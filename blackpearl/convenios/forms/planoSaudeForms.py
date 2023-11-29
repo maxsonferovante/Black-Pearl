@@ -33,10 +33,11 @@ class ContratoPlanoSaudeForm(forms.ModelForm):
                                widget=forms.Select(choices=[(True, 'Sim'), (False, 'Não')],
                                                    attrs={'class': 'form-control'}))
 
+    valorTotal = forms.DecimalField(label='Valor Total (Taxa Administrativa)', max_digits=10, decimal_places=2, required=True)
     class Meta:
         model = ContratoPlanoSaude
         fields = ['contratante', 'planoSaude', 'faixa', 'formaPagamento', 'atendimentoDomiciliar', 'dataInicio',
-                  'valor', 'ativo', 'faixa']
+                  'valor','valorTotal', 'ativo', 'faixa']
         exclude = ['dataFim']
 
     def __init__(self, *args, **kwargs):

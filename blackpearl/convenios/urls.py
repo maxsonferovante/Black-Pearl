@@ -6,7 +6,9 @@ from blackpearl.convenios.views.homeViews import HomeTemplateView, exportar
 
 from blackpearl.convenios.views.planoSaudeViews import ContratoPlanoSaudeCreateView, ContratoPlanoSaudeListView, \
     ContratoPlanoSaudeUpdateView, ContratoPlanoSaudeDeleteView, ContratoPlanoSaudeDetailView, ConsultaValorFaixaEtaria, \
-    ContratoPlanoSaudeDependenteCreateView, ConsultaDependenteView, ConsultaValorFaixaEtariaDependente
+    ContratoPlanoSaudeDependenteCreateView, ConsultaDependenteView, ConsultaValorFaixaEtariaDependente \
+    , ContratoPlanoSaudeDependenteUpdateView, ContratoPlanoSaudeDependenteDeleteView, ContratoPlanoSaudeDependenteDetailView, \
+    ContratoPlanoSaudeDependenteListView
 
 from blackpearl.convenios.views.planoOdontologicoViews import ContratoPlanoOdontologicoCreateView, \
     ContratoPlanoOdontologicoDetailView, \
@@ -45,7 +47,7 @@ urlpatterns = [
     path('contratoondontologico/all/dependente', DependentePlanoOdontologicoListView.as_view(), name='listar_dependente_plano_odontologico'),
     path('contratoondontologico/dependente/<int:pk>/editar/', DependentePlanoOdontologicoUpdateView.as_view(), name='editar_dependente_plano_odontologico'),
     path('contratoondontologico/dependente/<int:pk>/excluir/', DependentePlanoOdontologicoDeleteView.as_view(), name='deletar_dependente_plano_odontologico'),
-    path('contratoondontologico/dependente/<int:pk>/detalhes/', DependentePlanoOdontologicoDetailView.as_view(), name='detalhar_dependente_plano_odontologico'),
+    path('contratoondontologico/dependente/<int:pk>/detalhar/', DependentePlanoOdontologicoDetailView.as_view(), name='detalhar_dependente_plano_odontologico'),
 
 
     path('contratoodontologica/verificarassociacao/', VerificarAssociacaoView.as_view(), name='verificar_associacao'),
@@ -59,12 +61,16 @@ urlpatterns = [
     path('contratoplanosaude/<int:pk>/editar', ContratoPlanoSaudeUpdateView.as_view(), name='editar_contrato_plano_saude'),
     path('contratoplanosaude/<int:pk>/excluir', ContratoPlanoSaudeDeleteView.as_view(), name='excluir_contrato_plano_saude'),
     path('contratoplanosaude/<int:pk>/detalhes', ContratoPlanoSaudeDetailView.as_view(), name='detalhes_contrato_plano_saude'),
+
+    path('contratoplanosaude/add/dependente', ContratoPlanoSaudeDependenteCreateView.as_view(),name='cadastrar_dependentes_contrato_plano_saude'),
+    path('contratoplanosaude/all/dependente', ContratoPlanoSaudeDependenteListView.as_view(),name='listar_dependentes_contrato_plano_saude'),
+    path('contratoplanosaude/dependente/<int:pk>/editar/', ContratoPlanoSaudeDependenteUpdateView.as_view(),name='editar_dependentes_contrato_plano_saude'),
+    path('contratoplanosaude/dependente/<int:pk>/excluir/', ContratoPlanoSaudeDependenteDeleteView.as_view(),name='excluir_dependentes_contrato_plano_saude'),
+    path('contratoplanosaude/dependente/<int:pk>/delalhar/', ContratoPlanoSaudeDependenteDetailView.as_view(),name='detalhar_dependentes_contrato_plano_saude'),
+
     path('contratoplanosaude/consultafaixa/', ConsultaValorFaixaEtaria.as_view(), name='consultafaixa'),
 
-    path('contratoplanosaude/add_dependente', ContratoPlanoSaudeDependenteCreateView.as_view(), name='cadastrar_dependentes_contrato_plano_saude'),
-
     path('contratoplanosaude/consultadependente/', ConsultaDependenteView.as_view(), name='consulta_dependente'),
-
     path('contratoplanosaude/consultafaixa_dependente/', ConsultaValorFaixaEtariaDependente.as_view(), name='consulta_faixa_dependente'),
 
 

@@ -145,6 +145,8 @@ class Associado(Base):
     def get_associacao_display(self):
         return dict(ASSOCIACAO_CHOICES)[self.associacao]
     def get_estadocivil_display(self):
+        if self.estadocivil == '':
+            return 'Não Informado'
         return dict(ESTADOCIVIL_CHOICES)[self.estadocivil]
     def get_absolute_url(self):
         return reverse("editar", kwargs={"pk": self.pk})

@@ -1,26 +1,21 @@
 {% extends "base_sidebar.html" %}
 {% block content %}
+{% load crispy_forms_tags %}
 {% load bootstrap5 %}
 {% load static %}
 
-<style>
-    .not-visible{
-        display: none;
-    }
-</style>
       <div class="container-fluid ">
           <div class="row d-flex justify-content-md-center align-items-center h-50 mt-5">
              <h6 class="from">Cadastro de Faturas </h6>
-              {% bootstrap_messages %}
-                <form class="form" action="{% url 'importExcel' %}" method="post" autocomplete="off" enctype="multipart/form-data" id="upload_form">
-                            {% csrf_token %}
+                <form class="form" action="" method="post" autocomplete="off" enctype="multipart/form-data">
+                {% csrf_token %}
                  <div class="card mb-3 mt-3">
                      <h6 class="card-header text-center">Selecione o arquivo para importação.</h6>
                      <div class="card-body">
                             <div class="input-group mb-3">
-                              <input type="file" class="form-control" id="inputGroupFile02" name="files" required>
-                                {% bootstrap_form formUploadFileFaturas%}
-                              <label class="input-group-text" for="inputGroupFile02">Upload</label>
+                                <input type="file" class="form-control" id="inputGroupFile" name="arquivo" accept=".xlsx, .xls, .csv">
+
+                              <label class="input-group-text" for="inputGroupFile">Upload</label>
                             </div>
                      </div>
                  </div>

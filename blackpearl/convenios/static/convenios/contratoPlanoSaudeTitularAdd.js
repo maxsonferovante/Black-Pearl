@@ -19,11 +19,16 @@ $(document).ready(function() {
           success: function(response) {
             snapLoading.hide();
             const faixa_id = response.faixa_id;
-            const valor = response.valor;
+            const valor = response.valorUnitario;
+            const valorComTaxa = response.valorComTaxa;
             idadeMin = response.idadeMin;
             idadeMax = response.idadeMax;
             $('#id_valor').empty();
             $('#id_valor').val(valor);
+
+            $('#id_valorTotal').empty();
+            $('#id_valorTotal').val(valorComTaxa);
+
             $('#id_faixa').empty();
             $('#id_faixa').append('<option value="' + faixa_id + '">' + idadeMin + ' a ' +  idadeMax + ' (anos)</option>');
           }

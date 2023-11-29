@@ -170,6 +170,9 @@ class ImportarFaturasView(View):
     success_url = reverse_lazy('listagemfaturas')
     def get(self, request, *args, **kwargs):
         context = {
-            'formUploadFileFaturas': self.form_class,
+            'form': self.form_class,
         }
         return render(request, self.template_name, context)
+    def post(self, request, *args, **kwargs):
+
+        print(request.FILES)

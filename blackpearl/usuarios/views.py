@@ -11,7 +11,7 @@ from django.views.generic import TemplateView
 
 class LoginCustomView(View):
     template_name = 'registration/login.html'
-    success_url = 'usuarios/home.html'
+    success_url = 'usuarios/home_cob.html'
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, {'form': AuthenticationForm})

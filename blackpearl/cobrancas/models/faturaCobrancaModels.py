@@ -28,15 +28,12 @@ class FaturaCobranca(Base):
     multa = models.DecimalField(verbose_name="Multa", max_digits=10, decimal_places=2)
 
     def get_situacao(self):
-        return CHOICES_SITUACAO[self.situacao][1]
+            return 'Aberta' if self.situacao == 'A' else 'Paga' if self.situacao == 'P' else 'Cancelada' if self.situacao == 'C' else 'Vencida'
 
     class Meta:
         verbose_name = "Cobrança"
         verbose_name_plural = "Cobranças"
         ordering = ['dataDoVencimento']
-
-    def __str__(self):
-        return self.valorContratado + " - " + self.dataDoVencimento
 
 
 class CobrancaPlanoSaude(FaturaCobranca):
@@ -44,7 +41,10 @@ class CobrancaPlanoSaude(FaturaCobranca):
                                            on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.contratoPlanoSaude + " - " + self.valorContratado + " - " + self.dataDoVencimento
+        return f'{self.contratoPlanoSaude.contratante} - {self.contratoPlanoSaude.planoSaude}'
+
+    def get_forma_pagamento(self):
+        return f'{self.contratoPlanoSaude.formaPagamento}'
 
 
 class CobrancaPlanoOdontologico(FaturaCobranca):
@@ -53,4 +53,7 @@ class CobrancaPlanoOdontologico(FaturaCobranca):
                                                   on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.contratoPlanoOdontologico + " - " + self.valorContratado + " - " + self.dataDoVencimento
+        return f'{self.contratoPlanoOdontologico.contratante} - {self.contratoPlanoOdontologico.planoOdontologico}'
+
+    def get_forma_pagamento(self):
+        return self.contratoPlanoOdontologico.formaPagamento

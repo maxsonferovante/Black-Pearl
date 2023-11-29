@@ -1,15 +1,15 @@
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.views.generic import TemplateView
+from django.views.generic import ListView
 
-from blackpearl.convenios.models.planoSaudeModels import ContratoPlanoSaude, ContratoPlanoSaudeDependente
-
-
+from blackpearl.cobrancas.models.faturaCobrancaModels import CobrancaPlanoSaude, CobrancaPlanoOdontologico, FaturaCobranca
 
 
 @method_decorator(login_required, name='dispatch')
-class HomeTemplateView(TemplateView):
+class FaturaCobrancaListView(ListView):
     template_name = 'home_cob.html'
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+    model = FaturaCobranca
+    context_object_name = 'list_objs'
+    paginate_by = 10
+
+

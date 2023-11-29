@@ -3,13 +3,51 @@
 {% load bootstrap5 %}
 {% load crispy_forms_tags %}
 {% load static %}
-<div class="container">
-         <div class="row d-flex justify-content-center align-items-center h-50 mt-5">
-             <div class="container overflow-hidden ">
-
+<div class="container-fluid">
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="row align-items-center">
+            <div class="col-md-4 ">
+                <h4 class="m-0 font-weight-bold text-primary">Cobranças</h4>
             </div>
+        </div>
+    </div>
+    {% if list_objs %}
+    {% include 'search.html' with href='home_cob' %}
 
-
-         </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+                <th scope="col">Titular</th>
+                <th scope="col">Valor (R$)</th>
+                <th scope="col">Forma de Pagamento</th>
+                <th scope="col">Data do Vencimento</th>
+                <th scope="col">Situação</th>
+            </tr>
+          </thead>
+          <tbody class="table-group-divider">
+            {% for faturaCobranca in list_objs %}
+            <tr>
+              <td>{{ faturaCobranca }}</td>
+              <td>{{ faturaCobranca.valorContratado }}</td>
+              <td>{{ faturaCobranca.get_forma_pagamento }} </td>
+              <td>{{ faturaCobranca.dataDoVencimento }}</td>
+              <td>{{ faturaCobranca.get_situacao }}</td>
+              {% endfor %}
+          </tbody>
+        </table>
+        {% include 'pagination.html' with href='home_cob'%}
       </div>
+    </div>
+    {% else %}
+        <div class="card-body">
+        <div class="d-flex gap-2 d-md-flex">
+          <h4 class="m-0 font-weight-bold text-primary">Não há cobranças cadastrados</h4>
+        </div>
+      </div>
+    {% endif%}
+</div>
+</div>
 {% endblock content %}

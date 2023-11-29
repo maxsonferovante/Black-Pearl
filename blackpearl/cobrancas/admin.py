@@ -6,6 +6,7 @@ from blackpearl.cobrancas.models.faturasConvenios import FaturaPlanoSaude
 @admin.register(FaturaPlanoSaude)
 class FaturaPlanoSaudeAdmin(admin.ModelAdmin):
     list_display = ('id',
+                    'nome',
                     'competencia',
                     'valorTotalContratos',
                     'valorTotalAtendimentoDomiciliar',

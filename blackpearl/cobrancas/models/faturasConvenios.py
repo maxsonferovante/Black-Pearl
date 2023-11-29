@@ -6,7 +6,7 @@ from blackpearl.convenios.models.planoSaudeModels import ContratoPlanoSaude
 class FaturaPlanoSaude(Base):
     nome = models.CharField('Nome', max_length=100, help_text='Nome da fatura. Ex: Fatura 01/2020')
 
-    contratos = models.ManyToManyField(ContratoPlanoSaude, related_name='faturas')
+    contratos = models.ManyToManyField(ContratoPlanoSaude, related_name='faturas', blank=True)
 
     competencia = models.DateField('Competência',help_text='Data de competência da fatura. Ex: 01/2020')
 
@@ -22,4 +22,5 @@ class FaturaPlanoSaude(Base):
 
     def __str__(self):
         return self.nome
-
+    def get__contratos(self):
+        return ', '.join([contrato.nome for contrato in self.contratos.all()])

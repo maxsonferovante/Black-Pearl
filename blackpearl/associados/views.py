@@ -31,7 +31,7 @@ from ..convenios.models.planoSaudeModels import ValoresPorFaixa
 #
 @method_decorator(login_required, name='dispatch')
 class HomeTemplateView(ListView):
-    template_name = 'associados/home_cob.html'
+    template_name = 'associados/home.html'
     model = Associado
     paginate_by = 10
     context_object_name = 'lista_objs'

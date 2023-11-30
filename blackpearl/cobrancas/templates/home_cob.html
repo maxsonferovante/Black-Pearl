@@ -20,7 +20,8 @@
         <table class="table table-bordered">
           <thead>
             <tr>
-                <th scope="col">Titular</th>
+                <th scope="col">Pagador (Titular)</th>
+                <th scope="col">Convênio </th>
                 <th scope="col">Valor (R$)</th>
                 <th scope="col">Forma de Pagamento</th>
                 <th scope="col">Data do Vencimento</th>
@@ -31,6 +32,7 @@
             {% for faturaCobranca in list_objs %}
             <tr>
               <td>{{ faturaCobranca }}</td>
+              <td>{{ faturaCobranca.get_nome_convenio }}</td>
               <td>{{ faturaCobranca.valorContratado }}</td>
               <td>{{ faturaCobranca.get_forma_pagamento }} </td>
               <td>{{ faturaCobranca.dataDoVencimento }}</td>

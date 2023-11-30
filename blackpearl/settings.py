@@ -104,8 +104,9 @@ DATABASES = {
 }
 
 CRONJOBS = [
-    ('20 10 29 * *', 'blackpearl.cobrancas.services.ProcessoFaturamentoService.processar_faturamento_plano_saude'),  # Gera faturas todo dia 10 às 00:00
-
+    ('00 23 29 * *', 'blackpearl.cobrancas.services.ProcessoFaturamentoService.processar_faturamento'),
+    ('00 23 29 * *', 'blackpearl.cobrancas.services.ProcessoFaturamentoService.processar_faturas_vencidas'),
+    ('00 23 29 * *', 'blackpearl.cobrancas.services.ProcessoFaturamentoService.atualizar_juros_multas_faturas_vencidas')
 ]
 
 # Password validation

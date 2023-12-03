@@ -14,6 +14,7 @@ from blackpearl.convenios.models.models import TaxasAdministrativa
 from blackpearl.convenios.forms.planoOdontologicoForms import ContratoPlanoOdontologicoForm, DependentePlanoOdontologicoForms
 from blackpearl.associados.models import Associado
 
+from blackpearl.cobrancas.services.processoFaturamentoService import ProcessoFaturamentoService
 
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoOdontologicoCreateView(CreateView):
@@ -36,6 +37,8 @@ class ContratoPlanoOdontologicoCreateView(CreateView):
         contrato.valor = valor_total
         contrato.save()
 
+        ProcessoFaturamentoService.criar_fatura_plano_odontologico(contrato)
+
         return super().form_valid(form)
 
 @method_decorator(login_required, name='dispatch')
@@ -56,6 +59,23 @@ class ContratoPlanoOdontologicoUpdateView(UpdateView):
     form_class = ContratoPlanoOdontologicoForm
     template_name = 'convenios/planoOdontologico/contratacaoplanoodontologico_criar_form.html'
     success_url = reverse_lazy('listagemcontratoodontologica')
+
+    def form_valid(self, form):
+        contrato = form.save(commit=False)
+
+        if contrato.dataInicio < contrato.contratante.dataAssociacao:
+            form.add_error('dataInicio', 'Data de contratação não pode ser anterior a data de associação ( '+ str(contrato.contratante.dataAssociacao) +')')
+            return super().form_invalid(form)
+
+        taxa_administrativa = TaxasAdministrativa.objects.get(grupos=contrato.contratante.associacao)
+        percentual_taxa = taxa_administrativa.percentual
+        valor_unitario = PlanoOdontologico.objects.get(id=contrato.planoOdontologico.id).valorUnitario
+        valor_total = round(((valor_unitario) / (100 - percentual_taxa)) * 100, 2)
+        contrato.valor = valor_total
+        contrato.save()
+
+        ProcessoFaturamentoService.atualizar_valor_fatura_plano_odontologico(contrato)
+        return super().form_valid(form)
 
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoOdontologicoDeleteView(DeleteView):
@@ -120,6 +140,7 @@ class DependentePlanoOdontologicoCreateView(CreateView):
         contratoTitular = ContratoPlanoOdontologico.objects.get(pk=contratoDependente.contratoTitular.id)
         contratoTitular.valor = contratoTitular.valor + contratoDependente.valorComTaxa
         contratoTitular.save()
+        ProcessoFaturamentoService.atualizar_valor_fatura_plano_odontologico(contratoTitular)
         return super().form_valid(form)
 
 
@@ -165,6 +186,7 @@ class DependentePlanoOdontologicoUpdateView(UpdateView):
         
         contratoTitular.save()
 
+        ProcessoFaturamentoService.atualizar_valor_fatura_plano_odontologico(contratoTitular)
         return super().form_valid(form)
 
 @method_decorator(login_required, name='dispatch')
@@ -177,6 +199,7 @@ class DependentePlanoOdontologicoDeleteView(DeleteView):
         contratoTitular = ContratoPlanoOdontologico.objects.get(pk=contratoDependente.contratoTitular.id)
         contratoTitular.valor = contratoTitular.valor - contratoDependente.valorComTaxa
         contratoTitular.save()
+        ProcessoFaturamentoService.atualizar_valor_fatura_plano_odontologico(contratoTitular)
         return super().get_success_url()
 
 

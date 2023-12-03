@@ -6,7 +6,7 @@ from blackpearl.convenios.models.planoOdontologicoModels import ContratoPlanoOdo
 from blackpearl.cobrancas.models.faturaCobrancaModels import CobrancaPlanoSaude, CobrancaPlanoOdontologico, \
     PERCENTUAL_JUROS, PERCENTUAL_MULTA
 
-TIME_MINUTES = 1
+TIME_MINUTES = 10
 
 
 class ProcessoFaturamentoService(BackgroundScheduler):
@@ -29,6 +29,7 @@ class ProcessoFaturamentoService(BackgroundScheduler):
     def __destroy__(self):
         self.shutdown()
 
+
     def gerar_data_vencimento(self):
         data_atual = timezone.now().date()
 
@@ -40,6 +41,7 @@ class ProcessoFaturamentoService(BackgroundScheduler):
         data_vencimento = proximo_mes.replace(day=10)
 
         return data_vencimento
+
 
     def processar_faturamento_plano_saude(self):
         contratos_plano_saude = ContratoPlanoSaude.objects.filter(ativo=True)
@@ -58,16 +60,6 @@ class ProcessoFaturamentoService(BackgroundScheduler):
                         multa=0
                     )
 
-    @staticmethod
-    def atualizar_valor_fatura_plano_saude(contrato):
-        cobranca = CobrancaPlanoSaude.objects.get(contratoPlanoSaude=contrato,situacao='A')
-        cobranca.valorContratado = contrato.valorTotal
-        cobranca.save()
-    @staticmethod
-    def atualizar_valor_fatura_plano_odontologico(contrato):
-        cobranca = CobrancaPlanoOdontologico.objects.get(contratoPlanoOdontologico=contrato, situacao='A')
-        cobranca.valorContratado = contrato.valor
-        cobranca.save()
 
     def processar_faturamento_plano_odontologico(self):
         contratos_plano_odontologico = ContratoPlanoOdontologico.objects.filter(ativo=True)
@@ -127,3 +119,58 @@ class ProcessoFaturamentoService(BackgroundScheduler):
                 cobranca.valorPago = cobranca.valorContratado + cobranca.juros + cobranca.multa
 
                 cobranca.save()
+
+    @staticmethod
+    def criar_fatura_plano_saude(contrato):
+        data_atual = timezone.now().date()
+
+        # Obtendo o próximo mês
+        proximo_mes = data_atual.replace(day=1)  # Indo para o primeiro dia do mês atual do datetime
+        proximo_mes = proximo_mes + timezone.timedelta(days=32)  # Adicionando 32 dias (aproximadamente um mês)
+
+        # Garantindo que a data seja o dia 10 do próximo mês
+        data_vencimento = proximo_mes.replace(day=10)
+
+        CobrancaPlanoSaude.objects.create(
+            contratoPlanoSaude=contrato,
+            valorContratado=contrato.valorTotal,
+            valorPago=0,
+            dataDoVencimento=data_vencimento,
+            situacao='A',
+            juros=0,
+            multa=0
+        )
+
+    @staticmethod
+    def atualizar_valor_fatura_plano_saude(contrato):
+        cobranca = CobrancaPlanoSaude.objects.get(contratoPlanoSaude=contrato, situacao='A')
+        cobranca.valorContratado = contrato.valorTotal
+        cobranca.save()
+
+    @staticmethod
+    def criar_fatura_plano_odontologico(contrato):
+        data_atual = timezone.now().date()
+
+        # Obtendo o próximo mês
+        proximo_mes = data_atual.replace(day=1)  # Indo para o primeiro dia do mês atual do datetime
+        proximo_mes = proximo_mes + timezone.timedelta(days=32)  # Adicionando 32 dias (aproximadamente um mês)
+
+        # Garantindo que a data seja o dia 10 do próximo mês
+        data_vencimento = proximo_mes.replace(day=10)
+        CobrancaPlanoOdontologico.objects.create(
+            contratoPlanoOdontologico=contrato,
+            valorContratado=contrato.valor,
+            valorPago=0,
+            dataDoVencimento=data_vencimento,
+            situacao='A',
+            juros=0,
+            multa=0
+        )
+
+    @staticmethod
+    def atualizar_valor_fatura_plano_odontologico(contrato):
+        cobranca = CobrancaPlanoOdontologico.objects.get(contratoPlanoOdontologico=contrato, situacao='A')
+        cobranca.valorContratado = contrato.valor
+        cobranca.save()
+
+

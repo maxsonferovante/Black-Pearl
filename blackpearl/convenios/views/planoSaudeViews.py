@@ -91,7 +91,7 @@ class ContratoPlanoSaudeDependenteCreateView(CreateView):
 
         dependente_contrato.valorTotal = round((valor_faixa.valor / (Decimal(100) - percentual_taxa)) * 100, 2) + dependente_contrato.contrato.planoSaude.valorAtendimentoTelefonico
         dependente_contrato.save()
-        titular_contrato = get_object_or_404(ContratoPlanoSaude, )
+        titular_contrato = ContratoPlanoSaude.objects.get(pk=dependente_contrato.contrato.id)
         titular_contrato.valorTotal = titular_contrato.valorTotal + dependente_contrato.valorTotal
         titular_contrato.save()
 

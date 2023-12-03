@@ -143,9 +143,13 @@ class ProcessoFaturamentoService(BackgroundScheduler):
 
     @staticmethod
     def atualizar_valor_fatura_plano_saude(contrato):
-        cobranca = CobrancaPlanoSaude.objects.get(contratoPlanoSaude=contrato, situacao='A')
-        cobranca.valorContratado = contrato.valorTotal
-        cobranca.save()
+        try:
+            cobranca = CobrancaPlanoSaude.objects.get(contratoPlanoSaude=contrato, situacao='A')
+            cobranca.valorContratado = contrato.valorTotal
+            cobranca.save()
+        except CobrancaPlanoSaude.DoesNotExist:
+            ProcessoFaturamentoService.criar_fatura_plano_saude(contrato)
+
 
     @staticmethod
     def criar_fatura_plano_odontologico(contrato):
@@ -166,11 +170,17 @@ class ProcessoFaturamentoService(BackgroundScheduler):
             juros=0,
             multa=0
         )
+        print("Criou fatura")
 
     @staticmethod
     def atualizar_valor_fatura_plano_odontologico(contrato):
-        cobranca = CobrancaPlanoOdontologico.objects.get(contratoPlanoOdontologico=contrato, situacao='A')
-        cobranca.valorContratado = contrato.valor
-        cobranca.save()
+        try:
+            cobranca = CobrancaPlanoOdontologico.objects.get(contratoPlanoOdontologico=contrato, situacao='A')
+            cobranca.valorContratado = contrato.valor
+            cobranca.save()
+        except CobrancaPlanoOdontologico.DoesNotExist:
+            ProcessoFaturamentoService.criar_fatura_plano_odontologico(contrato)
+
+
 
 

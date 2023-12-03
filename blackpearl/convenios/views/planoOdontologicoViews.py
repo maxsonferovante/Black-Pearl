@@ -199,7 +199,6 @@ class DependentePlanoOdontologicoDeleteView(DeleteView):
         contratoTitular = ContratoPlanoOdontologico.objects.get(pk=contratoDependente.contratoTitular.id)
         contratoTitular.valor = contratoTitular.valor - contratoDependente.valorComTaxa
         contratoTitular.save()
-        ProcessoFaturamentoService.atualizar_valor_fatura_plano_odontologico(contratoTitular)
         return super().get_success_url()
 
 

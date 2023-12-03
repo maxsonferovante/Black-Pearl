@@ -2,8 +2,8 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView
 
-from blackpearl.cobrancas.models.faturaCobrancaModels import CobrancaPlanoSaude, CobrancaPlanoOdontologico, FaturaCobranca
 
+from blackpearl.cobrancas.models.faturaCobrancaModels import CobrancaPlanoSaude, CobrancaPlanoOdontologico, FaturaCobranca
 
 @method_decorator(login_required, name='dispatch')
 class FaturaCobrancaListView(ListView):
@@ -25,4 +25,6 @@ class FaturaCobrancaListView(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(FaturaCobrancaListView, self).get_context_data(**kwargs)
         context['list_obs'] = self.get_queryset()
+
         return context
+

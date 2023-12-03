@@ -25,7 +25,7 @@ class ContratoPlanoOdontologico(Base):
     dataFim = models.DateField('Data de Fim', null=True, blank=True)
 
     def __str__(self):
-        return '{}'.format(self.contratante)
+        return '{} - {}'.format(self.contratante, self.planoOdontologico)
 
     def get_ativo_display(self):
         return 'Sim' if self.ativo else 'Não'

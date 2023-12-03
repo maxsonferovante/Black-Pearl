@@ -17,7 +17,6 @@ INSTALLED_APPS = [
     'blackpearl.associados',
     'blackpearl.convenios',
     'blackpearl.cobrancas',
-    'django_crontab',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -76,11 +75,6 @@ DATABASES = {
     }
 }
 
-CRONJOBS = [
-    ('00 23 29 * *', 'blackpearl.cobrancas.services.ProcessoFaturamentoService.processar_faturamento'),
-    ('00 23 29 * *', 'blackpearl.cobrancas.services.ProcessoFaturamentoService.processar_faturas_vencidas'),
-    ('00 23 29 * *', 'blackpearl.cobrancas.services.ProcessoFaturamentoService.atualizar_juros_multas_faturas_vencidas')
-]
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators

@@ -1,96 +1,129 @@
-from datetime import timedelta
-
+from apscheduler.schedulers.background import BackgroundScheduler
 from django.utils import timezone
+
 from blackpearl.convenios.models.planoSaudeModels import ContratoPlanoSaude
 from blackpearl.convenios.models.planoOdontologicoModels import ContratoPlanoOdontologico
-from blackpearl.cobrancas.models.faturaCobrancaModels import CobrancaPlanoSaude, CobrancaPlanoOdontologico, FaturaCobranca, PERCENTUAL_JUROS, PERCENTUAL_MULTA
+from blackpearl.cobrancas.models.faturaCobrancaModels import CobrancaPlanoSaude, CobrancaPlanoOdontologico, \
+    PERCENTUAL_JUROS, PERCENTUAL_MULTA
 
-dia_geracao_fatura = 29
-hora_geracao_fatura = 23
-minuto_geracao_fatura = 00
+TIME_MINUTES = 1
 
-class ProcessoFaturamentoService:
-    @staticmethod
-    def processar_faturamento_plano_saude():
-        print ("processar_faturamento_plano_saude")
+
+class ProcessoFaturamentoService(BackgroundScheduler):
+    def __init__(self):
+        super().__init__()
+
+        self.add_job(self.processar_faturamento_plano_saude,
+                     'interval', minutes=TIME_MINUTES, replace_existing=True,
+                     max_instances=1)
+
+        self.add_job(self.processar_faturamento_plano_odontologico,
+                     'interval', minutes=TIME_MINUTES, replace_existing=True, max_instances=1)
+
+        self.add_job(self.processar_faturas_vencidas,
+                     'interval', minutes=TIME_MINUTES, replace_existing=True, max_instances=1)
+
+        self.add_job(self.atualizar_juros_multas_faturas_vencidas,
+                     'interval', minutes=TIME_MINUTES, replace_existing=True, max_instances=1)
+
+    def __destroy__(self):
+        self.shutdown()
+
+    def gerar_data_vencimento(self):
+        data_atual = timezone.now().date()
+
+        # Obtendo o próximo mês
+        proximo_mes = data_atual.replace(day=1)  # Indo para o primeiro dia do mês atual do datetime
+        proximo_mes = proximo_mes + timezone.timedelta(days=32)  # Adicionando 32 dias (aproximadamente um mês)
+
+        # Garantindo que a data seja o dia 10 do próximo mês
+        data_vencimento = proximo_mes.replace(day=10)
+
+        return data_vencimento
+
+    def processar_faturamento_plano_saude(self):
         contratos_plano_saude = ContratoPlanoSaude.objects.filter(ativo=True)
-
-        if contratos_plano_saude.exists() and  timezone.now().day == dia_geracao_fatura and timezone.now().hour == hora_geracao_fatura and timezone.now().minute == minuto_geracao_fatura:
+        if contratos_plano_saude.exists():
             for contrato in contratos_plano_saude:
-                if not CobrancaPlanoSaude.objects.filter(contratoPlanoSaude=contrato).exists():
-
-                    # Cálculo da data de vencimento para o próximo mês de maneira mais precisa
-                    data_atual = timezone.now().date()
-                    proximo_mes = data_atual.replace(day=29) + timedelta(days=35)  # Aproximadamente 35 dias para o próximo mês
-                    data_vencimento = proximo_mes.replace(day=29)
-
+                # a data de vencimento é o dia 10 do mês seguinte
+                data_vencimento = self.gerar_data_vencimento()
+                if not CobrancaPlanoSaude.objects.filter(contratoPlanoSaude=contrato, dataDoVencimento = data_vencimento).exists():
                     CobrancaPlanoSaude.objects.create(
                         contratoPlanoSaude=contrato,
                         valorContratado=contrato.valorTotal,
-                        valorPago = 0,
-                        dataDoVencimento= data_vencimento,
-                        situacao='A',
-                        juros= 0,
-                        multa= 0
-                    )
-
-    @staticmethod
-    def processar_faturamento_plano_odontologico():
-        print ("processar_faturamento_plano_odontologico")
-        contratos_plano_odontologico = ContratoPlanoOdontologico.objects.filter(ativo=True)
-
-        if contratos_plano_odontologico.exists()and  timezone.now().day == dia_geracao_fatura and timezone.now().hour == hora_geracao_fatura and timezone.now().minute == minuto_geracao_fatura:
-            for contrato in contratos_plano_odontologico:
-                if not CobrancaPlanoOdontologico.objects.filter(contratoPlanoOdontologico=contrato).exists():
-
-                    # Cálculo da data de vencimento para o próximo mês de maneira mais precisa
-                    data_atual = timezone.now().date()
-                    proximo_mes = data_atual.replace(day=29) + timedelta(days=35)
-                    data_vencimento = proximo_mes.replace(day=29)
-
-                    CobrancaPlanoOdontologico.objects.create(
-                        contratoPlanoOdontologico=contrato,
-                        valorContratado=contrato.valorTotal,
-                        valorPago = 0,
+                        valorPago=0,
                         dataDoVencimento=data_vencimento,
                         situacao='A',
-                        juros= 0,
-                        multa= 0
+                        juros=0,
+                        multa=0
                     )
 
     @staticmethod
-    def processar_faturamento():
-        print ("processar_faturamento")
-        ProcessoFaturamentoService.processar_faturamento_plano_saude()
-        ProcessoFaturamentoService.processar_faturamento_plano_odontologico()
-
+    def atualizar_valor_fatura_plano_saude(contrato):
+        cobranca = CobrancaPlanoSaude.objects.get(contratoPlanoSaude=contrato,situacao='A')
+        cobranca.valorContratado = contrato.valorTotal
+        cobranca.save()
     @staticmethod
-    def processar_faturas_vencidas():
-        print("processar_faturas_vencidas")
-        cobrancas_plano_saude = CobrancaPlanoSaude.objects.filter(situacao='A')
-        cobrancas_plano_odontologico = CobrancaPlanoOdontologico.objects.filter(situacao='A')
+    def atualizar_valor_fatura_plano_odontologico(contrato):
+        cobranca = CobrancaPlanoOdontologico.objects.get(contratoPlanoOdontologico=contrato, situacao='A')
+        cobranca.valorContratado = contrato.valor
+        cobranca.save()
+
+    def processar_faturamento_plano_odontologico(self):
+        contratos_plano_odontologico = ContratoPlanoOdontologico.objects.filter(ativo=True)
+
+        if contratos_plano_odontologico.exists():
+            for contrato in contratos_plano_odontologico:
+                # a data de vencimento é o dia 10 do mês seguinte
+                data_vencimento = self.gerar_data_vencimento()
+                if not CobrancaPlanoOdontologico.objects.filter(contratoPlanoOdontologico=contrato, dataDoVencimento = data_vencimento).exists():
+                    CobrancaPlanoOdontologico.objects.create(
+                        contratoPlanoOdontologico=contrato,
+                        valorContratado=contrato.valor,
+                        valorPago=0,
+                        dataDoVencimento=data_vencimento,
+                        situacao='A',
+                        juros=0,
+                        multa=0
+                    )
+
+    def processar_faturas_vencidas(self):
+        cobrancas_plano_saude = CobrancaPlanoSaude.objects.filter(situacao='A',
+                                                                  dataDoPagamento=None,
+                                                                  contratoPlanoSaude__formaPagamento='Boleto Bancário')
+
+        cobrancas_plano_odontologico = CobrancaPlanoOdontologico.objects.filter(situacao='A',
+                                                                                dataDoPagamento=None,
+                                                                                contratoPlanoOdontologico__formaPagamento='Boleto Bancário')
 
         todas_cobrancas = list(cobrancas_plano_saude) + list(cobrancas_plano_odontologico)
 
         for cobranca in todas_cobrancas:
-            if cobranca.dataDoVencimento < timezone.now().date() and cobranca.situacao == 'A':
+            if cobranca.dataDoVencimento < timezone.now().date():
+                print(cobranca)
                 cobranca.situacao = 'V'
-                cobranca.valorPago = cobranca.valorContratado
                 cobranca.save()
 
-    @staticmethod
-    def atualizar_juros_multas_faturas_vencidas():
-        print("atualizar_juros_multas_faturas_vencidas")
-        cobrancas_plano_saude = CobrancaPlanoSaude.objects.filter(situacao='V')
-        cobrancas_plano_odontologico = CobrancaPlanoOdontologico.objects.filter(situacao='V')
+    def atualizar_juros_multas_faturas_vencidas(self):
+
+        cobrancas_plano_saude = CobrancaPlanoSaude.objects.filter(situacao='V',
+                                                                  dataDoPagamento=None,
+                                                                  contratoPlanoSaude__formaPagamento='Boleto Bancário')
+
+        cobrancas_plano_odontologico = CobrancaPlanoOdontologico.objects.filter(situacao='V',
+                                                                                dataDoPagamento=None,
+                                                                                contratoPlanoOdontologico__formaPagamento='Boleto Bancário')
 
         todas_cobrancas = list(cobrancas_plano_saude) + list(cobrancas_plano_odontologico)
 
         for cobranca in todas_cobrancas:
             if cobranca.dataDoVencimento < timezone.now().date() and cobranca.situacao == 'V':
+                print(cobranca)
                 dias_atraso = timezone.now().date() - cobranca.dataDoVencimento
+
                 cobranca.juros = cobranca.valorContratado * PERCENTUAL_JUROS * dias_atraso.days
                 cobranca.multa = cobranca.valorContratado * PERCENTUAL_MULTA
-                cobranca.valorPago = cobranca.valorContratado + cobranca.juros + cobranca.multa
-                cobranca.save()
 
+                cobranca.valorPago = cobranca.valorContratado + cobranca.juros + cobranca.multa
+
+                cobranca.save()

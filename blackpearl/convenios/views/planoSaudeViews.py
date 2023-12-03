@@ -13,6 +13,7 @@ from blackpearl.convenios.models.models import  TaxasAdministrativa
 from blackpearl.convenios.forms.planoSaudeForms import ContratoPlanoSaudeForm, ContratoPlanoSaudeDependenteForm
 from blackpearl.associados.models import Associado, Dependente
 
+from blackpearl.cobrancas.services.processoFaturamentoService import ProcessoFaturamentoService
 
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoSaudeCreateView(CreateView):
@@ -29,6 +30,10 @@ class ContratoPlanoSaudeCreateView(CreateView):
         contrato.valor = valor_faixa.valor + contrato.planoSaude.valorAtendimentoTelefonico
         contrato.valorTotal = round((valor_faixa.valor / (100 - percentual_taxa)) * 100, 2) + contrato.planoSaude.valorAtendimentoTelefonico
         contrato.save()
+
+        ## cria uma fatura para o proximo mes
+        ProcessoFaturamentoService.criar_fatura_plano_saude(contrato)
+
         return super().form_valid(form)
 
 @method_decorator(login_required, name='dispatch')
@@ -57,6 +62,9 @@ class ContratoPlanoSaudeUpdateView(UpdateView):
     template_name = 'convenios/planoSaude/contrato_plano_saude_add.html'
     success_url = reverse_lazy('listar_contratos_plano_saude')
 
+    def form_valid(self, form):
+        ProcessoFaturamentoService.atualizar_valor_fatura_plano_saude(form.instance)
+        return super().form_valid(form)
 
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoSaudeDeleteView(DeleteView):
@@ -94,6 +102,8 @@ class ContratoPlanoSaudeDependenteCreateView(CreateView):
         titular_contrato = ContratoPlanoSaude.objects.get(pk=dependente_contrato.contrato.id)
         titular_contrato.valorTotal = titular_contrato.valorTotal + dependente_contrato.valorTotal
         titular_contrato.save()
+
+        ProcessoFaturamentoService.atualizar_valor_fatura_plano_saude(titular_contrato)
 
         return super().form_valid(form)
 
@@ -134,6 +144,8 @@ class ContratoPlanoSaudeDependenteUpdateView(UpdateView):
 
         titular_contrato.save()
 
+        ProcessoFaturamentoService.atualizar_valor_fatura_plano_saude(titular_contrato)
+
         return super().form_valid(form)
 
 @method_decorator(login_required, name='dispatch')
@@ -141,9 +153,10 @@ class ContratoPlanoSaudeDependenteDeleteView(DeleteView):
     model = ContratoPlanoSaudeDependente
     success_url = reverse_lazy('listar_dependentes_contrato_plano_saude')
     def get_success_url(self):
-        titular_contrato = get_object_or_404(ContratoPlanoSaude, )
+        titular_contrato = ContratoPlanoSaude.objects.get(pk=self.object.contrato.id)
         titular_contrato.valorTotal = titular_contrato.valorTotal - self.object.valorTotal
         titular_contrato.save()
+        ProcessoFaturamentoService.atualizar_valor_fatura_plano_saude(titular_contrato)
         return super().get_success_url()
 
 @method_decorator(login_required, name='dispatch')

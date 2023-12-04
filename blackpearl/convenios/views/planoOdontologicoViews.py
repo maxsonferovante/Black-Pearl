@@ -82,6 +82,12 @@ class ContratoPlanoOdontologicoDeleteView(DeleteView):
     model = ContratoPlanoOdontologico
     success_url = reverse_lazy('listagemcontratoodontologica')
 
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.ativo = False
+        self.object.save()
+        return super().post(request, *args, **kwargs)
+
 @method_decorator(login_required, name='dispatch')
 class ContratoOdontologicaListView(ListView):
     template_name = 'convenios/planoOdontologico/listagem_contratacaoodontologica.html'
@@ -95,7 +101,7 @@ class ContratoOdontologicaListView(ListView):
         if nome_pesquisado:
             queryset = queryset.filter(contratante__nomecompleto__icontains=nome_pesquisado).order_by('contratante')
         else:
-            queryset = queryset.order_by('contratante')
+            queryset = queryset.order_by('contratante').filter(ativo=True)
         return queryset
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -157,7 +163,7 @@ class DependentePlanoOdontologicoListView(ListView):
         if nome_pesquisado:
             queryset = queryset.filter(dependente__nomecompleto__icontains=nome_pesquisado).order_by('dependente')
         else:
-            queryset = queryset.order_by('dependente')
+            queryset = queryset.order_by('dependente').filter(ativo=True)
         return queryset
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -194,6 +200,11 @@ class DependentePlanoOdontologicoDeleteView(DeleteView):
     model = DependentePlanoOdontologico
     success_url = reverse_lazy('listar_dependente_plano_odontologico')
 
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.ativo = False
+        self.object.save()
+        return super().post(request, *args, **kwargs)
     def get_success_url(self):
         contratoDependente = self.get_object()
         contratoTitular = ContratoPlanoOdontologico.objects.get(pk=contratoDependente.contratoTitular.id)

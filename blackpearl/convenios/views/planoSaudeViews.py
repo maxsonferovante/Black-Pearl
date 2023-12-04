@@ -8,12 +8,14 @@ from django.views.decorators.csrf import csrf_exempt
 from decimal import Decimal
 import datetime
 
-from blackpearl.convenios.models.planoSaudeModels import PlanoSaude, ContratoPlanoSaude, ContratoPlanoSaudeDependente, ValoresPorFaixa
-from blackpearl.convenios.models.models import  TaxasAdministrativa
+from blackpearl.convenios.models.planoSaudeModels import PlanoSaude, ContratoPlanoSaude, ContratoPlanoSaudeDependente, \
+    ValoresPorFaixa
+from blackpearl.convenios.models.models import TaxasAdministrativa
 from blackpearl.convenios.forms.planoSaudeForms import ContratoPlanoSaudeForm, ContratoPlanoSaudeDependenteForm
 from blackpearl.associados.models import Associado, Dependente
 
 from blackpearl.cobrancas.services.processoFaturamentoService import ProcessoFaturamentoService
+
 
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoSaudeCreateView(CreateView):
@@ -28,13 +30,15 @@ class ContratoPlanoSaudeCreateView(CreateView):
         valor_faixa = ValoresPorFaixa.objects.get(pk=contrato.faixa.id)
         percentual_taxa = taxa_administrativa.percentual
         contrato.valor = valor_faixa.valor + contrato.planoSaude.valorAtendimentoTelefonico
-        contrato.valorTotal = round((valor_faixa.valor / (100 - percentual_taxa)) * 100, 2) + contrato.planoSaude.valorAtendimentoTelefonico
+        contrato.valorTotal = round((valor_faixa.valor / (100 - percentual_taxa)) * 100,
+                                    2) + contrato.planoSaude.valorAtendimentoTelefonico
         contrato.save()
 
         ## cria uma fatura para o proximo mes
         ProcessoFaturamentoService.criar_fatura_plano_saude(contrato)
 
         return super().form_valid(form)
+
 
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoSaudeListView(ListView):
@@ -49,11 +53,13 @@ class ContratoPlanoSaudeListView(ListView):
         if nome_pesquisado:
             queryset = queryset.filter(contratante__nomecompleto__icontains=nome_pesquisado).order_by('contratante')
         else:
-            queryset = queryset.order_by('contratante')
+            queryset = queryset.order_by('contratante').filter(ativo=True)
         return queryset
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
+
 
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoSaudeUpdateView(UpdateView):
@@ -66,16 +72,25 @@ class ContratoPlanoSaudeUpdateView(UpdateView):
         ProcessoFaturamentoService.atualizar_valor_fatura_plano_saude(form.instance)
         return super().form_valid(form)
 
+
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoSaudeDeleteView(DeleteView):
     model = ContratoPlanoSaude
     success_url = reverse_lazy('listar_contratos_plano_saude')
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.ativo = False
+        self.object.save()
+        return redirect(self.get_success_url())
+
 
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoSaudeDetailView(DetailView):
     model = ContratoPlanoSaude
     template_name = 'convenios/planoSaude/button_model_contrato_plano_saude_detail.html'
     context_object_name = 'contrato'
+
 
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoSaudeDependenteCreateView(CreateView):
@@ -85,19 +100,22 @@ class ContratoPlanoSaudeDependenteCreateView(CreateView):
     success_url = reverse_lazy('listar_dependentes_contrato_plano_saude')
 
     def form_valid(self, form):
-
         dependente_contrato = form.save(commit=False)
         if dependente_contrato.dataInicio < dependente_contrato.contrato.dataInicio:
-            form.add_error('dataInicio', 'Data de Contratação do dependente não pode ser maior que a data de início do titular (' + str(dependente_contrato.contrato.dataInicio) + ')')
+            form.add_error('dataInicio',
+                           'Data de Contratação do dependente não pode ser maior que a data de início do titular (' + str(
+                               dependente_contrato.contrato.dataInicio) + ')')
             return super().form_invalid(form)
 
-        taxa_administrativa = TaxasAdministrativa.objects.get(grupos=dependente_contrato.contrato.contratante.associacao)
+        taxa_administrativa = TaxasAdministrativa.objects.get(
+            grupos=dependente_contrato.contrato.contratante.associacao)
         valor_faixa = ValoresPorFaixa.objects.get(pk=dependente_contrato.faixa.id)
 
         percentual_taxa = taxa_administrativa.percentual
         dependente_contrato.valor = valor_faixa.valor + dependente_contrato.contrato.planoSaude.valorAtendimentoTelefonico
 
-        dependente_contrato.valorTotal = round((valor_faixa.valor / (Decimal(100) - percentual_taxa)) * 100, 2) + dependente_contrato.contrato.planoSaude.valorAtendimentoTelefonico
+        dependente_contrato.valorTotal = round((valor_faixa.valor / (Decimal(100) - percentual_taxa)) * 100,
+                                               2) + dependente_contrato.contrato.planoSaude.valorAtendimentoTelefonico
         dependente_contrato.save()
         titular_contrato = ContratoPlanoSaude.objects.get(pk=dependente_contrato.contrato.id)
         titular_contrato.valorTotal = titular_contrato.valorTotal + dependente_contrato.valorTotal
@@ -107,6 +125,7 @@ class ContratoPlanoSaudeDependenteCreateView(CreateView):
 
         return super().form_valid(form)
 
+
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoSaudeDependenteUpdateView(UpdateView):
     model = ContratoPlanoSaudeDependente
@@ -114,11 +133,12 @@ class ContratoPlanoSaudeDependenteUpdateView(UpdateView):
     template_name = 'convenios/planoSaude/contrato_plano_dependente_saude_add.html'
     success_url = reverse_lazy('listar_contratos_plano_saude')
 
-
     def form_valid(self, form):
         dependente_contrato = form.save(commit=False)
         if dependente_contrato.dataInicio < dependente_contrato.contrato.dataInicio:
-            form.add_error('dataInicio', 'Data de Contratação do dependente não pode ser maior que a data de início do titular (' + str(dependente_contrato.contrato.dataInicio) + ')')
+            form.add_error('dataInicio',
+                           'Data de Contratação do dependente não pode ser maior que a data de início do titular (' + str(
+                               dependente_contrato.contrato.dataInicio) + ')')
             return super().form_invalid(form)
 
         if dependente_contrato.ativo == False:
@@ -131,12 +151,15 @@ class ContratoPlanoSaudeDependenteUpdateView(UpdateView):
 
             return super().form_valid(form)
 
-        taxa_administrativa = TaxasAdministrativa.objects.get(grupos=dependente_contrato.contrato.contratante.associacao)
+        taxa_administrativa = TaxasAdministrativa.objects.get(
+            grupos=dependente_contrato.contrato.contratante.associacao)
         valor_faixa = ValoresPorFaixa.objects.get(pk=dependente_contrato.faixa.id)
 
         percentual_taxa = taxa_administrativa.percentual
-        dependente_contrato.valor = round((valor_faixa.valor / (100 - percentual_taxa)) * 100, 2) + dependente_contrato.contrato.planoSaude.valorAtendimentoTelefonico
-        dependente_contrato.valorTotal = round((valor_faixa.valor / (Decimal(100) - percentual_taxa)) * 100, 2) + dependente_contrato.contrato.planoSaude.valorAtendimentoTelefonico
+        dependente_contrato.valor = round((valor_faixa.valor / (100 - percentual_taxa)) * 100,
+                                          2) + dependente_contrato.contrato.planoSaude.valorAtendimentoTelefonico
+        dependente_contrato.valorTotal = round((valor_faixa.valor / (Decimal(100) - percentual_taxa)) * 100,
+                                               2) + dependente_contrato.contrato.planoSaude.valorAtendimentoTelefonico
         dependente_contrato.save()
 
         titular_contrato = get_object_or_404(ContratoPlanoSaude, )
@@ -148,10 +171,12 @@ class ContratoPlanoSaudeDependenteUpdateView(UpdateView):
 
         return super().form_valid(form)
 
+
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoSaudeDependenteDeleteView(DeleteView):
     model = ContratoPlanoSaudeDependente
     success_url = reverse_lazy('listar_dependentes_contrato_plano_saude')
+
     def get_success_url(self):
         titular_contrato = ContratoPlanoSaude.objects.get(pk=self.object.contrato.id)
         titular_contrato.valorTotal = titular_contrato.valorTotal - self.object.valorTotal
@@ -159,11 +184,13 @@ class ContratoPlanoSaudeDependenteDeleteView(DeleteView):
         ProcessoFaturamentoService.atualizar_valor_fatura_plano_saude(titular_contrato)
         return super().get_success_url()
 
+
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoSaudeDependenteDetailView(DetailView):
     model = ContratoPlanoSaudeDependente
     template_name = 'convenios/planoSaude/button_model_contrato_plano_dependente_saude_detail.html'
     context_object_name = 'contrato'
+
 
 @method_decorator(login_required, name='dispatch')
 class ContratoPlanoSaudeDependenteListView(ListView):
@@ -180,9 +207,11 @@ class ContratoPlanoSaudeDependenteListView(ListView):
         else:
             queryset = queryset.order_by('dependente')
         return queryset
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
+
 
 @method_decorator(login_required, name='dispatch')
 class ConsultaDependenteView(View):
@@ -197,6 +226,7 @@ class ConsultaDependenteView(View):
         except Associado.DoesNotExist:
             return JsonResponse({'has_dependents': False, 'dependentes': []})
 
+
 @method_decorator(login_required, name='dispatch')
 class ConsultaValorFaixaEtaria(View):
     @csrf_exempt
@@ -207,16 +237,18 @@ class ConsultaValorFaixaEtaria(View):
 
         idade = self.calcular_idade(Associado.objects.get(pk=contratante_id).dataNascimento)
 
-        faixa = ValoresPorFaixa.objects.filter(planoSaude_id=planoSaude_id, idadeMin__lte=idade, idadeMax__gte=idade).first()
+        faixa = ValoresPorFaixa.objects.filter(planoSaude_id=planoSaude_id, idadeMin__lte=idade,
+                                               idadeMax__gte=idade).first()
         valorAtendimentoDomiciliar = PlanoSaude.objects.get(pk=planoSaude_id).valorAtendimentoDomiciliar
         valorAtendimentoTelefonico = PlanoSaude.objects.get(pk=planoSaude_id).valorAtendimentoTelefonico
 
-        taxa = TaxasAdministrativa.objects.get(grupos = Associado.objects.get(pk=contratante_id).associacao)
+        taxa = TaxasAdministrativa.objects.get(grupos=Associado.objects.get(pk=contratante_id).associacao)
 
         if atendimentoDomiciliar == 'True':
-            valor = round(((faixa.valor+valorAtendimentoTelefonico) / (100-taxa.percentual)) * 100,2) + round((valorAtendimentoDomiciliar/(100-taxa.percentual)*100),2)
+            valor = round(((faixa.valor + valorAtendimentoTelefonico) / (100 - taxa.percentual)) * 100, 2) + round(
+                (valorAtendimentoDomiciliar / (100 - taxa.percentual) * 100), 2)
         else:
-            valor = round(((faixa.valor+valorAtendimentoTelefonico)  / (100-taxa.percentual)) * 100,2)
+            valor = round(((faixa.valor + valorAtendimentoTelefonico) / (100 - taxa.percentual)) * 100, 2)
 
         return JsonResponse({'faixa_id': faixa.id,
                              'valorUnitario': faixa.valor + valorAtendimentoTelefonico,
@@ -227,8 +259,10 @@ class ConsultaValorFaixaEtaria(View):
 
     def calcular_idade(self, dataNascimento):
         data_atual = datetime.date.today()
-        idade = data_atual.year - dataNascimento.year - ((data_atual.month, data_atual.day) < (dataNascimento.month, dataNascimento.day))
+        idade = data_atual.year - dataNascimento.year - (
+                    (data_atual.month, data_atual.day) < (dataNascimento.month, dataNascimento.day))
         return idade
+
 
 @method_decorator(login_required, name='dispatch')
 class ConsultaValorFaixaEtariaDependente(View):
@@ -242,31 +276,34 @@ class ConsultaValorFaixaEtariaDependente(View):
 
         contrato = ContratoPlanoSaude.objects.get(pk=planoSaude_id)
 
-        faixa = ValoresPorFaixa.objects.filter(planoSaude_id=contrato.planoSaude_id, idadeMin__lte=idade, idadeMax__gte=idade).first()
-
+        faixa = ValoresPorFaixa.objects.filter(planoSaude_id=contrato.planoSaude_id, idadeMin__lte=idade,
+                                               idadeMax__gte=idade).first()
 
         valorAtendimentoDomiciliar = PlanoSaude.objects.get(pk=contrato.planoSaude_id).valorAtendimentoDomiciliar
 
         valorAtendimentoTelefonico = PlanoSaude.objects.get(pk=contrato.planoSaude_id).valorAtendimentoTelefonico
 
-        taxa = TaxasAdministrativa.objects.get(grupos = Dependente.objects.get(pk=dependente_id).titular.associacao)
+        taxa = TaxasAdministrativa.objects.get(grupos=Dependente.objects.get(pk=dependente_id).titular.associacao)
 
         if atendimentoDomiciliar == 'True':
-            valor = round(((faixa.valor+valorAtendimentoTelefonico) / (100-taxa.percentual)) * 100,2) + round((valorAtendimentoDomiciliar/(100-taxa.percentual)*100),2) + round((valorAtendimentoDomiciliar/(100-taxa.percentual)*100),2)
+            valor = round(((faixa.valor + valorAtendimentoTelefonico) / (100 - taxa.percentual)) * 100, 2) + round(
+                (valorAtendimentoDomiciliar / (100 - taxa.percentual) * 100), 2) + round(
+                (valorAtendimentoDomiciliar / (100 - taxa.percentual) * 100), 2)
         else:
-            valor = round(((faixa.valor+valorAtendimentoTelefonico)  / (100-taxa.percentual)) * 100,2)
+            valor = round(((faixa.valor + valorAtendimentoTelefonico) / (100 - taxa.percentual)) * 100, 2)
 
         return JsonResponse({
-                                'faixa': {
-                                    'id': faixa.id,
-                                    'valor': faixa.valor + valorAtendimentoTelefonico,
-                                    'idadeMin': faixa.idadeMin,
-                                    'idadeMax': faixa.idadeMax
-                                },
-                                'valorComTaxa': valor
-                             })
+            'faixa': {
+                'id': faixa.id,
+                'valor': faixa.valor + valorAtendimentoTelefonico,
+                'idadeMin': faixa.idadeMin,
+                'idadeMax': faixa.idadeMax
+            },
+            'valorComTaxa': valor
+        })
 
     def calcular_idade(self, dataNascimento):
         data_atual = datetime.date.today()
-        idade = data_atual.year - dataNascimento.year - ((data_atual.month, data_atual.day) < (dataNascimento.month, dataNascimento.day))
+        idade = data_atual.year - dataNascimento.year - (
+                    (data_atual.month, data_atual.day) < (dataNascimento.month, dataNascimento.day))
         return idade

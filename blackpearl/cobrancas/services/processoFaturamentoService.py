@@ -6,31 +6,36 @@ from blackpearl.convenios.models.planoOdontologicoModels import ContratoPlanoOdo
 from blackpearl.cobrancas.models.faturaCobrancaModels import CobrancaPlanoSaude, CobrancaPlanoOdontologico, \
     PERCENTUAL_JUROS, PERCENTUAL_MULTA
 
-TIME_MINUTES = 1
-
 
 class ProcessoFaturamentoService(BackgroundScheduler):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, **options):
+
+        super().__init__(**options)
 
         self.add_job(self.processar_faturamento_plano_saude,
-                     'interval', minutes=TIME_MINUTES, replace_existing=True,
+                     'interval',minutes = 15,  replace_existing=True,
                      max_instances=1)
 
         self.add_job(self.processar_faturamento_plano_odontologico,
-                     'interval', minutes=TIME_MINUTES, replace_existing=True, max_instances=1)
+                     'interval',minutes = 15,   replace_existing=True,
+                     max_instances=1)
 
         self.add_job(self.processar_faturas_vencidas,
-                     'interval', minutes=TIME_MINUTES, replace_existing=True, max_instances=1)
+                     'interval', minutes = 15,   replace_existing=True,
+                     max_instances=1)
 
         self.add_job(self.atualizar_juros_multas_faturas_vencidas,
-                     'interval', minutes=TIME_MINUTES, replace_existing=True, max_instances=1)
+                     'interval', minutes = 15,   replace_existing=True,
+                     max_instances=1)
+
+        self.print_jobs()
 
     def __destroy__(self):
         self.shutdown()
 
-
+    @property
     def gerar_data_vencimento(self):
+        print("Gerando data de vencimento")
         data_atual = timezone.now().date()
 
         # Obtendo o próximo mês
@@ -42,14 +47,14 @@ class ProcessoFaturamentoService(BackgroundScheduler):
 
         return data_vencimento
 
-
     def processar_faturamento_plano_saude(self):
         contratos_plano_saude = ContratoPlanoSaude.objects.filter(ativo=True)
         if contratos_plano_saude.exists():
             for contrato in contratos_plano_saude:
                 # a data de vencimento é o dia 10 do mês seguinte
-                data_vencimento = self.gerar_data_vencimento()
-                if not CobrancaPlanoSaude.objects.filter(contratoPlanoSaude=contrato, dataDoVencimento = data_vencimento).exists():
+                data_vencimento = self.gerar_data_vencimento
+                if not CobrancaPlanoSaude.objects.filter(contratoPlanoSaude=contrato,
+                                                         dataDoVencimento=data_vencimento).exists():
                     CobrancaPlanoSaude.objects.create(
                         contratoPlanoSaude=contrato,
                         valorContratado=contrato.valorTotal,
@@ -60,15 +65,15 @@ class ProcessoFaturamentoService(BackgroundScheduler):
                         multa=0
                     )
 
-
     def processar_faturamento_plano_odontologico(self):
         contratos_plano_odontologico = ContratoPlanoOdontologico.objects.filter(ativo=True)
 
         if contratos_plano_odontologico.exists():
             for contrato in contratos_plano_odontologico:
                 # a data de vencimento é o dia 10 do mês seguinte
-                data_vencimento = self.gerar_data_vencimento()
-                if not CobrancaPlanoOdontologico.objects.filter(contratoPlanoOdontologico=contrato, dataDoVencimento = data_vencimento).exists():
+                data_vencimento = self.gerar_data_vencimento
+                if not CobrancaPlanoOdontologico.objects.filter(contratoPlanoOdontologico=contrato,
+                                                                dataDoVencimento=data_vencimento).exists():
                     CobrancaPlanoOdontologico.objects.create(
                         contratoPlanoOdontologico=contrato,
                         valorContratado=contrato.valor,
@@ -167,7 +172,6 @@ class ProcessoFaturamentoService(BackgroundScheduler):
         except CobrancaPlanoSaude.DoesNotExist:
             ProcessoFaturamentoService.criar_fatura_plano_saude(contrato)
 
-
     @staticmethod
     def criar_fatura_plano_odontologico(contrato):
         data_atual = timezone.now().date()
@@ -197,7 +201,3 @@ class ProcessoFaturamentoService(BackgroundScheduler):
             cobranca.save()
         except CobrancaPlanoOdontologico.DoesNotExist:
             ProcessoFaturamentoService.criar_fatura_plano_odontologico(contrato)
-
-
-
-

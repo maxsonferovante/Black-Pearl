@@ -6,7 +6,7 @@ from blackpearl.convenios.models.planoOdontologicoModels import ContratoPlanoOdo
 from blackpearl.cobrancas.models.faturaCobrancaModels import CobrancaPlanoSaude, CobrancaPlanoOdontologico, \
     PERCENTUAL_JUROS, PERCENTUAL_MULTA
 
-TIME_MINUTES = 10
+TIME_MINUTES = 1
 
 
 class ProcessoFaturamentoService(BackgroundScheduler):
@@ -119,6 +119,23 @@ class ProcessoFaturamentoService(BackgroundScheduler):
                 cobranca.valorPago = cobranca.valorContratado + cobranca.juros + cobranca.multa
 
                 cobranca.save()
+
+    @staticmethod
+    def existem_faturas_vencidas(contrante):
+        cobrancas_plano_saude = CobrancaPlanoSaude.objects.filter(
+            contratoPlanoSaude__contrato__contrante=contrante,
+            situacao='V', dataDoPagamento=None, contratoPlanoSaude__formaPagamento='Boleto Bancário')
+
+        cobrancas_plano_odontologico = CobrancaPlanoOdontologico.objects.filter(
+            contratoPlanoOdontologico__contrato__contrante=contrante,
+            situacao='V', dataDoPagamento=None, contratoPlanoOdontologico__formaPagamento='Boleto Bancário')
+
+        todas_cobrancas = list(cobrancas_plano_saude) + list(cobrancas_plano_odontologico)
+
+        if todas_cobrancas:
+            return True
+        else:
+            return False
 
     @staticmethod
     def criar_fatura_plano_saude(contrato):

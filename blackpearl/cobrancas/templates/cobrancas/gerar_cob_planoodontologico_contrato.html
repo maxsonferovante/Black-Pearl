@@ -1,0 +1,41 @@
+{% extends "base_sidebar.html" %}
+{% load crispy_forms_tags %}
+{% load bootstrap5 %}
+
+{% block content_script %}
+    <script src=""></script>
+{% endblock content_script %}
+
+{% block content %}
+<div class="container">
+          <div class="row d-flex justify-content-md-center align-items-center h-50">
+            {% bootstrap_messages %}
+              <form class="form-horizontal" action="" method="post" autocomplete="off" >
+                  {% csrf_token %}
+
+                 <div class="card shadow mb-3">
+                     <h6 class="card-header">Cobrança - Plano de Saúde</h6>
+                     <div class="card-body">
+                         <div class="row">
+                             <div class="from-group col-sm">
+                                {{ form.contratoPlanoOdontologico|as_crispy_field }}
+                             </div>
+                             <div class="from-group col-sm">
+                                {{ form.situacao|as_crispy_field }}
+                             </div>
+                         </div>
+                         <div class="row">
+                             <div class="from-group col-sm">
+                                {{ form.dataDoVencimento|as_crispy_field }}
+                             </div>
+                             <div class="from-group col-sm">
+                                    {{ form.valorContratado|as_crispy_field }}
+                             </div>
+                         </div>
+                          {% include 'button_save.html' %}
+                     </div>
+                 </div>
+              </form>
+          </div>
+</div>
+{% endblock content %}

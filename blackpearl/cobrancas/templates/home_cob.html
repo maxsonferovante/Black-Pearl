@@ -22,9 +22,11 @@
             <tr>
                 <th scope="col">Pagador (Titular)</th>
                 <th scope="col">Convênio </th>
-                <th scope="col">Valor (R$)</th>
                 <th scope="col">Forma de Pagamento</th>
                 <th scope="col">Data do Vencimento</th>
+                <th scope="col">Valor (R$)</th>
+                <th scope="col">Juros e Multa (R$)</th>
+                <th scope="col">Valor Atualizado (R$)</th>
                 <th scope="col">Situação</th>
             </tr>
           </thead>
@@ -33,9 +35,11 @@
             <tr>
               <td>{{ faturaCobranca }}</td>
               <td>{{ faturaCobranca.get_nome_convenio }}</td>
-              <td>{{ faturaCobranca.valorContratado }}</td>
               <td>{{ faturaCobranca.get_forma_pagamento }} </td>
               <td>{{ faturaCobranca.dataDoVencimento }}</td>
+              <td>{{ faturaCobranca.valorContratado }}</td>
+              <td>{{ faturaCobranca.juros }} / {{ faturaCobranca.multa }}</td>
+              <td>{{ faturaCobranca.valorPago }}</td>
               <td>{{ faturaCobranca.get_situacao }}</td>
               {% endfor %}
           </tbody>

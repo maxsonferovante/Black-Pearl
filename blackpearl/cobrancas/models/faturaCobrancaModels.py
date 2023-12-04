@@ -6,7 +6,7 @@ from blackpearl.cobrancas.models.models import Base
 from blackpearl.convenios.models.planoSaudeModels import ContratoPlanoSaude
 from blackpearl.convenios.models.planoOdontologicoModels import ContratoPlanoOdontologico
 
-PERCENTUAL_JUROS = Decimal(0.03)
+PERCENTUAL_JUROS = Decimal(0.0033)
 PERCENTUAL_MULTA = Decimal(0.02)
 
 CHOICES_SITUACAO = (

@@ -5,6 +5,7 @@ class CobrancasConfig(AppConfig):
     name = 'blackpearl.cobrancas'
 
 
+
     def ready(self):
         from blackpearl.cobrancas.services.processoFaturamentoService import ProcessoFaturamentoService
         try:

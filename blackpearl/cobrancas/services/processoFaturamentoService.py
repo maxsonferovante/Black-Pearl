@@ -1,4 +1,4 @@
-from apscheduler.schedulers.background import BackgroundScheduler
+
 from django.utils import timezone
 
 from blackpearl.convenios.models.planoSaudeModels import ContratoPlanoSaude
@@ -7,31 +7,7 @@ from blackpearl.cobrancas.models.faturaCobrancaModels import CobrancaPlanoSaude,
     PERCENTUAL_JUROS, PERCENTUAL_MULTA
 
 
-class ProcessoFaturamentoService(BackgroundScheduler):
-    def __init__(self, **options):
-
-        super().__init__(**options)
-
-        self.add_job(self.processar_faturamento_plano_saude,
-                     'interval',minutes = 15,  replace_existing=True,
-                     max_instances=1)
-
-        self.add_job(self.processar_faturamento_plano_odontologico,
-                     'interval',minutes = 15,   replace_existing=True,
-                     max_instances=1)
-
-        self.add_job(self.processar_faturas_vencidas,
-                     'interval', minutes = 15,   replace_existing=True,
-                     max_instances=1)
-
-        self.add_job(self.atualizar_juros_multas_faturas_vencidas,
-                     'interval', minutes = 15,   replace_existing=True,
-                     max_instances=1)
-
-        self.print_jobs()
-
-    def __destroy__(self):
-        self.shutdown()
+class ProcessoFaturamentoService:
 
     @property
     def gerar_data_vencimento(self):
@@ -201,3 +177,5 @@ class ProcessoFaturamentoService(BackgroundScheduler):
             cobranca.save()
         except CobrancaPlanoOdontologico.DoesNotExist:
             ProcessoFaturamentoService.criar_fatura_plano_odontologico(contrato)
+
+

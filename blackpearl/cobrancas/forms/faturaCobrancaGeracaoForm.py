@@ -24,7 +24,15 @@ class FaturaCobrancaGeracaoContratoPlanoSaudeForm(forms.ModelForm):
                 'data-mask': '0000/00/00'
             }
         ))
-
+    valorContratado = forms.DecimalField(
+        label='Valor Contratado',
+        widget=forms.TextInput(
+            attrs={
+                'type': 'text',
+                'class': 'form-control',
+                'autocomplete': 'off',
+                'placeholder': 'Valor do contratado'})
+    )
     class Meta:
         model = CobrancaPlanoSaude
         fields = ['contratoPlanoSaude', 'dataDoVencimento', 'situacao', 'valorContratado']
@@ -49,7 +57,15 @@ class FaturaCobrancaGeracaoContratoPlanoOdontologicoForm(forms.ModelForm):
                 'data-mask': '0000/00/00'
             }
         ))
-
+    valorContratado = forms.DecimalField(
+        label='Valor Contratado',
+        widget=forms.TextInput(
+            attrs={
+                'type': 'text',
+                'class': 'form-control',
+                'autocomplete': 'off',
+                'placeholder': 'Valor do contratado'})
+    )
     class Meta:
         model = CobrancaPlanoOdontologico
         fields = ['contratoPlanoOdontologico', 'dataDoVencimento', 'situacao', 'valorContratado']

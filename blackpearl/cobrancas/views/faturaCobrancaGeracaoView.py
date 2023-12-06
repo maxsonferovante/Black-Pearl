@@ -1,7 +1,9 @@
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView, TemplateView
 
 from blackpearl.cobrancas.models.faturaCobrancaModels import CobrancaPlanoSaude, CobrancaPlanoOdontologico
@@ -9,6 +11,8 @@ from blackpearl.cobrancas.forms.faturaCobrancaGeracaoForm import FaturaCobrancaG
     FaturaCobrancaGeracaoContratoPlanoOdontologicoForm
 
 from blackpearl.cobrancas.services.processoFaturamentoService import ProcessoFaturamentoService
+from blackpearl.convenios.models.planoOdontologicoModels import ContratoPlanoOdontologico
+from blackpearl.convenios.models.planoSaudeModels import ContratoPlanoSaude
 
 
 @method_decorator(login_required, name='dispatch')
@@ -36,6 +40,30 @@ class FaturaCobrancaGeracaoContratoPlanoOdontologicoCreateView(CreateView):
     form_class = FaturaCobrancaGeracaoContratoPlanoOdontologicoForm
     template_name = 'cobrancas/gerar_cob_planoodontologico_contrato.html'
     success_url = reverse_lazy('home_cob')
+
+
+@method_decorator(login_required, name='dispatch')
+class FaturaCobrancaGeracaoConsultaValorContratoIndividualView(TemplateView):
+
+    @csrf_exempt
+    def get(self, request, *args, **kwargs):
+        contratoPlanoSaude = request.GET.get('contratoPlanoSaude')
+        try:
+            valorContratadoPlanoSaude = ContratoPlanoSaude.objects.get(pk=contratoPlanoSaude).valorTotal
+            print (valorContratadoPlanoSaude, "valorContratadoPlanoSaude")
+            return JsonResponse({'valorContratado': valorContratadoPlanoSaude})
+        except ContratoPlanoSaude.DoesNotExist:
+            try:
+                valorContratadoPlanoOdontologico = ContratoPlanoOdontologico.objects.get(pk=contratoPlanoSaude).valor
+                print (valorContratadoPlanoOdontologico, "valorContratadoPlanoOdontologico")
+                return JsonResponse({'valorContratado': valorContratadoPlanoOdontologico})
+            except ContratoPlanoOdontologico.DoesNotExist:
+                return JsonResponse({'error': 'Contrato não encontrado'})
+            except Exception as e:
+                return JsonResponse({'error': e})
+
+
+
 
 
 @method_decorator(login_required, name='dispatch')

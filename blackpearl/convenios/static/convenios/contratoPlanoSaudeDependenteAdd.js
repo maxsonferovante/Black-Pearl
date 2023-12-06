@@ -91,7 +91,6 @@ $(document).ready(function() {
         $('#id_faixa').append('<option value=""> ---------------- </option>');
     }
     });
-
     $('#id_contrato').change(function() {
         var snapLoading = $('#snap-loading');
         var contratoValue = $(this).val();

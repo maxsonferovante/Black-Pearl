@@ -33,6 +33,26 @@ class FaturaCobrancaGeracaoContratoPlanoSaudeCreateView(CreateView):
     template_name = 'cobrancas/gerar_cob_planodesaude_contrato.html'
     success_url = reverse_lazy('home_cob')
 
+    def form_valid(self, form):
+        contratoPlanoSaude = form.save(commit=False)
+
+        contratoPlanoSaudeExiste = CobrancaPlanoSaude.objects.filter(
+            contratoPlanoSaude=contratoPlanoSaude.contratoPlanoSaude,
+            situacao=contratoPlanoSaude.situacao,
+            dataDoVencimento=contratoPlanoSaude.dataDoVencimento
+        ).exists()
+
+        if contratoPlanoSaudeExiste:
+            form.add_error('contratoPlanoSaude', 'Já existe uma cobrança para este contrato com esta situação e data de vencimento')
+            return super().form_invalid(form)
+
+        contratoPlanoSaude.valotPago = 0
+        contratoPlanoSaude.juros = 0
+        contratoPlanoSaude.multa = 0
+        contratoPlanoSaude.dataDoPagamento = None
+        contratoPlanoSaude.save()
+        return super().form_valid(form)
+
 
 @method_decorator(login_required, name='dispatch')
 class FaturaCobrancaGeracaoContratoPlanoOdontologicoCreateView(CreateView):
@@ -41,6 +61,25 @@ class FaturaCobrancaGeracaoContratoPlanoOdontologicoCreateView(CreateView):
     template_name = 'cobrancas/gerar_cob_planoodontologico_contrato.html'
     success_url = reverse_lazy('home_cob')
 
+    def form_valid(self, form):
+        contratoPlanoOdontologico = form.save(commit=False)
+
+        contratoPlanoOdontologicoExiste = CobrancaPlanoOdontologico.objects.filter(
+            contratoPlanoOdontologico=contratoPlanoOdontologico.contratoPlanoOdontologico,
+            situacao=contratoPlanoOdontologico.situacao,
+            dataDoVencimento=contratoPlanoOdontologico.dataDoVencimento
+        ).exists()
+
+        if contratoPlanoOdontologicoExiste:
+            form.add_error('contratoPlanoOdontologico', 'Já existe uma cobrança para este contrato com esta situação e data de vencimento')
+            return super().form_invalid(form)
+
+        contratoPlanoOdontologico.valotPago = 0
+        contratoPlanoOdontologico.juros = 0
+        contratoPlanoOdontologico.multa = 0
+        contratoPlanoOdontologico.dataDoPagamento = None
+        contratoPlanoOdontologico.save()
+        return super().form_valid(form)
 
 @method_decorator(login_required, name='dispatch')
 class FaturaCobrancaGeracaoConsultaValorContratoIndividualView(TemplateView):
@@ -50,20 +89,17 @@ class FaturaCobrancaGeracaoConsultaValorContratoIndividualView(TemplateView):
         contratoPlanoSaude = request.GET.get('contratoPlanoSaude')
         try:
             valorContratadoPlanoSaude = ContratoPlanoSaude.objects.get(pk=contratoPlanoSaude).valorTotal
-            print (valorContratadoPlanoSaude, "valorContratadoPlanoSaude")
+            print(valorContratadoPlanoSaude, "valorContratadoPlanoSaude")
             return JsonResponse({'valorContratado': valorContratadoPlanoSaude})
         except ContratoPlanoSaude.DoesNotExist:
             try:
                 valorContratadoPlanoOdontologico = ContratoPlanoOdontologico.objects.get(pk=contratoPlanoSaude).valor
-                print (valorContratadoPlanoOdontologico, "valorContratadoPlanoOdontologico")
+                print(valorContratadoPlanoOdontologico, "valorContratadoPlanoOdontologico")
                 return JsonResponse({'valorContratado': valorContratadoPlanoOdontologico})
             except ContratoPlanoOdontologico.DoesNotExist:
                 return JsonResponse({'error': 'Contrato não encontrado'})
             except Exception as e:
                 return JsonResponse({'error': e})
-
-
-
 
 
 @method_decorator(login_required, name='dispatch')

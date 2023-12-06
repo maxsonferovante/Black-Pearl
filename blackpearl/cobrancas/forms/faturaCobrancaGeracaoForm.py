@@ -31,8 +31,7 @@ class FaturaCobrancaGeracaoContratoPlanoSaudeForm(forms.ModelForm):
                 'type': 'text',
                 'class': 'form-control',
                 'autocomplete': 'off',
-                'placeholder': 'Valor do contratado'}),
-        disabled= True
+                'placeholder': 'Valor do contratado'})
     )
     class Meta:
         model = CobrancaPlanoSaude
@@ -65,8 +64,7 @@ class FaturaCobrancaGeracaoContratoPlanoOdontologicoForm(forms.ModelForm):
                 'type': 'text',
                 'class': 'form-control',
                 'autocomplete': 'off',
-                'placeholder': 'Valor do contratado'}),
-        disabled=True
+                'placeholder': 'Valor do contratado'})
     )
     class Meta:
         model = CobrancaPlanoOdontologico

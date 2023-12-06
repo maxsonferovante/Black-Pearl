@@ -17,6 +17,16 @@
                   <div class="p-3">
                        <div class="card" >
                         <div class="card-body">
+                            {% if error_plano_saude %}
+                                <div class="alert alert-warning" role="alert">
+                                    {{ error_plano_saude }}
+                                </div>
+                            {% endif %}
+                            {% if success_plano_odonto %}
+                                <div class="alert alert-success" role="alert">
+                                    {{ success_plano_saude }}
+                                </div>
+                            {% endif %}
                           <h5 class="card-title">Cobrança - Plano de Saúde</h5>
                                 <p class="card-text">Existem ... </p>
                           <a href="{% url 'gerar_cob_planodesaude_contrato' %}" class="btn btn-primary">Individual</a>
@@ -29,6 +39,17 @@
                   <div class="p-3">
                        <div class="card" >
                         <div class="card-body">
+                            {% if error_plano_odonto %}
+                                <div class="alert alert-warning" role="alert">
+                                    {{ error_plano_odonto }}
+                                </div>
+                            {% endif %}
+                            {% if success_plano_odonto %}
+                                <div class="alert alert-success" role="alert">
+                                    {{ success_plano_odonto }}
+                                </div>
+                            {% endif %}
+
                           <h5 class="card-title">Cobrança - Plano Odontológico</h5>
                                 <p class="card-text">Existem ... </p>
                             <a href="{% url 'gerar_cob_planoodontologico_contrato' %}" class="btn btn-primary">Individual</a>

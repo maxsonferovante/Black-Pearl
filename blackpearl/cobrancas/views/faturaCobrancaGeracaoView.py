@@ -5,8 +5,10 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView, TemplateView
+from django.utils import timezone
 
-from blackpearl.cobrancas.models.faturaCobrancaModels import CobrancaPlanoSaude, CobrancaPlanoOdontologico
+from blackpearl.cobrancas.models.faturaCobrancaModels import CobrancaPlanoSaude, CobrancaPlanoOdontologico, \
+    FaturaCobrancaDiasConfig
 from blackpearl.cobrancas.forms.faturaCobrancaGeracaoForm import FaturaCobrancaGeracaoContratoPlanoSaudeForm, \
     FaturaCobrancaGeracaoContratoPlanoOdontologicoForm
 
@@ -43,7 +45,8 @@ class FaturaCobrancaGeracaoContratoPlanoSaudeCreateView(CreateView):
         ).exists()
 
         if contratoPlanoSaudeExiste:
-            form.add_error('contratoPlanoSaude', 'Já existe uma cobrança para este contrato com esta situação e data de vencimento')
+            form.add_error('contratoPlanoSaude',
+                           'Já existe uma cobrança para este contrato com esta situação e data de vencimento')
             return super().form_invalid(form)
 
         contratoPlanoSaude.valotPago = 0
@@ -71,7 +74,8 @@ class FaturaCobrancaGeracaoContratoPlanoOdontologicoCreateView(CreateView):
         ).exists()
 
         if contratoPlanoOdontologicoExiste:
-            form.add_error('contratoPlanoOdontologico', 'Já existe uma cobrança para este contrato com esta situação e data de vencimento')
+            form.add_error('contratoPlanoOdontologico',
+                           'Já existe uma cobrança para este contrato com esta situação e data de vencimento')
             return super().form_invalid(form)
 
         contratoPlanoOdontologico.valotPago = 0
@@ -80,6 +84,7 @@ class FaturaCobrancaGeracaoContratoPlanoOdontologicoCreateView(CreateView):
         contratoPlanoOdontologico.dataDoPagamento = None
         contratoPlanoOdontologico.save()
         return super().form_valid(form)
+
 
 @method_decorator(login_required, name='dispatch')
 class FaturaCobrancaGeracaoConsultaValorContratoIndividualView(TemplateView):
@@ -107,13 +112,20 @@ class FaturaCobrancaGeracaoContratoPlanoSaudeColetivaView(TemplateView):
     processamento_faturamento_service = ProcessoFaturamentoService()
 
     def get(self, request, *args, **kwargs):
-        try:
-            self.processamento_faturamento_service.processar_faturamento_plano_saude()
-            self.processamento_faturamento_service.processar_faturas_vencidas()
-            self.processamento_faturamento_service.atualizar_juros_multas_faturas_vencidas()
-            return render(request, 'cobrancas/gerar_cob.html')
-        except Exception as e:
-            return render(request, 'cobrancas/gerar_cob.html', {'error': e})
+        diaParaGeracaoPlanosOdontologico = FaturaCobrancaDiasConfig.objects.get().diaParaGeracaoPlanosOdontologico
+        diaDataAtual = timezone.now().day
+        if diaParaGeracaoPlanosOdontologico <= diaDataAtual <= 30:
+            try:
+                self.processamento_faturamento_service.processar_faturamento_plano_saude()
+                self.processamento_faturamento_service.processar_faturas_vencidas()
+                self.processamento_faturamento_service.atualizar_juros_multas_faturas_vencidas()
+                return render(request, 'cobrancas/gerar_cob.html',
+                              {'success_plano_saude': 'Cobranças de planos de saúde geradas com sucesso.'})
+            except Exception as e:
+                return render(request, 'cobrancas/gerar_cob.html', {'error': e})
+        else:
+            return render(request, 'cobrancas/gerar_cob.html',
+                          {'error_plano_saude': 'Não é possível gerar cobranças de planos de saúde entre o dia 1 e 10 de cada mês.'})
 
 
 @method_decorator(login_required, name='dispatch')
@@ -121,10 +133,18 @@ class FaturaCobrancaGeracaoContratoPlanoOdontologicoColetivaView(TemplateView):
     processamento_faturamento_service = ProcessoFaturamentoService()
 
     def get(self, request, *args, **kwargs):
-        try:
-            self.processamento_faturamento_service.processar_faturamento_plano_odontologico()
-            self.processamento_faturamento_service.processar_faturas_vencidas()
-            self.processamento_faturamento_service.atualizar_juros_multas_faturas_vencidas()
-            return render(request, 'cobrancas/gerar_cob.html')
-        except Exception as e:
-            return render(request, 'cobrancas/gerar_cob.html', {'error': e})
+        diaParaGeracaoPlanosOdontologico = FaturaCobrancaDiasConfig.objects.get().diaParaGeracaoPlanosOdontologico
+        diaDataAtual = timezone.now().day
+
+        if diaParaGeracaoPlanosOdontologico <= diaDataAtual <= 30:
+            try:
+                self.processamento_faturamento_service.processar_faturamento_plano_odontologico()
+                self.processamento_faturamento_service.processar_faturas_vencidas()
+                self.processamento_faturamento_service.atualizar_juros_multas_faturas_vencidas()
+                return render(request, 'cobrancas/gerar_cob.html',
+                              {'success_plano_odonto': 'Cobranças de planos de odontológico geradas com sucesso.'})
+            except Exception as e:
+                return render(request, 'cobrancas/gerar_cob.html', {'error': e})
+        else:
+            return render(request, 'cobrancas/gerar_cob.html',
+                          {'error_plano_odonto': 'Não é possível gerar cobranças de planos odontológico  entre o dia 1 e 10 de cada mês.'})

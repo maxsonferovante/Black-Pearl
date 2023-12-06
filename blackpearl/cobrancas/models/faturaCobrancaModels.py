@@ -65,3 +65,18 @@ class CobrancaPlanoOdontologico(FaturaCobranca):
 
     def get_forma_pagamento(self):
         return self.contratoPlanoOdontologico.formaPagamento
+
+
+class FaturaCobrancaDiasConfig(Base):
+    diaParaGeracaoPlanosDeSaude = models.IntegerField(verbose_name="Dia para geração dos planos de saúde", default=15)
+    diaParaGeracaoPlanosOdontologico = models.IntegerField(verbose_name="Dia para geração dos planos odontológicos",
+                                                            default=15)
+
+    diaParaVencimentoPlanosDeSaude = models.IntegerField(verbose_name="Dia para vencimento dos planos de saúde",
+                                                         default=10)
+    diaParaVencimentoPlanosOdontologico = models.IntegerField(
+        verbose_name="Dia para vencimento dos planos odontológicos", default=10)
+
+    class Meta:
+        verbose_name = "Configuração do dia de cobrança"
+        verbose_name_plural = "Configurações dos dias de cobrança"

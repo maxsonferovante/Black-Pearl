@@ -177,3 +177,5 @@ class ProcessoFaturamentoService:
             cobranca.save()
         except CobrancaPlanoOdontologico.DoesNotExist:
             ProcessoFaturamentoService.criar_fatura_plano_odontologico(contrato)
+
+

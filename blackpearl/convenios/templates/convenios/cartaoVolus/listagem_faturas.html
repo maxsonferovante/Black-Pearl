@@ -47,8 +47,8 @@
         </table>
         {% include 'pagination.html' with href='listagemfaturas'%}
 
-        <div class="filtros d-grid gap-2 d-md-flex justify-content-md-end">
-            <form class="form" action="{% url 'exportar' %}" method="GET">
+            <div class="filtros d-grid gap-2 d-md-flex justify-content-md-end">
+            <form class="form" action="" method="GET">
 
                 <span class="fw-bold"> Filtro de Exportação</span>
 
@@ -84,6 +84,8 @@
                 </div>
             </form>
         </div>
+
+
         </div>
     </div>
     {% else %}

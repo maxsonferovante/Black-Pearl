@@ -1,5 +1,4 @@
 from io import BytesIO
-import openpyxl
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
@@ -7,6 +6,7 @@ from reportlab.pdfgen import canvas
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from blackpearl.convenios.models.cartaoVolusModels import FaturaCartao
+
 
 @method_decorator(login_required, name='dispatch')
 class HomeTemplateView(TemplateView):
@@ -17,6 +17,7 @@ class HomeTemplateView(TemplateView):
         return context
 
 
+"""
 def exportar(request):
     empresa_selecionada = request.GET.get('inputGroupSelectEmpresa')
     data_inicial = request.GET.get('start_date')
@@ -118,3 +119,4 @@ def exporttofile(faturas, nome_arq, tipoArquivo_selecionado):
         response['Content-Disposition'] = f'attachment; filename="{nome_arq}.txt'
 
     return response
+"""

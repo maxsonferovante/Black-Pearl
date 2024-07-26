@@ -42,16 +42,42 @@ Esse projeto é usado pela seguinte empresa:
 - Gerenciamento de Convenios (Cartões de Convênio, Plano de Saude, e Plano Odontologico)
 - Gerenciamento de Cobranças em faturas dos convenios
 
-## Produção
+## Uso/Instalação
 
-https://blackpearl.herokuapp.com/
+Para clonar e rodar esse projeto, você precisará ter o [Git](https://git-scm.com) e o [Python](https://www.python.org/) instalados em seu computador. A partir da sua linha de comando:
 
-## Referência
+```bash
+    git clone https://github.com/maxsonferovante/Black-Pearl.git
+    cd Black-Pearl
+```
 
- - [Django 4.2](https://www.djangoproject.com/)
- - [Django-Crispy-Forms](https://django-crispy-forms.readthedocs.io/en/latest/index.html)
- - [Django-Form-Tools](https://django-formtools.readthedocs.io/en/latest/index.html)
- - [Bootstrap 5](https://getbootstrap.com/docs/5.3/getting-started/introduction/)
- - [Heroku](https://www.heroku.com/home?)
+Para instalar e configurar o ambiente virtual:
 
+```bash
+    python -m venv venv
+    source venv/bin/activate
+    pip install -r requirements.txt
+```
+Antes da execução, crie o arquivo para as variáveis de ambiente:
+
+```bash
+    touch .env
+```
+O conteúdo do arquivo .env deve ser:
+
+```bash
+    SECRET_KEY = 'your_secret_key'
+    DB_ENGINE = 'django.db.backends.postgresql_psycopg2'
+    DB_NAME = 'your_db_name'
+    DB_USER = 'your_db_user'
+    DB_PASSWORD = 'your_db_password'
+    DB_HOST = 'localhost'
+    DB_PORT = '5432'
+```
+
+Para rodar o projeto:
+
+```bash
+    python manage.py runserver
+```
 

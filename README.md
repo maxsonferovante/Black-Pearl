@@ -76,7 +76,9 @@ O conteúdo do arquivo .env deve ser:
 ```
 
 Para rodar o projeto:
-
+```
+    python manage.py makemigrations && python manage.py migrate
+```
 ```bash
     python manage.py runserver
 ```

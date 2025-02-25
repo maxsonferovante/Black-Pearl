@@ -82,4 +82,4 @@ Para rodar o projeto:
 ```bash
     python manage.py runserver
 ```
-
+https://medium.com/@nandagopal05/deploy-django-project-with-nginx-gunicorn-docker-to-production-b4368a2fefff
